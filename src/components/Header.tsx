@@ -41,35 +41,51 @@ export default function Header() {
   return (
     <header className="sticky top-0 bg-white z-20 border-b border-gray-100">
       <div className="container-app">
-        <div className="flex items-center justify-between py-3">
-          <button className="p-2">
-            <FiMenu className="w-6 h-6" />
+        <div className="flex items-center justify-between py-2">
+          <button className="p-1.5">
+            <FiMenu className="w-5 h-5" />
           </button>
           
           <div className="relative" ref={dropdownRef}>
             <button 
-              className="flex items-center font-medium text-gray-900 px-3 py-1.5 rounded-full hover:bg-gray-50 transition-colors"
+              className={`
+                flex items-center font-medium text-gray-900 
+                px-3 py-1.5 rounded-full transition-all duration-300
+                ${isDropdownOpen ? 'scale-105' : 'hover:scale-105'}
+              `}
               onClick={toggleDropdown}
             >
-              <FiMapPin className="w-4 h-4 mr-1.5 text-primary" />
-              Shanghai
-              <FiChevronDown className={`w-4 h-4 ml-1.5 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              <span className="font-bold text-base leading-none">Shanghai</span>
+              <FiChevronDown className={`w-3.5 h-3.5 ml-1 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
             
             {isDropdownOpen && (
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-white rounded-lg shadow-lg py-2 w-48 z-30 animate-scale-in">
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1.5 bg-white rounded-xl shadow-xl py-2 w-56 z-30 border border-gray-100">
+                <div className="px-4 py-1.5 border-b border-gray-100">
+                  <h3 className="text-xs font-medium text-gray-700">Select a city</h3>
+                </div>
                 {cities.map((city) => (
                   <button
                     key={city.name}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between ${
-                      city.name === "Shanghai" ? "text-primary font-medium" : "text-gray-700"
-                    } hover:bg-gray-50 transition-colors`}
+                    className={`
+                      w-full text-left px-4 py-2 text-xs flex items-center justify-between
+                      transition-colors relative
+                      ${city.name === "Shanghai" 
+                        ? "text-primary font-bold bg-primary/5" 
+                        : "text-gray-700 hover:bg-gray-50"}
+                    `}
                     disabled={!city.available}
                     onClick={() => setIsDropdownOpen(false)}
                   >
-                    {city.name}
+                    <div className="flex items-center">
+                      <FiMapPin className={`w-3.5 h-3.5 mr-2 ${city.name === "Shanghai" ? "text-primary" : "text-gray-400"}`} />
+                      {city.name}
+                    </div>
+                    {city.name === "Shanghai" && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    )}
                     {!city.available && (
-                      <span className="text-xs text-gray-400">Coming Soon</span>
+                      <span className="text-[10px] py-0.5 px-1.5 rounded-full bg-gray-100 text-gray-400">Coming Soon</span>
                     )}
                   </button>
                 ))}
@@ -77,8 +93,8 @@ export default function Header() {
             )}
           </div>
           
-          <button className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-sm">
-            <FiPlus className="w-5 h-5" />
+          <button className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
+            <FiPlus className="w-4 h-4" />
           </button>
         </div>
       </div>

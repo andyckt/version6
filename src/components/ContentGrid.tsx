@@ -3,46 +3,70 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FiHeart } from 'react-icons/fi';
+import { 
+  FiCamera, 
+  FiCoffee, 
+  FiMapPin, 
+  FiStar, 
+  FiWind, 
+  FiHome, 
+  FiCompass, 
+  FiGlobe 
+} from 'react-icons/fi';
 import { travelPosts } from '@/data/posts';
 import BlurImage from './BlurImage';
 
-// Define categories for filtering
+// Define categories with icons and colors
 const categories = [
-  "All",
-  "Food",
-  "Nature",
-  "City",
-  "Beach",
-  "Mountain",
-  "Culture"
+  { id: "superpicture", name: "Superpicture", icon: FiCamera, color: "#FF6B6B" },
+  { id: "food", name: "Food", icon: FiCoffee, color: "#4ECDC4" },
+  { id: "attractions", name: "Attractions", icon: FiMapPin, color: "#FFD166" },
+  { id: "luxurious", name: "Luxurious", icon: FiStar, color: "#6A0572" },
+  { id: "getdrunk", name: "Get Drunk", icon: FiWind, color: "#1A535C" },
+  { id: "hotel", name: "Hotel", icon: FiHome, color: "#FF9F1C" },
+  { id: "treasurehunt", name: "Treasure Hunt", icon: FiCompass, color: "#7B68EE" },
+  { id: "korea", name: "Korea", icon: FiGlobe, color: "#FF5E5B" }
 ];
 
 export default function ContentGrid() {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState("");
   
   // Filter posts based on selected category
-  const filteredPosts = activeCategory === "All" 
+  const filteredPosts = activeCategory === "" 
     ? travelPosts 
     : travelPosts.filter(post => 
-        post.tags.some(tag => tag.toLowerCase() === activeCategory.toLowerCase())
+        post.tags.some(tag => tag.toLowerCase().includes(activeCategory.toLowerCase()))
       );
 
   return (
-    <div className="pt-4 pb-4">
-      {/* Category filters */}
-      <div className="mb-4 overflow-x-auto no-scrollbar">
-        <div className="flex space-x-2 pb-2 px-1">
+    <div className="pt-2 pb-4">
+      {/* Category filters - compact 2-row grid */}
+      <div className="mb-3">
+        <div className="grid grid-cols-4 gap-x-1 gap-y-2">
           {categories.map(category => (
             <button
-              key={category}
-              className={`px-3 py-1.5 rounded-full text-sm whitespace-nowrap transition-colors ${
-                activeCategory === category
-                  ? 'bg-primary text-black font-medium'
-                  : 'bg-gray-100 text-gray-700'
-              }`}
-              onClick={() => setActiveCategory(category)}
+              key={category.id}
+              className="flex flex-col items-center justify-center transition-all duration-200"
+              onClick={() => setActiveCategory(activeCategory === category.id ? "" : category.id)}
             >
-              {category}
+              <div 
+                className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 transition-transform ${
+                  activeCategory === category.id ? 'scale-110' : ''
+                }`}
+                style={{ backgroundColor: `${category.color}20` }} // 20% opacity of the color
+              >
+                <category.icon 
+                  className="w-4 h-4" 
+                  style={{ color: category.color }}
+                />
+              </div>
+              <span 
+                className={`text-xs font-medium transition-colors ${
+                  activeCategory === category.id ? 'text-primary font-bold' : 'text-gray-700'
+                }`}
+              >
+                {category.name}
+              </span>
             </button>
           ))}
         </div>
@@ -110,4 +134,4 @@ export default function ContentGrid() {
       )}
     </div>
   );
-} 
+}

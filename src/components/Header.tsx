@@ -1,6 +1,6 @@
 "use client";
 
-import { FiSearch, FiMenu } from 'react-icons/fi'
+import { FiSearch, FiMenu, FiPlus } from 'react-icons/fi'
 import Link from 'next/link'
 
 export default function Header() {
@@ -24,9 +24,14 @@ export default function Header() {
             </Link>
           </div>
           
-          <button className="p-2">
-            <FiSearch className="w-6 h-6" />
-          </button>
+          <div className="flex items-center">
+            <button className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-sm mr-2">
+              <FiPlus className="w-5 h-5" />
+            </button>
+            <button className="p-2">
+              <FiSearch className="w-6 h-6" />
+            </button>
+          </div>
         </div>
       </div>
     </header>

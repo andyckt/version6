@@ -12,9 +12,9 @@ const categories = [
   { id: "superpicture", name: "Superpicture", iconSrc: "/icons/gif-superpicture.gif", color: "#FF6B6B" },
   { id: "food", name: "Food", iconSrc: "/icons/gif-food.gif", color: "#4ECDC4" },
   { id: "attractions", name: "Attractions", iconSrc: "/icons/gif-attractions.gif", color: "#FFD166" },
-  { id: "luxurious", name: "Luxurious", iconSrc: "/icons/gif-luxurious.gif", color: "#6A0572" },
+  { id: "luxurious", name: "Luxury", iconSrc: "/icons/gif-luxurious.gif", color: "#6A0572" },
   { id: "getdrunk", name: "Get Drunk", iconSrc: "/icons/gif-getdrunk.gif", color: "#1A535C" },
-  { id: "hotel", name: "Hotel", iconSrc: "/icons/gif-hotel.gif", color: "#FF9F1C" },
+  { id: "hotel", name: "Accommodation", iconSrc: "/icons/gif-hotel.gif", color: "#FF9F1C" },
   { id: "treasurehunt", name: "Treasure Hunt", iconSrc: "/icons/gif-treasurehunt.gif", color: "#7B68EE" },
   { id: "korea", name: "Korea", iconSrc: "/icons/gif-korea.gif", color: "#FF5E5B" }
 ];
@@ -40,20 +40,15 @@ export default function ContentGrid() {
               className="flex flex-col items-center justify-center group"
               onClick={() => setActiveCategory(activeCategory === category.id ? "" : category.id)}
             >
-              <div className="h-8 flex items-center justify-center mb-1 relative">
+              <div className="relative h-8 flex items-center justify-center mb-0.5">
                 <img 
                   src={category.iconSrc}
                   alt={category.name}
-                  className="w-7 h-7 transition-all duration-300 group-hover:scale-110"
+                  className="w-9 h-9 transition-all duration-300 group-hover:scale-[1.5] group-hover:z-10"
                   loading="lazy"
                 />
-                {activeCategory === category.id && (
-                  <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-primary rounded-full"></span>
-                )}
               </div>
-              <span className={`text-xs font-medium transition-colors duration-300
-                ${activeCategory === category.id ? 'text-primary' : 'text-gray-700'}
-              `}>
+              <span className="text-xs font-semibold tracking-tight text-gray-800 transition-opacity duration-300 group-hover:opacity-0">
                 {category.name}
               </span>
             </button>

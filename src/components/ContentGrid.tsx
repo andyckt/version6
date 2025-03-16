@@ -7,16 +7,16 @@ import Image from 'next/image';
 import { travelPosts } from '@/data/posts';
 import BlurImage from './BlurImage';
 
-// Define categories with colors
+// Define categories with GIF icons
 const categories = [
-  { id: "superpicture", name: "Superpicture", iconSrc: "/icons/icon-superpicture.svg", color: "#FF6B6B" },
-  { id: "food", name: "Food", iconSrc: "/icons/icon-food.svg", color: "#4ECDC4" },
-  { id: "attractions", name: "Attractions", iconSrc: "/icons/icon-attractions.svg", color: "#FFD166" },
-  { id: "luxurious", name: "Luxurious", iconSrc: "/icons/icon-luxurious.svg", color: "#6A0572" },
-  { id: "getdrunk", name: "Get Drunk", iconSrc: "/icons/icon-getdrunk.svg", color: "#1A535C" },
-  { id: "hotel", name: "Hotel", iconSrc: "/icons/icon-hotel.svg", color: "#FF9F1C" },
-  { id: "treasurehunt", name: "Treasure Hunt", iconSrc: "/icons/icon-treasurehunt.svg", color: "#7B68EE" },
-  { id: "korea", name: "Korea", iconSrc: "/icons/icon-korea.svg", color: "#FF5E5B" }
+  { id: "superpicture", name: "Superpicture", iconSrc: "/icons/gif-superpicture.gif", color: "#FF6B6B" },
+  { id: "food", name: "Food", iconSrc: "/icons/gif-food.gif", color: "#4ECDC4" },
+  { id: "attractions", name: "Attractions", iconSrc: "/icons/gif-attractions.gif", color: "#FFD166" },
+  { id: "luxurious", name: "Luxurious", iconSrc: "/icons/gif-luxurious.gif", color: "#6A0572" },
+  { id: "getdrunk", name: "Get Drunk", iconSrc: "/icons/gif-getdrunk.gif", color: "#1A535C" },
+  { id: "hotel", name: "Hotel", iconSrc: "/icons/gif-hotel.gif", color: "#FF9F1C" },
+  { id: "treasurehunt", name: "Treasure Hunt", iconSrc: "/icons/gif-treasurehunt.gif", color: "#7B68EE" },
+  { id: "korea", name: "Korea", iconSrc: "/icons/gif-korea.gif", color: "#FF5E5B" }
 ];
 
 export default function ContentGrid() {
@@ -34,20 +34,26 @@ export default function ContentGrid() {
       {/* Category filters - compact 2-row grid */}
       <div className="mb-3">
         <div className="grid grid-cols-4 gap-x-1 gap-y-2">
-          {categories.map(category => (
+          {categories.map((category) => (
             <button
               key={category.id}
-              className="flex flex-col items-center justify-center transition-all duration-200"
+              className="flex flex-col items-center justify-center group"
               onClick={() => setActiveCategory(activeCategory === category.id ? "" : category.id)}
             >
-              <div className="h-8 flex items-center justify-center mb-1">
+              <div className="h-8 flex items-center justify-center mb-1 relative">
                 <img 
                   src={category.iconSrc}
                   alt={category.name}
-                  className="w-6 h-6"
+                  className="w-7 h-7 transition-all duration-300 group-hover:scale-110"
+                  loading="lazy"
                 />
+                {activeCategory === category.id && (
+                  <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-primary rounded-full"></span>
+                )}
               </div>
-              <span className="text-xs font-medium text-gray-700">
+              <span className={`text-xs font-medium transition-colors duration-300
+                ${activeCategory === category.id ? 'text-primary' : 'text-gray-700'}
+              `}>
                 {category.name}
               </span>
             </button>

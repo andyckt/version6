@@ -61,14 +61,14 @@ export default function ContentGrid() {
         {filteredPosts.map((post, index) => (
           <div 
             key={post.id} 
-            className="flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-md"
+            className="group flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
             style={{ 
               animationDelay: `${index * 100}ms`,
               opacity: 0,
               animation: 'fadeIn 0.5s ease forwards'
             }}
           >
-            <Link href={`/post/${post.id}`} className="block">
+            <Link href={`/post/${post.id}`} className="block relative overflow-hidden">
               <div className="relative">
                 <BlurImage 
                   src={post.image} 
@@ -76,29 +76,38 @@ export default function ContentGrid() {
                   aspectRatio="pb-[100%]"
                   sizes="(max-width: 768px) 50vw, 33vw"
                 />
+                {/* Image overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                {/* Featured tag if it exists */}
+                {post.tags.includes("featured") && (
+                  <div className="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-0.5 rounded-sm">
+                    Featured
+                  </div>
+                )}
               </div>
               
-              <div className="p-3">
-                <h3 className="font-medium text-sm line-clamp-2">{post.title}</h3>
-                <div className="flex items-center mt-2">
-                  <div className="w-5 h-5 rounded-full bg-gray-200 mr-2"></div>
-                  <span className="text-xs text-gray-700">{post.author}</span>
-                </div>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center text-xs text-gray-500">
-                    <FiHeart className="w-3 h-3 mr-1" />
+              <div className="p-3.5">
+                <h3 className="font-[550] text-sm line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+                  {post.title}
+                </h3>
+                
+                <div className="flex items-center justify-between mt-2.5">
+                  <Link 
+                    href={`/account/${post.author.toLowerCase().replace(/\s+/g, '')}`} 
+                    className="flex items-center group/author"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="w-5 h-5 rounded-full bg-gray-200 mr-2 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
+                      {/* This could be a real avatar image */}
+                    </div>
+                    <span className="text-xs font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">{post.author}</span>
+                  </Link>
+                  
+                  <div className="flex items-center text-xs text-gray-500 group-hover:text-rose-500 transition-colors duration-300">
+                    <FiHeart className="w-3.5 h-3.5 mr-1 group-hover:scale-110 transition-transform duration-300" />
                     <span>{post.likes}</span>
                   </div>
-                </div>
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {post.tags.slice(0, 2).map((tag) => (
-                    <span key={tag} className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded-sm">
-                      #{tag}
-                    </span>
-                  ))}
-                  {post.tags.length > 2 && (
-                    <span className="text-[10px] text-gray-500">+{post.tags.length - 2}</span>
-                  )}
                 </div>
               </div>
             </Link>

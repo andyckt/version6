@@ -68,35 +68,31 @@ export default function ContentGrid() {
               animation: 'fadeIn 0.5s ease forwards'
             }}
           >
-            <Link href={`/post/${post.id}`} className="block relative overflow-hidden">
-              <div className="relative">
-                <BlurImage 
-                  src={post.image} 
-                  alt={post.title}
-                  aspectRatio="pb-[100%]"
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                />
-                {/* Image overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
-                {/* Featured tag if it exists */}
-                {post.tags.includes("featured") && (
-                  <div className="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-0.5 rounded-sm">
-                    Featured
-                  </div>
-                )}
-              </div>
+            <div className="relative overflow-hidden">
+              <Link href={`/post/${post.id}`} className="block">
+                <div className="relative">
+                  <BlurImage 
+                    src={post.image} 
+                    alt={post.title}
+                    aspectRatio="pb-[100%]"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
+                  {/* Image overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+              </Link>
               
               <div className="p-3.5">
-                <h3 className="font-[550] text-sm line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
-                  {post.title}
-                </h3>
+                <Link href={`/post/${post.id}`}>
+                  <h3 className="font-[550] text-sm line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+                    {post.title}
+                  </h3>
+                </Link>
                 
                 <div className="flex items-center justify-between mt-2.5">
                   <Link 
                     href={`/account/${post.author.toLowerCase().replace(/\s+/g, '')}`} 
                     className="flex items-center group/author"
-                    onClick={(e) => e.stopPropagation()}
                   >
                     <div className="w-5 h-5 rounded-full bg-gray-200 mr-2 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
                       {/* This could be a real avatar image */}
@@ -104,13 +100,13 @@ export default function ContentGrid() {
                     <span className="text-xs font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">{post.author}</span>
                   </Link>
                   
-                  <div className="flex items-center text-xs text-gray-500 group-hover:text-rose-500 transition-colors duration-300">
+                  <div className="flex items-center text-xs text-gray-500">
                     <FiHeart className="w-3.5 h-3.5 mr-1 group-hover:scale-110 transition-transform duration-300" />
                     <span>{post.likes}</span>
                   </div>
                 </div>
               </div>
-            </Link>
+            </div>
           </div>
         ))}
       </div>

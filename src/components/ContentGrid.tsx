@@ -3,29 +3,20 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FiHeart } from 'react-icons/fi';
-import { 
-  FiCamera, 
-  FiCoffee, 
-  FiMapPin, 
-  FiStar, 
-  FiWind, 
-  FiHome, 
-  FiCompass, 
-  FiGlobe 
-} from 'react-icons/fi';
+import Image from 'next/image';
 import { travelPosts } from '@/data/posts';
 import BlurImage from './BlurImage';
 
-// Define categories with icons and colors
+// Define categories with colors
 const categories = [
-  { id: "superpicture", name: "Superpicture", icon: FiCamera, color: "#FF6B6B" },
-  { id: "food", name: "Food", icon: FiCoffee, color: "#4ECDC4" },
-  { id: "attractions", name: "Attractions", icon: FiMapPin, color: "#FFD166" },
-  { id: "luxurious", name: "Luxurious", icon: FiStar, color: "#6A0572" },
-  { id: "getdrunk", name: "Get Drunk", icon: FiWind, color: "#1A535C" },
-  { id: "hotel", name: "Hotel", icon: FiHome, color: "#FF9F1C" },
-  { id: "treasurehunt", name: "Treasure Hunt", icon: FiCompass, color: "#7B68EE" },
-  { id: "korea", name: "Korea", icon: FiGlobe, color: "#FF5E5B" }
+  { id: "superpicture", name: "Superpicture", iconSrc: "/icons/icon-superpicture.svg", color: "#FF6B6B" },
+  { id: "food", name: "Food", iconSrc: "/icons/icon-food.svg", color: "#4ECDC4" },
+  { id: "attractions", name: "Attractions", iconSrc: "/icons/icon-attractions.svg", color: "#FFD166" },
+  { id: "luxurious", name: "Luxurious", iconSrc: "/icons/icon-luxurious.svg", color: "#6A0572" },
+  { id: "getdrunk", name: "Get Drunk", iconSrc: "/icons/icon-getdrunk.svg", color: "#1A535C" },
+  { id: "hotel", name: "Hotel", iconSrc: "/icons/icon-hotel.svg", color: "#FF9F1C" },
+  { id: "treasurehunt", name: "Treasure Hunt", iconSrc: "/icons/icon-treasurehunt.svg", color: "#7B68EE" },
+  { id: "korea", name: "Korea", iconSrc: "/icons/icon-korea.svg", color: "#FF5E5B" }
 ];
 
 export default function ContentGrid() {
@@ -49,22 +40,14 @@ export default function ContentGrid() {
               className="flex flex-col items-center justify-center transition-all duration-200"
               onClick={() => setActiveCategory(activeCategory === category.id ? "" : category.id)}
             >
-              <div 
-                className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 transition-transform ${
-                  activeCategory === category.id ? 'scale-110' : ''
-                }`}
-                style={{ backgroundColor: `${category.color}20` }} // 20% opacity of the color
-              >
-                <category.icon 
-                  className="w-4 h-4" 
-                  style={{ color: category.color }}
+              <div className="h-8 flex items-center justify-center mb-1">
+                <img 
+                  src={category.iconSrc}
+                  alt={category.name}
+                  className="w-6 h-6"
                 />
               </div>
-              <span 
-                className={`text-xs font-medium transition-colors ${
-                  activeCategory === category.id ? 'text-primary font-bold' : 'text-gray-700'
-                }`}
-              >
+              <span className="text-xs font-medium text-gray-700">
                 {category.name}
               </span>
             </button>
@@ -134,4 +117,32 @@ export default function ContentGrid() {
       )}
     </div>
   );
+}
+
+// Helper function to calculate hue rotation based on color
+function getHueRotation(hexColor: string): number {
+  // Convert hex to RGB
+  const r = parseInt(hexColor.slice(1, 3), 16) / 255;
+  const g = parseInt(hexColor.slice(3, 5), 16) / 255;
+  const b = parseInt(hexColor.slice(5, 7), 16) / 255;
+  
+  // Find the maximum and minimum values
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  
+  // Calculate hue
+  let h = 0;
+  if (max === min) {
+    h = 0; // achromatic
+  } else {
+    const d = max - min;
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h *= 60;
+  }
+  
+  return h;
 }

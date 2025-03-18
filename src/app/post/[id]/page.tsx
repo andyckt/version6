@@ -1,17 +1,65 @@
+"use client"
+
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FiArrowLeft, FiHeart, FiMessageSquare, FiBookmark, FiShare2 } from 'react-icons/fi'
+import { FiArrowLeft, FiHeart, FiMessageSquare, FiBookmark, FiShare2, FiEdit2, FiX } from 'react-icons/fi'
 import { travelPosts } from '@/data/posts'
 import Navigation from '@/components/Navigation'
 import PageTransition from '@/components/PageTransition'
 import BlurImage from '@/components/BlurImage'
+import EditPostForm from '@/components/EditPostForm'
+import { Post } from '@/types/post'
 
 export default function PostDetail({ params }: { params: { id: string } }) {
   const postId = parseInt(params.id)
   const post = travelPosts.find(post => post.id === postId)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   
   if (!post) {
     return <div className="container-app py-20 text-center">Post not found</div>
+  }
+
+  // Convert TravelPost to Post format for the EditPostForm
+  const convertToPost = (): Post => {
+    return {
+      id: post.id.toString(),
+      userId: 1, // Assuming current user ID is 1
+      caption: post.title + (post.description ? '\n\n' + post.description : ''),
+      media: [
+        {
+          id: `image-${post.id}`,
+          type: 'image',
+          url: post.image,
+          width: 600,
+          height: 800
+        }
+      ],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      tags: post.tags.map((tag, index) => ({
+        id: `tag-${index}`,
+        type: 'hashtag',
+        text: tag
+      })),
+      visibility: 'public',
+      commentSetting: 'everyone',
+      hideStats: false,
+      likesCount: post.likes,
+      commentsCount: 2, // Hardcoded from the UI
+      sharesCount: 0,
+      savedCount: 0,
+      comments: []
+    }
+  }
+
+  // Handler for saving post updates
+  const handleSavePost = async (updatedPost: Post): Promise<boolean> => {
+    console.log('Saving updated post:', updatedPost)
+    // In a real app, this would send the updated post to an API
+    // For now, we'll just close the modal and pretend it worked
+    setIsEditModalOpen(false)
+    return true
   }
 
   return (
@@ -45,9 +93,18 @@ export default function PostDetail({ params }: { params: { id: string } }) {
               <h3 className="font-medium text-sm">{post.author}</h3>
               <p className="text-xs text-gray-500">Travel Enthusiast</p>
             </div>
-            <button className="ml-auto px-4 py-1.5 text-xs font-medium bg-primary rounded-full transition-transform hover:scale-105 active:scale-95">
-              Follow
-            </button>
+            <div className="ml-auto flex space-x-2">
+              <button 
+                className="px-3 py-1.5 text-xs font-medium bg-gray-100 text-gray-700 rounded-full transition-transform hover:scale-105 active:scale-95 flex items-center"
+                onClick={() => setIsEditModalOpen(true)}
+              >
+                <FiEdit2 className="w-3 h-3 mr-1" />
+                Edit
+              </button>
+              <button className="px-4 py-1.5 text-xs font-medium bg-primary rounded-full transition-transform hover:scale-105 active:scale-95">
+                Follow
+              </button>
+            </div>
           </div>
 
           {/* Post image */}
@@ -160,6 +217,36 @@ export default function PostDetail({ params }: { params: { id: string } }) {
           </div>
         </div>
       </PageTransition>
+      
+      {/* Edit Post Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div 
+            className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-50 rounded-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal header */}
+            <div className="sticky top-0 z-10 bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="font-semibold text-gray-900">Edit Post</h2>
+              <button 
+                className="p-1 rounded-full hover:bg-gray-200"
+                onClick={() => setIsEditModalOpen(false)}
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Edit form */}
+            <div className="p-4">
+              <EditPostForm 
+                post={convertToPost()} 
+                onSave={handleSavePost} 
+                onCancel={() => setIsEditModalOpen(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
       
       <Navigation />
     </main>

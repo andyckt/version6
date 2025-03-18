@@ -241,7 +241,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 bg-white z-20 border-b border-gray-100">
       <div className="container-app">
-        <div className="flex items-center justify-between py-2 relative">
+        <div className="flex items-center justify-between py-1.5 relative">
           {/* Left section */}
           <div className="w-20 flex justify-start">
             <button className="p-1.5">

@@ -12,6 +12,7 @@
     "@react-spring/web": "^9.7.5",
     "@types/nodemailer": "^6.4.17",
     "framer-motion": "^12.5.0",
+    "mongodb": "^6.14.2",
     "next": "^14.1.0",
     "nodemailer": "^6.10.0",
     "react": "^18.2.0",

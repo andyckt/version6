@@ -5,7 +5,7 @@ import PageTransition from '@/components/PageTransition'
 
 export default function Home() {
   return (
-    <main className="pb-16"> {/* Add padding bottom for the navigation */}
+    <main className="pb-12"> {/* Add padding bottom for the navigation */}
       <Header />
       <PageTransition>
         <div className="container-app">

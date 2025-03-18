@@ -7,10 +7,10 @@
  * the ability to update post content, location, and privacy settings.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Post, PostVisibility, PostMedia } from '@/types/post';
 import PostPrivacySelector from './PostPrivacySelector';
-import { FiX, FiMapPin } from 'react-icons/fi';
+import { FiX, FiMapPin, FiImage, FiPlus } from 'react-icons/fi';
 
 interface EditPostFormProps {
   post: Post;
@@ -28,12 +28,14 @@ const EditPostForm: React.FC<EditPostFormProps> = ({
   const [location, setLocation] = useState(post.location?.name || '');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [media, setMedia] = useState<PostMedia[]>(post.media);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (caption.trim() === '' && post.media.length === 0) {
+    if (caption.trim() === '' && media.length === 0) {
       setError('Your post must have either text or media');
       return;
     }
@@ -46,6 +48,7 @@ const EditPostForm: React.FC<EditPostFormProps> = ({
       const updatedPost: Post = {
         ...post,
         caption,
+        media,
         visibility,
         location: location.trim() ? {
           name: location,
@@ -68,17 +71,44 @@ const EditPostForm: React.FC<EditPostFormProps> = ({
     }
   };
   
+  // Function to handle media selection
+  const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    // Process each file
+    const newMedia: PostMedia[] = [];
+    
+    Array.from(files).forEach((file, index) => {
+      // Create a URL for the file
+      const url = URL.createObjectURL(file);
+      
+      // Determine if it's an image or video
+      const type = file.type.startsWith('image/') ? 'image' : 'video';
+      
+      // Add to the media array
+      newMedia.push({
+        id: `media-${Date.now()}-${index}`,
+        type,
+        url,
+        width: 0, // Would be determined after load in a real implementation
+        height: 0, // Would be determined after load in a real implementation
+      });
+    });
+    
+    setMedia([...media, ...newMedia]);
+  };
+
+  // Function to trigger the file input
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  
   // Function to remove a media item
   const removeMedia = (id: string) => {
-    // Create an updated post with the media removed
-    const updatedPost: Post = {
-      ...post,
-      media: post.media.filter(item => item.id !== id),
-      updatedAt: new Date().toISOString()
-    };
-    
-    // Save the updated post
-    onSave(updatedPost);
+    setMedia(media.filter(item => item.id !== id));
   };
 
   return (
@@ -97,9 +127,9 @@ const EditPostForm: React.FC<EditPostFormProps> = ({
         />
         
         {/* Media preview */}
-        {post.media.length > 0 && (
+        {media.length > 0 && (
           <div className="grid grid-cols-3 gap-2 mb-4">
-            {post.media.map((item: PostMedia) => (
+            {media.map((item) => (
               <div key={item.id} className="relative">
                 {item.type === 'image' ? (
                   <img
@@ -124,8 +154,46 @@ const EditPostForm: React.FC<EditPostFormProps> = ({
                 </button>
               </div>
             ))}
+            
+            {/* Add media button if under limit */}
+            {media.length < 9 && (
+              <button
+                type="button"
+                className="flex items-center justify-center h-24 border-2 border-dashed border-gray-300 rounded hover:border-blue-500 transition-colors"
+                onClick={triggerFileInput}
+                disabled={isSaving}
+              >
+                <FiPlus className="text-gray-400 h-8 w-8" />
+              </button>
+            )}
           </div>
         )}
+        
+        {/* Show add media button if no media */}
+        {media.length === 0 && (
+          <div className="mb-4">
+            <button
+              type="button"
+              className="flex items-center justify-center w-full py-3 border-2 border-dashed border-gray-300 rounded hover:border-blue-500 transition-colors"
+              onClick={triggerFileInput}
+              disabled={isSaving}
+            >
+              <FiImage className="text-gray-400 mr-2" />
+              <span className="text-gray-500">Add Photos/Videos</span>
+            </button>
+          </div>
+        )}
+        
+        {/* Hidden file input */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleMediaSelect}
+          multiple
+          accept="image/*,video/*"
+          className="hidden"
+          disabled={isSaving}
+        />
         
         {/* Location input */}
         <div className="mb-4 flex items-center">
@@ -138,6 +206,12 @@ const EditPostForm: React.FC<EditPostFormProps> = ({
             onChange={(e) => setLocation(e.target.value)}
             disabled={isSaving}
           />
+        </div>
+        
+        {/* Media limits note */}
+        <div className="mb-4 text-xs text-gray-500">
+          <p>You can upload up to 9 images or videos.</p>
+          <p>Maximum video length: 2 minutes</p>
         </div>
         
         {/* Privacy selector */}

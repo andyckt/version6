@@ -6,6 +6,15 @@ export interface TravelPost {
   likes: number;
   tags: string[];
   description?: string;
+  taggedAccounts?: TaggedAccount[];
+}
+
+export interface TaggedAccount {
+  id: number;
+  username: string;
+  displayName: string;
+  accountType: 'user' | 'restaurant' | 'hotel' | 'attraction';
+  avatar?: string;
 }
 
 export const travelPosts: TravelPost[] = [
@@ -16,7 +25,23 @@ export const travelPosts: TravelPost[] = [
     author: 'TravelExplorer',
     likes: 24,
     tags: ['Shanghai', 'Hidden Gems', 'attractions'],
-    description: 'Shanghai is a city of contrasts, where traditional temples sit alongside futuristic skyscrapers. During my recent trip, I discovered some amazing hidden spots that most tourists miss. The winding alleys of Tianzifang were filled with local artisans and cozy cafes. I spent hours exploring the area and sampling delicious street food. The Yu Garden was another highlight, especially early in the morning before the crowds arrived.'
+    description: 'Shanghai is a city of contrasts, where traditional temples sit alongside futuristic skyscrapers. Had an amazing dinner at @shanghaitaste restaurant last night! Also visited @shanghaigarden for sightseeing. During my recent trip, I discovered some amazing hidden spots that most tourists miss. The winding alleys of Tianzifang were filled with local artisans and cozy cafes. I spent hours exploring the area and sampling delicious street food. The Yu Garden was another highlight, especially early in the morning before the crowds arrived.',
+    taggedAccounts: [
+      {
+        id: 101,
+        username: 'shanghaitaste',
+        displayName: 'Shanghai Taste',
+        accountType: 'restaurant',
+        avatar: 'S'
+      },
+      {
+        id: 103,
+        username: 'luxuryhotel',
+        displayName: 'Shanghai Luxury Hotel',
+        accountType: 'hotel',
+        avatar: 'L'
+      }
+    ]
   },
   {
     id: 2,

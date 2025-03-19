@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, Fragment, useEffect } from 'react'
 import { FiArrowLeft, FiHeart, FiMessageSquare, FiBookmark, FiShare2, FiMoreHorizontal } from 'react-icons/fi'
+import { FaHeart, FaBookmark } from 'react-icons/fa'
 import { travelPosts, TaggedAccount } from '@/data/posts'
 import Navigation from '@/components/Navigation'
 import PageTransition from '@/components/PageTransition'
@@ -33,6 +34,18 @@ interface Comment {
   replies: CommentReply[];
 }
 
+// Helper function to check if localStorage is available
+const isLocalStorageAvailable = () => {
+  try {
+    const testKey = '__storage_test__';
+    localStorage.setItem(testKey, testKey);
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 export default function PostDetail({ params }: { params: { id: string } }) {
   const postId = parseInt(params.id)
   // Find the post regardless of ID - we only have one post with ID 1 now
@@ -42,7 +55,91 @@ export default function PostDetail({ params }: { params: { id: string } }) {
   const [isLiked, setIsLiked] = useState(false)
   const [isStarred, setIsStarred] = useState(false)
   const [likeCount, setLikeCount] = useState(post?.likes || 0)
-  const [starCount, setStarCount] = useState(1404)
+  const [starCount, setStarCount] = useState(post?.bookmarks || 0)
+  const [storageAvailable, setStorageAvailable] = useState(false)
+  
+  // Check if localStorage is available and load liked/bookmarked status
+  useEffect(() => {
+    const available = isLocalStorageAvailable();
+    setStorageAvailable(available);
+    
+    if (available && post) {
+      try {
+        // Load liked posts from localStorage
+        const savedLikedPosts = localStorage.getItem('likedPosts');
+        if (savedLikedPosts) {
+          const parsedLikedPosts = JSON.parse(savedLikedPosts);
+          
+          // Check if this post is liked
+          const isPostLiked = parsedLikedPosts[post.id] === true;
+          setIsLiked(isPostLiked);
+          
+          // If liked, adjust the initial like count
+          if (isPostLiked) {
+            setLikeCount(post.likes + 1);
+          }
+        }
+        
+        // Load bookmarked posts from localStorage
+        const savedBookmarkedPosts = localStorage.getItem('bookmarkedPosts');
+        if (savedBookmarkedPosts) {
+          const parsedBookmarkedPosts = JSON.parse(savedBookmarkedPosts);
+          
+          // Check if this post is bookmarked
+          const isPostBookmarked = parsedBookmarkedPosts[post.id] === true;
+          setIsStarred(isPostBookmarked);
+          
+          // If bookmarked, adjust the initial bookmark count
+          if (isPostBookmarked) {
+            setStarCount((post.bookmarks || 0) + 1);
+          } else {
+            setStarCount(post.bookmarks || 0);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load from localStorage:', error);
+      }
+    }
+  }, [post]);
+  
+  // Save liked status to localStorage
+  const updateLocalStorageLiked = (liked: boolean) => {
+    if (storageAvailable && post) {
+      try {
+        // Get current liked posts
+        const savedLikedPosts = localStorage.getItem('likedPosts');
+        let parsedLikedPosts = savedLikedPosts ? JSON.parse(savedLikedPosts) : {};
+        
+        // Update the liked status for this post
+        parsedLikedPosts[post.id] = liked;
+        
+        // Save back to localStorage
+        localStorage.setItem('likedPosts', JSON.stringify(parsedLikedPosts));
+      } catch (error) {
+        console.error('Failed to save liked status to localStorage:', error);
+      }
+    }
+  };
+  
+  // Save bookmarked status to localStorage
+  const updateLocalStorageBookmarked = (bookmarked: boolean) => {
+    if (storageAvailable && post) {
+      try {
+        // Get current bookmarked posts
+        const savedBookmarkedPosts = localStorage.getItem('bookmarkedPosts');
+        let parsedBookmarkedPosts = savedBookmarkedPosts ? JSON.parse(savedBookmarkedPosts) : {};
+        
+        // Update the bookmarked status for this post
+        parsedBookmarkedPosts[post.id] = bookmarked;
+        
+        // Save back to localStorage
+        localStorage.setItem('bookmarkedPosts', JSON.stringify(parsedBookmarkedPosts));
+        console.log('Saved bookmarked status:', parsedBookmarkedPosts);
+      } catch (error) {
+        console.error('Failed to save bookmarked status to localStorage:', error);
+      }
+    }
+  };
   
   // Define initial comments for each post
   const initialComments = [
@@ -133,22 +230,34 @@ export default function PostDetail({ params }: { params: { id: string } }) {
   
   // Handle like button click
   const handleLikeClick = () => {
+    const newLikedState = !isLiked;
+    
     if (isLiked) {
       setLikeCount(prev => prev - 1)
     } else {
       setLikeCount(prev => prev + 1)
     }
-    setIsLiked(!isLiked)
+    
+    setIsLiked(newLikedState);
+    
+    // Update localStorage
+    updateLocalStorageLiked(newLikedState);
   }
   
   // Handle star button click
   const handleStarClick = () => {
+    const newStarredState = !isStarred;
+    
     if (isStarred) {
       setStarCount(prev => prev - 1)
     } else {
       setStarCount(prev => prev + 1)
     }
-    setIsStarred(!isStarred)
+    
+    setIsStarred(newStarredState);
+    
+    // Update localStorage
+    updateLocalStorageBookmarked(newStarredState);
   }
 
   // Handle posting a new comment
@@ -587,19 +696,11 @@ export default function PostDetail({ params }: { params: { id: string } }) {
               className="flex items-center transition-transform hover:scale-110 active:scale-95" 
               onClick={handleLikeClick}
             >
-              <svg 
-                width="24" height="24" 
-                viewBox="0 0 24 24" 
-                fill={isLiked ? "currentColor" : "none"} 
-                xmlns="http://www.w3.org/2000/svg" 
-                className={`w-[22px] h-[22px] ${isLiked ? "text-red-500" : "text-gray-800"}`}
-              >
-                <path 
-                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" 
-                  stroke={isLiked ? "none" : "currentColor"} 
-                  strokeWidth="1.5" 
-                />
-              </svg>
+              {isLiked ? (
+                <FaHeart className="w-[22px] h-[22px] text-red-500" />
+              ) : (
+                <FiHeart className="w-[22px] h-[22px] text-gray-800" />
+              )}
               <span className={`text-sm ml-1 ${isLiked ? "text-red-500 font-medium" : "text-gray-800"}`}>
                 {likeCount}
               </span>
@@ -610,19 +711,11 @@ export default function PostDetail({ params }: { params: { id: string } }) {
               className="flex items-center transition-transform hover:scale-110 active:scale-95"
               onClick={handleStarClick}
             >
-              <svg 
-                width="24" height="24" 
-                viewBox="0 0 24 24" 
-                fill={isStarred ? "currentColor" : "none"} 
-                xmlns="http://www.w3.org/2000/svg" 
-                className={`w-[22px] h-[22px] ${isStarred ? "text-amber-400" : "text-gray-800"}`}
-              >
-                <path 
-                  d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27z" 
-                  stroke={isStarred ? "none" : "currentColor"} 
-                  strokeWidth="1.5"
-                />
-              </svg>
+              {isStarred ? (
+                <FaBookmark className="w-[22px] h-[22px] text-amber-400" />
+              ) : (
+                <FiBookmark className="w-[22px] h-[22px] text-gray-800" />
+              )}
               <span className={`text-sm ml-1 ${isStarred ? "text-amber-400 font-medium" : "text-gray-800"}`}>
                 {starCount}
               </span>

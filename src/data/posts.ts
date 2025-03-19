@@ -5,6 +5,7 @@ export interface TravelPost {
   media?: MediaItem[];
   author: string;
   likes: number;
+  bookmarks?: number;
   hashtags: string[];
   description?: string;
   taggedAccounts?: TaggedAccount[];
@@ -71,6 +72,7 @@ export const travelPosts: TravelPost[] = [
     ],
     author: 'TravelExplorer',
     likes: 42,
+    bookmarks: 1404,
     hashtags: ['Shanghai', 'Hidden Gems', 'attractions'],
     description: 'Shanghai\'s hidden gems are absolutely incredible! From the historic Bund to the modern skyscrapers, there\'s something for everyone. I spent a week exploring different neighborhoods and my favorite was definitely Tianzifang. Had the most amazing dumplings at @shanghaitaste restaurant - they\'re juicy, flavorful, and perfectly steamed! Also visited the famous @shanghaigarden where the traditional architecture and peaceful ponds create a perfect escape from the city. My local friend @shanghaiguide showed me some hidden gems away from the tourist spots. Don\'t miss the xiaolongbao (soup dumplings) at @dumplinghouse stand!',
     taggedAccounts: [

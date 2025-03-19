@@ -8,6 +8,8 @@ import { travelPosts, TaggedAccount } from '@/data/posts'
 import Navigation from '@/components/Navigation'
 import PageTransition from '@/components/PageTransition'
 import BlurImage from '@/components/BlurImage'
+import MediaGallery from '@/components/MediaGallery'
+import ShareDialog from '@/components/ShareDialog'
 
 export default function PostDetail({ params }: { params: { id: string } }) {
   const postId = parseInt(params.id)
@@ -55,6 +57,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
   const [replyingTo, setReplyingTo] = useState<number | null>(null)
   const [replyText, setReplyText] = useState('')
   const [pinnedMerchants, setPinnedMerchants] = useState<number[]>([])
+  const [showShareDialog, setShowShareDialog] = useState(false)
   
   if (!post) {
     return <div className="container-app py-20 text-center">Post not found</div>
@@ -251,7 +254,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
             <Link href={`/account/${username}`} className="flex items-center transition-transform hover:scale-105 active:scale-95">
               <div className="relative w-6 h-6 rounded-full overflow-hidden bg-gray-200 mr-2">
                 <Image 
-                  src={`https://placehold.co/200x200/ffd100/ffffff?text=${post.author.charAt(0)}`}
+                  src={`https://picsum.photos/200/200?random=${post.author.charAt(0)}`}
                   alt={post.author}
                   fill
                   className="object-cover"
@@ -261,24 +264,39 @@ export default function PostDetail({ params }: { params: { id: string } }) {
             </Link>
             
             {/* Right section - Share button */}
-            <button className="p-1.5 transition-transform hover:scale-110 active:scale-95">
-              <FiShare2 className="w-5 h-5" />
+            <button 
+              className="p-1.5 transition-transform hover:scale-110 active:scale-95 relative group"
+              onClick={() => setShowShareDialog(true)}
+            >
+              <FiShare2 className="w-5 h-5 group-hover:text-primary transition-colors" />
+              <span className="absolute inset-0 rounded-full bg-primary opacity-0 group-hover:opacity-10 transition-opacity"></span>
             </button>
           </div>
         </div>
       </header>
 
       <PageTransition>
-        {/* Post image - Full width on mobile, contained on desktop */}
+        {/* Post media gallery - Full width on mobile, contained on desktop */}
         <div className="md:container-app md:mx-auto md:px-4 mb-4">
-          <BlurImage 
-            src={post.image} 
-            alt={post.title}
-            aspectRatio="aspect-square"
-            priority={true}
-            sizes="(max-width: 768px) 100vw, 448px"
-            className="md:rounded-lg"
-          />
+          {post.media && post.media.length > 0 ? (
+            <>
+              <MediaGallery 
+                media={post.media}
+                className="md:rounded-lg"
+              />
+            </>
+          ) : (
+            <div className="relative aspect-[4/5] md:aspect-auto md:h-[450px] overflow-hidden md:rounded-lg">
+              <Image 
+                src={post.image || 'https://picsum.photos/600/800?random=default'} 
+                alt={post.title}
+                fill
+                priority={true}
+                sizes="(max-width: 768px) 100vw, 448px"
+                className="object-cover md:object-contain"
+              />
+            </div>
+          )}
         </div>
           
         <div className="container-app">
@@ -371,7 +389,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                   <div className="flex">
                     <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                       <Image 
-                        src={`https://placehold.co/200x200/ffd100/ffffff?text=${comment.avatar}`}
+                        src={`https://picsum.photos/200/200?random=${comment.avatar}`}
                         alt={comment.username}
                         fill
                         className="object-cover"
@@ -438,7 +456,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                         <div key={reply.id} className="flex">
                           <div className="relative w-6 h-6 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                             <Image 
-                              src={`https://placehold.co/200x200/ffd100/ffffff?text=${reply.avatar}`}
+                              src={`https://picsum.photos/200/200?random=${reply.avatar}`}
                               alt={reply.username}
                               fill
                               className="object-cover"
@@ -555,6 +573,14 @@ export default function PostDetail({ params }: { params: { id: string } }) {
           </div>
         </div>
       </div>
+      
+      {/* Share dialog */}
+      <ShareDialog 
+        isOpen={showShareDialog}
+        onClose={() => setShowShareDialog(false)}
+        postId={postId}
+        postTitle={post?.title || 'Travel Post'}
+      />
     </main>
   )
 } 

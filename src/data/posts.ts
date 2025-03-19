@@ -1,12 +1,25 @@
 export interface TravelPost {
   id: number;
   title: string;
-  image: string;
+  image?: string;
+  media?: MediaItem[];
   author: string;
   likes: number;
   tags: string[];
   description?: string;
   taggedAccounts?: TaggedAccount[];
+}
+
+export interface MediaItem {
+  id: number;
+  type: 'image' | 'video' | 'livePhoto';
+  url: string;
+  aspectRatio?: string;
+  thumbnail?: string;
+  width?: number;
+  height?: number;
+  duration?: number;
+  livePhotoVideoUrl?: string; // For Live Photos: URL to the video component
 }
 
 export interface TaggedAccount {
@@ -21,7 +34,44 @@ export const travelPosts: TravelPost[] = [
   {
     id: 1,
     title: 'Exploring the hidden gems of Shanghai',
-    image: 'https://placehold.co/600x800/ffd100/ffffff',
+    image: 'https://picsum.photos/600/800?random=1',
+    media: [
+      {
+        id: 101,
+        type: 'image',
+        url: 'https://picsum.photos/600/800?random=1',
+        aspectRatio: '3:4',
+        width: 600,
+        height: 800
+      },
+      {
+        id: 104,
+        type: 'livePhoto',
+        url: 'https://picsum.photos/600/800?random=55',
+        livePhotoVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4#t=0,3',
+        aspectRatio: '3:4',
+        width: 600,
+        height: 800
+      },
+      {
+        id: 102,
+        type: 'image',
+        url: 'https://picsum.photos/800/600?random=2',
+        aspectRatio: '4:3',
+        width: 800,
+        height: 600
+      },
+      {
+        id: 103,
+        type: 'video',
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4#t=0,60',
+        thumbnail: 'https://picsum.photos/1280/720?random=3',
+        aspectRatio: '16:9',
+        width: 1280,
+        height: 720,
+        duration: 60
+      }
+    ],
     author: 'TravelExplorer',
     likes: 24,
     tags: ['Shanghai', 'Hidden Gems', 'attractions'],
@@ -46,7 +96,41 @@ export const travelPosts: TravelPost[] = [
   {
     id: 2,
     title: 'Best street food in Seoul you must try',
-    image: 'https://placehold.co/600x600/ffd100/ffffff',
+    image: 'https://picsum.photos/600/600?random=4',
+    media: [
+      {
+        id: 201,
+        type: 'image',
+        url: 'https://picsum.photos/600/600?random=4',
+        aspectRatio: '1:1',
+        width: 600,
+        height: 600
+      },
+      {
+        id: 202,
+        type: 'image',
+        url: 'https://picsum.photos/600/800?random=5',
+        aspectRatio: '3:4',
+        width: 600,
+        height: 800
+      },
+      {
+        id: 203,
+        type: 'image',
+        url: 'https://picsum.photos/800/600?random=6',
+        aspectRatio: '4:3',
+        width: 800,
+        height: 600
+      },
+      {
+        id: 204,
+        type: 'image',
+        url: 'https://picsum.photos/600/600?random=7',
+        aspectRatio: '1:1',
+        width: 600,
+        height: 600
+      }
+    ],
     author: 'FoodieJourney',
     likes: 42,
     tags: ['Seoul', 'Food', 'korea'],
@@ -55,16 +139,44 @@ export const travelPosts: TravelPost[] = [
   {
     id: 3,
     title: 'A weekend getaway to Jeju Island',
-    image: 'https://placehold.co/600x900/ffd100/ffffff',
+    image: 'https://picsum.photos/600/900?random=8',
+    media: [
+      {
+        id: 301,
+        type: 'image',
+        url: 'https://picsum.photos/600/900?random=8',
+        aspectRatio: '2:3',
+        width: 600,
+        height: 900
+      },
+      {
+        id: 302,
+        type: 'video',
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4#t=0,60',
+        thumbnail: 'https://picsum.photos/1280/720?random=9',
+        aspectRatio: '16:9',
+        width: 1280,
+        height: 720,
+        duration: 60
+      },
+      {
+        id: 303,
+        type: 'image',
+        url: 'https://picsum.photos/600/600?random=10',
+        aspectRatio: '1:1',
+        width: 600,
+        height: 600
+      }
+    ],
     author: 'IslandHopper',
     likes: 18,
-    tags: ['Jeju', 'Weekend Trip', 'korea'],
-    description: 'Jeju Island is the perfect weekend escape from Seoul. Just a short flight away, this volcanic island offers stunning landscapes, beautiful beaches, and unique cultural experiences. I hiked up Mount Hallasan, the highest peak in South Korea, and the views from the top were absolutely breathtaking. The Jeju Olle Trail was another highlight, with coastal paths that lead to hidden coves and dramatic cliffs. Don\'t miss the fresh seafood - it\'s some of the best in Korea!'
+    tags: ['Jeju', 'Korea', 'Island'],
+    description: 'Spent a magical weekend exploring Jeju Island! The volcanic landscapes, beautiful beaches, and delicious seafood made it unforgettable. Hiking up Mount Hallasan gave me the most breathtaking views of the entire island. The black sand beaches were unlike anything I\'ve seen before. Make sure to try the fresh abalone if you visit - it\'s a local specialty that\'s absolutely delicious.'
   },
   {
     id: 4,
     title: 'Traditional tea houses in Kyoto',
-    image: 'https://placehold.co/600x700/ffd100/ffffff',
+    image: 'https://picsum.photos/600/700?random=11',
     author: 'TeaExplorer',
     likes: 31,
     tags: ['Kyoto', 'Tea Culture', 'attractions'],
@@ -73,7 +185,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 5,
     title: 'Luxury hotel experience in Bali',
-    image: 'https://placehold.co/600x800/4ecdc4/ffffff',
+    image: 'https://picsum.photos/600/800?random=12',
     author: 'LuxuryTraveler',
     likes: 89,
     tags: ['Bali', 'Luxury', 'hotel'],
@@ -82,7 +194,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 6,
     title: 'Street photography in Tokyo',
-    image: 'https://placehold.co/600x800/ff6b6b/ffffff',
+    image: 'https://picsum.photos/600/800?random=13',
     author: 'UrbanShooter',
     likes: 56,
     tags: ['Tokyo', 'Photography', 'superpicture'],
@@ -91,7 +203,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 7,
     title: 'Hidden bars in Hong Kong',
-    image: 'https://placehold.co/600x800/1a535c/ffffff',
+    image: 'https://picsum.photos/600/800?random=14',
     author: 'CocktailHunter',
     likes: 37,
     tags: ['Hong Kong', 'Nightlife', 'getdrunk'],
@@ -100,7 +212,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 8,
     title: 'Best dim sum in Guangzhou',
-    image: 'https://placehold.co/600x800/ff9f1c/ffffff',
+    image: 'https://picsum.photos/600/800?random=15',
     author: 'DimSumLover',
     likes: 45,
     tags: ['Guangzhou', 'Dim Sum', 'food'],
@@ -109,7 +221,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 9,
     title: 'Ancient temples of Siem Reap',
-    image: 'https://placehold.co/600x800/7b68ee/ffffff',
+    image: 'https://picsum.photos/600/800?random=16',
     author: 'HistoryBuff',
     likes: 62,
     tags: ['Siem Reap', 'Temples', 'treasurehunt'],
@@ -118,7 +230,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 10,
     title: 'Beachfront villa in Phuket',
-    image: 'https://placehold.co/600x800/6a0572/ffffff',
+    image: 'https://picsum.photos/600/800?random=17',
     author: 'BeachLover',
     likes: 73,
     tags: ['Phuket', 'Beach', 'luxurious'],
@@ -127,7 +239,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 11,
     title: 'Mountain retreat in Hakone',
-    image: 'https://placehold.co/600x800/ffd166/ffffff',
+    image: 'https://picsum.photos/600/800?random=18',
     author: 'ZenSeeker',
     likes: 29,
     tags: ['Hakone', 'Onsen', 'hotel'],
@@ -136,7 +248,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 12,
     title: 'Cycling through Vietnam\'s countryside',
-    image: 'https://placehold.co/600x800/ff5e5b/ffffff',
+    image: 'https://picsum.photos/600/800?random=19',
     author: 'AdventureSeeker',
     likes: 41,
     tags: ['Vietnam', 'Cycling', 'attractions'],
@@ -145,7 +257,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 13,
     title: 'Craft beer tour in Seoul',
-    image: 'https://placehold.co/600x800/4ecdc4/ffffff',
+    image: 'https://picsum.photos/600/800?random=20',
     author: 'BeerExplorer',
     likes: 33,
     tags: ['Seoul', 'Craft Beer', 'korea', 'getdrunk'],
@@ -154,7 +266,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 14,
     title: 'Stunning sunrise at Mount Bromo',
-    image: 'https://placehold.co/600x800/ff6b6b/ffffff',
+    image: 'https://picsum.photos/600/800?random=21',
     author: 'VolcanoChaser',
     likes: 87,
     tags: ['Indonesia', 'Volcano', 'superpicture'],
@@ -163,7 +275,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 15,
     title: 'Hidden waterfall in Bali',
-    image: 'https://placehold.co/600x800/7b68ee/ffffff',
+    image: 'https://picsum.photos/600/800?random=22',
     author: 'JungleExplorer',
     likes: 52,
     tags: ['Bali', 'Waterfall', 'treasurehunt'],
@@ -172,7 +284,7 @@ export const travelPosts: TravelPost[] = [
   {
     id: 16,
     title: 'Luxury glamping in Mongolia',
-    image: 'https://placehold.co/600x800/6a0572/ffffff',
+    image: 'https://picsum.photos/600/800?random=23',
     author: 'NomadLuxury',
     likes: 68,
     tags: ['Mongolia', 'Glamping', 'luxurious'],

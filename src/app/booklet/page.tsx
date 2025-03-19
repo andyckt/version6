@@ -33,7 +33,9 @@ export default function Booklet() {
                   <Link href={`/post/${post.id}`} className="flex">
                     <div className="w-1/3">
                       <BlurImage 
-                        src={post.image} 
+                        src={post.media && post.media.length > 0 
+                          ? post.media[0].url 
+                          : (post.image || 'https://picsum.photos/600/600?random=default')}
                         alt={post.title}
                         aspectRatio="aspect-square"
                         sizes="(max-width: 768px) 33vw, 25vw"
@@ -73,7 +75,9 @@ export default function Booklet() {
                 >
                   <Link href={`/post/${post.id}`} className="block">
                     <BlurImage 
-                      src={post.image} 
+                      src={post.media && post.media.length > 0 
+                        ? post.media[0].url 
+                        : (post.image || 'https://picsum.photos/600/600?random=default')}
                       alt={post.title}
                       aspectRatio="pb-[100%]"
                       sizes="(max-width: 768px) 50vw, 33vw"

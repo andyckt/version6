@@ -72,11 +72,19 @@ export default function ContentGrid() {
               <Link href={`/post/${post.id}`} className="block">
                 <div className="relative">
                   <BlurImage 
-                    src={post.image} 
+                    src={post.media && post.media.length > 0 
+                      ? post.media[0].url 
+                      : (post.image || 'https://picsum.photos/600/600?random=default')} 
                     alt={post.title}
                     aspectRatio="pb-[100%]"
                     sizes="(max-width: 768px) 50vw, 33vw"
                   />
+                  {/* Multiple media indicator */}
+                  {post.media && post.media.length > 1 && (
+                    <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
+                      {post.media.length} {post.media.some(m => m.type === 'video') ? 'media' : 'photos'}
+                    </div>
+                  )}
                   {/* Image overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>

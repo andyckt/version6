@@ -10,6 +10,7 @@ interface BlurImageProps {
   aspectRatio?: string;
   priority?: boolean;
   sizes?: string;
+  onError?: () => void;
 }
 
 export default function BlurImage({ 
@@ -18,9 +19,25 @@ export default function BlurImage({
   className = '', 
   aspectRatio = 'aspect-square',
   priority = false,
-  sizes = '(max-width: 768px) 100vw, 50vw'
+  sizes = '(max-width: 768px) 100vw, 50vw',
+  onError
 }: BlurImageProps) {
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  const handleError = () => {
+    setHasError(true);
+    setIsLoading(false);
+    if (onError) onError();
+  };
+
+  if (hasError) {
+    return (
+      <div className={`relative overflow-hidden ${aspectRatio} bg-gray-800 flex items-center justify-center`}>
+        <span className="text-white text-sm">Image failed to load</span>
+      </div>
+    );
+  }
 
   return (
     <div className={`relative overflow-hidden ${aspectRatio} bg-gray-100`}>
@@ -38,11 +55,13 @@ export default function BlurImage({
         priority={priority}
         sizes={sizes}
         className={`
-          object-cover transition-opacity duration-500 ease-in-out
+          transition-opacity duration-500 ease-in-out
           ${isLoading ? 'opacity-0' : 'opacity-100'}
           ${className}
         `}
+        style={{ objectFit: className.includes('object-contain') ? 'contain' : 'cover' }}
         onLoad={() => setIsLoading(false)}
+        onError={handleError}
       />
     </div>
   );

@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 import { FiArrowLeft, FiHeart, FiMessageSquare, FiBookmark, FiShare2, FiMoreHorizontal } from 'react-icons/fi'
 import { travelPosts, TaggedAccount } from '@/data/posts'
 import Navigation from '@/components/Navigation'
@@ -11,53 +11,118 @@ import BlurImage from '@/components/BlurImage'
 import MediaGallery from '@/components/MediaGallery'
 import ShareDialog from '@/components/ShareDialog'
 
+// Define comment types for type safety
+interface CommentReply {
+  id: number;
+  username: string;
+  avatar: string;
+  text: string;
+  time: string;
+  likes: number;
+  isLiked: boolean;
+}
+
+interface Comment {
+  id: number;
+  username: string;
+  avatar: string;
+  text: string;
+  time: string;
+  likes: number;
+  isLiked: boolean;
+  replies: CommentReply[];
+}
+
 export default function PostDetail({ params }: { params: { id: string } }) {
   const postId = parseInt(params.id)
-  const post = travelPosts.find(post => post.id === postId)
+  // Find the post regardless of ID - we only have one post with ID 1 now
+  const post = travelPosts[0]
   
   // State for tracking user interactions
   const [isLiked, setIsLiked] = useState(false)
   const [isStarred, setIsStarred] = useState(false)
   const [likeCount, setLikeCount] = useState(post?.likes || 0)
   const [starCount, setStarCount] = useState(1404)
-  const [commentCount, setCommentCount] = useState(557)
-  const [commentText, setCommentText] = useState('')
-  const [comments, setComments] = useState([
+  
+  // Define initial comments for each post
+  const initialComments = [
     {
       id: 1,
-      username: 'JourneyLover',
-      avatar: 'J',
-      text: 'This looks amazing! How many days did you spend there?',
-      time: '1 day ago',
-      likes: 3,
+      username: 'ShanghaiExplorer',
+      avatar: 'S',
+      text: 'The Bund is absolutely stunning! What time did you visit to get these views?',
+      time: '3 days ago',
+      likes: 8,
       isLiked: false,
       replies: [
         {
           id: 101,
           username: 'TravelExplorer',
           avatar: 'T',
-          text: 'I spent 5 days there and it wasn\'t enough! I highly recommend at least a week.',
-          time: '20 hours ago',
-          likes: 1,
+          text: 'I went around sunset - the lights of Pudong make for an incredible backdrop!',
+          time: '2 days ago',
+          likes: 3,
           isLiked: false
         }
       ]
     },
     {
       id: 2,
-      username: 'TravelBug',
-      avatar: 'T',
-      text: 'The colors in this photo are stunning! What camera did you use?',
-      time: '12 hours ago',
-      likes: 5,
+      username: 'ChinaTravel',
+      avatar: 'C',
+      text: 'Did you get to try the xiaolongbao at Din Tai Fung? Their dumplings are legendary!',
+      time: '1 day ago',
+      likes: 4,
       isLiked: false,
       replies: []
+    },
+    {
+      id: 3,
+      username: 'WorldTraveler',
+      avatar: 'W',
+      text: 'I\'m planning a trip to Shanghai next month. Any neighborhoods that are less touristy?',
+      time: '10 hours ago',
+      likes: 1,
+      isLiked: false,
+      replies: [
+        {
+          id: 301,
+          username: 'LocalShanghainese',
+          avatar: 'L',
+          text: 'Check out the French Concession! Much more authentic and the architecture is beautiful.',
+          time: '5 hours ago',
+          likes: 2,
+          isLiked: false
+        }
+      ]
     }
-  ])
-  const [replyingTo, setReplyingTo] = useState<number | null>(null)
-  const [replyText, setReplyText] = useState('')
-  const [pinnedMerchants, setPinnedMerchants] = useState<number[]>([])
-  const [showShareDialog, setShowShareDialog] = useState(false)
+  ];
+  
+  // Calculate initial comment count (including replies)
+  const calculateCommentCount = (comments: Comment[]): number => {
+    return comments.reduce((total: number, comment: Comment) => {
+      // Count the main comment
+      let count = 1;
+      // Add replies count if any
+      if (comment.replies && comment.replies.length > 0) {
+        count += comment.replies.length;
+      }
+      return total + count;
+    }, 0);
+  };
+  
+  const [comments, setComments] = useState(initialComments);
+  const [commentCount, setCommentCount] = useState(calculateCommentCount(initialComments));
+  const [commentText, setCommentText] = useState('');
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+  const [replyText, setReplyText] = useState('');
+  const [pinnedMerchants, setPinnedMerchants] = useState<number[]>([]);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  
+  // Sync comment count when comments change
+  useEffect(() => {
+    setCommentCount(calculateCommentCount(comments));
+  }, [comments]);
   
   if (!post) {
     return <div className="container-app py-20 text-center">Post not found</div>
@@ -304,7 +369,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
           <div className="mb-6">
             <h2 className="text-xl font-bold mb-3">{post.title}</h2>
             <p className="text-base leading-relaxed mb-4">
-              {renderDescriptionWithMentions(post.description || `Exploring the beautiful ${post.tags.join(' and ')} areas. This trip was amazing and I'd recommend it to anyone looking for an authentic travel experience. The local culture, food, and scenery were absolutely breathtaking.`)}
+              {renderDescriptionWithMentions(post.description || `Exploring the beautiful ${post.hashtags.join(' and ')} areas. This trip was amazing and I'd recommend it to anyone looking for an authentic travel experience. The local culture, food, and scenery were absolutely breathtaking.`)}
             </p>
             
             {/* Tagged accounts section */}
@@ -368,7 +433,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
             )}
             
             <div className="flex flex-wrap gap-2 mb-4">
-              {post.tags.map((tag) => (
+              {post.hashtags.map((tag) => (
                 <span key={tag} className="text-xs bg-gray-100 px-2 py-1 rounded-full">
                   #{tag}
                 </span>

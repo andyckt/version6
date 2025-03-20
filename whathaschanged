@@ -1,3 +1,21 @@
+What has changed:
+
+Make text overlay on image:
+Instead of having a separate area below the image for text, we would place the title text directly on top of the image
+This would be positioned at the bottom of the image with a dark gradient background to ensure readability
+For example, imagine Instagram's approach where the username appears directly over the photo
+The author's profile picture and name would move to a thin footer strip below the image
+This creates a more immersive, image-focused design where the text doesn't take up additional vertical space
+
+Adjust content layout:
+Currently the title can take up to 2 lines (line-clamp-2)
+We could limit this to 1 line (line-clamp-1) to reduce vertical space
+For the author and interaction section, we could place them side-by-side in a single row
+For example, putting the author on the left and the likes count directly next to it without much spacing
+We could also consider using smaller icons or combining the author name and profile picture in a more condensed format
+This would keep the same general structure but make it more space-efficient
+
+
 here is what has changed in the content grid to look like the different post card:
 in the ContentGrid.tsx:
 // ... existing code ...

@@ -31,6 +31,13 @@ export default function BlurImage({
     if (onError) onError();
   };
 
+  // Determine the object-fit style
+  const objectFit = className.includes('object-contain') 
+    ? 'contain' 
+    : className.includes('object-cover') 
+      ? 'cover' 
+      : 'cover'; // Default to cover
+
   if (hasError) {
     return (
       <div className={`relative overflow-hidden ${aspectRatio} bg-gray-800 flex items-center justify-center`}>
@@ -59,7 +66,7 @@ export default function BlurImage({
           ${isLoading ? 'opacity-0' : 'opacity-100'}
           ${className}
         `}
-        style={{ objectFit: className.includes('object-contain') ? 'contain' : 'cover' }}
+        style={{ objectFit }}
         onLoad={() => setIsLoading(false)}
         onError={handleError}
       />

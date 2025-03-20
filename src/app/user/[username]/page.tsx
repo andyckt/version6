@@ -84,8 +84,11 @@ export default function UserProfilePage() {
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-2">User Not Found</h1>
             <p className="text-gray-500 mb-4">We couldn't find a user with the username @{username}</p>
-            <Link href="/" className="text-blue-600 hover:underline">
-              Return to Home
+            <Link 
+              href="/" 
+              className="px-6 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary-dark transition-colors"
+            >
+              Return Home
             </Link>
           </div>
         </div>

@@ -33,12 +33,37 @@ const isLocalStorageAvailable = () => {
   }
 };
 
+// Fisher-Yates shuffle algorithm with view count weighting
+const shufflePosts = (posts: Array<typeof travelPosts[0]>, viewCounts: Record<number, number>) => {
+  // Create a copy to avoid mutating the original
+  const shuffled = [...posts];
+  
+  // Apply a weighted shuffle that favors posts with higher view counts
+  // but still maintains some randomness
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    // Adjust randomness based on view counts - posts with higher views
+    // have slightly better chances of being near the top
+    const viewWeight = Math.min(0.3, (viewCounts[shuffled[i].id] || 0) / 100);
+    const randomFactor = Math.random() * (1 - viewWeight);
+    
+    // Calculate index with weighted randomness
+    const j = Math.floor(randomFactor * (i + 1));
+    
+    // Swap elements
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  return shuffled;
+};
+
 export default function ContentGrid() {
   const [activeCategory, setActiveCategory] = useState("");
   const [likedPosts, setLikedPosts] = useState<Record<number, boolean>>({});
   const [postLikes, setPostLikes] = useState<Record<number, number>>({});
   const [bookmarkedPosts, setBookmarkedPosts] = useState<Record<number, boolean>>({});
   const [postBookmarks, setPostBookmarks] = useState<Record<number, number>>({});
+  const [postViews, setPostViews] = useState<Record<number, number>>({});
+  const [shuffledPosts, setShuffledPosts] = useState(travelPosts);
   const [storageAvailable, setStorageAvailable] = useState(false);
   
   // Check if localStorage is available
@@ -48,17 +73,20 @@ export default function ContentGrid() {
     console.log('localStorage available:', available);
   }, []);
   
-  // Initialize like and bookmark counts from the original data and load from localStorage
+  // Initialize like, bookmark, and view counts from localStorage
   useEffect(() => {
-    // Initialize base likes and bookmarks from posts data
+    // Initialize base likes, bookmarks, and views from posts data
     const initialLikes: Record<number, number> = {};
     const initialBookmarks: Record<number, number> = {};
+    const initialViews: Record<number, number> = {};
+    
     travelPosts.forEach(post => {
       initialLikes[post.id] = post.likes;
       initialBookmarks[post.id] = post.bookmarks || 0;
+      initialViews[post.id] = post.views; // Use views defined in post data
     });
     
-    // Try to load liked and bookmarked posts from localStorage
+    // Try to load liked, bookmarked, and viewed posts from localStorage
     if (storageAvailable) {
       try {
         // Load liked posts
@@ -90,6 +118,23 @@ export default function ContentGrid() {
             }
           });
         }
+        
+        // Load view counts
+        const savedPostViews = localStorage.getItem('postViews');
+        if (savedPostViews) {
+          const parsedPostViews = JSON.parse(savedPostViews);
+          
+          // Use saved views if available, otherwise use values from post data
+          travelPosts.forEach(post => {
+            const postId = post.id;
+            initialViews[postId] = parsedPostViews[postId] !== undefined 
+              ? parsedPostViews[postId] 
+              : post.views;
+          });
+        } else {
+          // First time - save the initial values to localStorage
+          localStorage.setItem('postViews', JSON.stringify(initialViews));
+        }
       } catch (error) {
         console.error('Failed to load from localStorage:', error);
       }
@@ -98,7 +143,23 @@ export default function ContentGrid() {
     // Set the final counts
     setPostLikes(initialLikes);
     setPostBookmarks(initialBookmarks);
+    setPostViews(initialViews);
+    
+    // Shuffle posts based on the loaded view counts
+    setShuffledPosts(shufflePosts(travelPosts, initialViews));
   }, [storageAvailable]);
+  
+  // Save view counts to localStorage when changed
+  useEffect(() => {
+    if (storageAvailable && Object.keys(postViews).length > 0) {
+      try {
+        const dataToSave = JSON.stringify(postViews);
+        localStorage.setItem('postViews', dataToSave);
+      } catch (error) {
+        console.error('Failed to save post views to localStorage:', error);
+      }
+    }
+  }, [postViews, storageAvailable]);
   
   // Save liked posts to localStorage when changed
   useEffect(() => {
@@ -166,11 +227,24 @@ export default function ContentGrid() {
     });
   };
   
+  // Handle viewing a post
+  const handleViewPost = (postId: number) => {
+    setPostViews(prev => {
+      const currentViews = prev[postId] || 0;
+      return {
+        ...prev,
+        [postId]: currentViews + 1
+      };
+    });
+  };
+  
   // Filter posts based on selected category
   const filteredPosts = activeCategory === "" 
-    ? travelPosts 
-    : travelPosts.filter(post => 
-        post.hashtags.some(tag => tag.toLowerCase().includes(activeCategory.toLowerCase()))
+    ? shuffledPosts 
+    : shuffledPosts.filter(post => 
+        post.hashtags.some(tag => 
+          tag.toLowerCase().includes(activeCategory.toLowerCase())
+        )
       );
 
   return (
@@ -213,21 +287,22 @@ export default function ContentGrid() {
             }}
           >
             <div className="relative overflow-hidden">
-              <Link href={`/post/${post.id}`} className="block">
-                <div className="relative">
+              <Link href={`/post/${post.id}`} className="block" onClick={() => handleViewPost(post.id)}>
+                <div className="relative aspect-[3/4] overflow-hidden">
                   <BlurImage 
                     src={post.media && post.media.length > 0 
                       ? post.media[0].url 
                       : (post.image || 'https://picsum.photos/600/600?random=default')} 
                     alt={post.title}
-                    aspectRatio={
+                    aspectRatio="aspect-[3/4]"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                    className={
                       post.media && post.media.length > 0 && post.media[0].width && post.media[0].height
                         ? post.media[0].width > post.media[0].height 
-                          ? "pb-[56.25%]" // 16:9 for landscape
-                          : "pb-[133.33%]" // 3:4 for portrait
-                        : "pb-[133.33%]" // Default
+                          ? "object-cover" // landscape images
+                          : "object-cover" // portrait images
+                        : "object-cover" // Default
                     }
-                    sizes="(max-width: 768px) 50vw, 33vw"
                   />
                   {/* Image overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -246,39 +321,39 @@ export default function ContentGrid() {
                 </div>
               </Link>
               
-              <div className="p-3.5">
+              <div className="p-2.5">
                 <Link href={`/post/${post.id}`}>
-                  <h3 className="font-[550] text-sm line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+                  <h3 className="font-[550] text-xs line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
                     {post.title}
                   </h3>
                 </Link>
                 
-                <div className="flex items-center justify-between mt-2.5">
+                <div className="flex items-center justify-between mt-1.5">
                   <Link 
                     href={`/user/${post.username}`} 
                     className="flex items-center group/author"
                   >
-                    <div className="w-5 h-5 rounded-full bg-gray-200 mr-2 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
+                    <div className="w-4 h-4 rounded-full bg-gray-200 mr-1.5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
                       <Image
                         src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.id}`}
                         alt={post.author}
-                        width={20}
-                        height={20}
+                        width={16}
+                        height={16}
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <span className="text-xs font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">{post.author}</span>
+                    <span className="text-[10px] font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">{post.author}</span>
                   </Link>
                   
                   <div className="flex items-center space-x-3">
                     <button 
-                      className="flex items-center text-xs transition-all duration-300 active:scale-125"
+                      className="flex items-center text-[10px] transition-all duration-300 active:scale-125"
                       onClick={(e) => handleLikePost(e, post.id)}
                     >
                       {likedPosts[post.id] ? (
-                        <FaHeart className="w-3.5 h-3.5 mr-1 text-red-500 transition-transform duration-300" />
+                        <FaHeart className="w-3 h-3 mr-1 text-red-500 transition-transform duration-300" />
                       ) : (
-                        <FiHeart className="w-3.5 h-3.5 mr-1 text-gray-500 transition-transform duration-300" />
+                        <FiHeart className="w-3 h-3 mr-1 text-gray-500 transition-transform duration-300" />
                       )}
                       <span className={likedPosts[post.id] ? "text-red-500 font-medium" : "text-gray-500"}>
                         {postLikes[post.id] || post.likes}

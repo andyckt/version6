@@ -10,9 +10,10 @@ interface ShareDialogProps {
   onClose: () => void;
   postId: number;
   postTitle: string;
+  customUrl?: string;
 }
 
-export default function ShareDialog({ isOpen, onClose, postId, postTitle }: ShareDialogProps) {
+export default function ShareDialog({ isOpen, onClose, postId, postTitle, customUrl }: ShareDialogProps) {
   const [copied, setCopied] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -55,7 +56,10 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle }: Shar
 
   // Copy link to clipboard
   const copyLink = () => {
-    const url = `${window.location.origin}/post/${postId}`;
+    const url = customUrl 
+      ? `${window.location.origin}${customUrl}` 
+      : `${window.location.origin}/post/${postId}`;
+      
     navigator.clipboard.writeText(url)
       .then(() => {
         setCopied(true);
@@ -78,9 +82,9 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle }: Shar
       name: 'Instagram',
       icon: <FaInstagram className="w-5 h-5" />,
       action: () => {
-        const url = `${window.location.origin}/post/${postId}`;
-        // Note: Instagram doesn't have a direct share API, this is a workaround
-        // Copy the link and show a message about sharing to Instagram
+        const url = customUrl 
+          ? `${window.location.origin}${customUrl}` 
+          : `${window.location.origin}/post/${postId}`;
         navigator.clipboard.writeText(url);
         alert('Link copied! Open Instagram and paste in your story or DM.');
         onClose();
@@ -91,8 +95,9 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle }: Shar
       name: 'Kakao',
       icon: <SiKakao className="w-5 h-5" />,
       action: () => {
-        const url = `${window.location.origin}/post/${postId}`;
-        // Kakao requires SDK initialization, this is a simplified approach
+        const url = customUrl 
+          ? `${window.location.origin}${customUrl}` 
+          : `${window.location.origin}/post/${postId}`;
         window.open(`https://story.kakao.com/share?url=${encodeURIComponent(url)}`, '_blank');
         onClose();
       },
@@ -102,7 +107,9 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle }: Shar
       name: 'Facebook',
       icon: <FiFacebook className="w-5 h-5" />,
       action: () => {
-        const url = `${window.location.origin}/post/${postId}`;
+        const url = customUrl 
+          ? `${window.location.origin}${customUrl}` 
+          : `${window.location.origin}/post/${postId}`;
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
         onClose();
       },
@@ -112,8 +119,10 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle }: Shar
       name: 'WhatsApp',
       icon: <FaWhatsapp className="w-5 h-5" />,
       action: () => {
-        const url = `${window.location.origin}/post/${postId}`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(`Yooo, check this out: ${postTitle} ${url}`)}`, '_blank');
+        const url = customUrl 
+          ? `${window.location.origin}${customUrl}` 
+          : `${window.location.origin}/post/${postId}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(`Check out: ${postTitle} ${url}`)}`, '_blank');
         onClose();
       },
       color: 'bg-green-500',
@@ -122,8 +131,10 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle }: Shar
       name: 'X.com',
       icon: <FaXTwitter className="w-5 h-5" />,
       action: () => {
-        const url = `${window.location.origin}/post/${postId}`;
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Yooo, check this out: ${postTitle}`)}&url=${encodeURIComponent(url)}`, '_blank');
+        const url = customUrl 
+          ? `${window.location.origin}${customUrl}` 
+          : `${window.location.origin}/post/${postId}`;
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${postTitle}`)}&url=${encodeURIComponent(url)}`, '_blank');
         onClose();
       },
       color: 'bg-black',

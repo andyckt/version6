@@ -1,30 +1,46 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react';
+import { motion } from 'framer-motion';
 
 interface PageTransitionProps {
   children: ReactNode;
 }
 
+// Animation variants for the transition
+const pageVariants = {
+  initial: { 
+    opacity: 0, 
+    y: 10 
+  },
+  animate: { 
+    opacity: 1, 
+    y: 0 
+  },
+  exit: { 
+    opacity: 0, 
+    y: -10 
+  }
+};
+
+// Transition settings optimized for speed and smoothness
+const pageTransition = {
+  type: "tween", // Linear transition instead of spring for more predictable timing
+  ease: "easeInOut",
+  duration: 0.2 // Faster transition (200ms instead of 300ms)
+};
+
 export default function PageTransition({ children }: PageTransitionProps) {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    // Set a small delay to ensure the transition is visible
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 10);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <div
-      className={`transition-all duration-300 ease-in-out ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-      }`}
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={pageVariants}
+      transition={pageTransition}
+      className="will-change-transform" // Hint to browser to optimize for transform changes
     >
       {children}
-    </div>
+    </motion.div>
   );
 } 

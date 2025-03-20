@@ -373,19 +373,19 @@ export default function UserProfilePage() {
             )}
             
             <div className="mt-2 flex flex-col gap-y-1">
-              {/* Location and Home Location on same line with smaller font */}
-              <div className="flex flex-wrap items-center text-gray-500 gap-x-3 text-xs">
+              {/* Location and Home Location using grid to match post layout below */}
+              <div className={`${user.homeLocation && user.location ? 'grid grid-cols-2' : 'flex'} gap-x-1 px-1 text-gray-500 text-xs`}>
                 {user.homeLocation && (
                   <div className="flex items-center">
                     <FiMapPin className="w-3 h-3 mr-1" />
-                    <span>From {user.homeLocation}</span>
+                    <span className="truncate">From {user.homeLocation}</span>
                   </div>
                 )}
                 
                 {user.location && (
-                  <div className="flex items-center">
+                  <div className={`flex items-center ${!user.homeLocation ? 'ml-0' : ''}`}>
                     <FiMapPin className="w-3 h-3 mr-1" />
-                    <span>{user.location}</span>
+                    <span className="truncate">{user.location}</span>
                   </div>
                 )}
               </div>
@@ -516,12 +516,37 @@ export default function UserProfilePage() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-10 bg-gray-50 rounded-lg">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <FiHeart className="w-6 h-6 text-gray-400" />
+              <div className="flex flex-col items-center justify-center py-12 bg-gray-50 rounded-lg text-center">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 animate-pulse">
+                  <Image 
+                    src="/icons/empty-posts.png" 
+                    alt="No posts" 
+                    width={40} 
+                    height={40}
+                    className="opacity-50"
+                    // Fallback to icon if image doesn't exist
+                    onError={(e) => {
+                      e.currentTarget.src = "";
+                      return true;
+                    }}
+                  />
+                  <FiHeart className="w-8 h-8 text-gray-300 absolute" />
                 </div>
                 <h3 className="text-gray-700 font-medium">No posts yet</h3>
-                <p className="text-gray-500 text-sm mt-1">This user hasn't posted anything</p>
+                <p className="text-gray-500 text-sm mt-1 max-w-xs mx-auto">
+                  This user hasn't posted anything yet
+                </p>
+                
+                {!isFollowing && (
+                  <Button 
+                    onClick={handleFollowClick}
+                    variant="primary"
+                    size="sm"
+                    className="rounded-full mt-5"
+                  >
+                    Follow
+                  </Button>
+                )}
               </div>
             )}
           </div>

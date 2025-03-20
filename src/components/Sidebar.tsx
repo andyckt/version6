@@ -6,6 +6,8 @@ import { travelPosts } from '@/data/posts';
 import BlurImage from './BlurImage';
 import Link from 'next/link';
 import { FaHeart, FaBookmark } from 'react-icons/fa';
+import Image from 'next/image';
+import { getUserByUsername } from '@/data/users';
 
 type Tab = 'liked' | 'bookmarked';
 
@@ -131,7 +133,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
         {/* Content */}
         <div className="overflow-y-auto h-[calc(100%-113px)]">
           {filteredPosts.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 p-4">
+            <div className="grid grid-cols-2 gap-1 p-4">
               {filteredPosts.map((post) => (
                 <div 
                   key={post.id} 
@@ -144,7 +146,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
                           ? post.media[0].url 
                           : (post.image || 'https://picsum.photos/600/600?random=default')}
                         alt={post.title}
-                        aspectRatio="pb-[100%]"
+                        aspectRatio="pb-[133.33%]"
                         sizes="(max-width: 768px) 50vw, 33vw"
                       />
                       
@@ -178,8 +180,16 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
                     </Link>
                     
                     <div className="flex items-center mt-2">
-                      <Link href={`/account/${post.author.toLowerCase().replace(/\s+/g, '')}`} className="flex items-center">
-                        <div className="w-5 h-5 rounded-full bg-gray-200 mr-2 overflow-hidden" />
+                      <Link href={`/user/${post.username}`} className="flex items-center">
+                        <div className="w-5 h-5 rounded-full bg-gray-200 mr-2 overflow-hidden">
+                          <Image
+                            src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.id}`}
+                            alt={post.author}
+                            width={20}
+                            height={20}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                         <span className="text-xs text-gray-700">{post.author}</span>
                       </Link>
                     </div>

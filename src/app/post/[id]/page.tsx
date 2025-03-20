@@ -47,16 +47,339 @@ const isLocalStorageAvailable = () => {
 };
 
 export default function PostDetail({ params }: { params: { id: string } }) {
-  const postId = parseInt(params.id)
-  // Find the post regardless of ID - we only have one post with ID 1 now
-  const post = travelPosts[0]
+  const postId = parseInt(params.id);
+  // Find the post with the matching ID
+  const post = travelPosts.find(p => p.id === postId);
   
   // State for tracking user interactions
-  const [isLiked, setIsLiked] = useState(false)
-  const [isStarred, setIsStarred] = useState(false)
-  const [likeCount, setLikeCount] = useState(post?.likes || 0)
-  const [starCount, setStarCount] = useState(post?.bookmarks || 0)
-  const [storageAvailable, setStorageAvailable] = useState(false)
+  const [isLiked, setIsLiked] = useState(false);
+  const [isStarred, setIsStarred] = useState(false);
+  const [likeCount, setLikeCount] = useState(post?.likes || 0);
+  const [starCount, setStarCount] = useState(post?.bookmarks || 0);
+  const [storageAvailable, setStorageAvailable] = useState(false);
+  
+  // Define post-specific comments for each post - moved inside component to use postId
+  const [initialComments, setInitialComments] = useState<Comment[]>([]);
+  
+  // Set initial comments when post changes
+  useEffect(() => {
+    // Create different comments for each post to make them unique
+    let postSpecificComments: Comment[] = [];
+    
+    // Comments for Post 1: Shanghai by Emma
+    if (postId === 1) {
+      postSpecificComments = [
+        {
+          id: 101,
+          username: 'ShanghaiExplorer',
+          avatar: 'S',
+          text: 'The Bund is absolutely stunning! What time did you visit to get these views?',
+          time: '3 days ago',
+          likes: 8,
+          isLiked: false,
+          replies: [
+            {
+              id: 1001,
+              username: 'wanderlust_emma',
+              avatar: 'E',
+              text: 'I went around sunset - the lights of Pudong make for an incredible backdrop!',
+              time: '2 days ago',
+              likes: 3,
+              isLiked: false
+            }
+          ]
+        },
+        {
+          id: 102,
+          username: 'ChinaTravel',
+          avatar: 'C',
+          text: 'Did you get to try the xiaolongbao at Din Tai Fung? Their dumplings are legendary!',
+          time: '1 day ago',
+          likes: 4,
+          isLiked: false,
+          replies: []
+        },
+        {
+          id: 103,
+          username: 'WorldTraveler',
+          avatar: 'W',
+          text: 'I\'m planning a trip to Shanghai next month. Any neighborhoods that are less touristy?',
+          time: '10 hours ago',
+          likes: 1,
+          isLiked: false,
+          replies: [
+            {
+              id: 1002,
+              username: 'LocalShanghainese',
+              avatar: 'L',
+              text: 'Check out the French Concession! Much more authentic and the architecture is beautiful.',
+              time: '5 hours ago',
+              likes: 2,
+              isLiked: false
+            }
+          ]
+        }
+      ];
+    } 
+    // Comments for Post 2: Xi'an by Li
+    else if (postId === 2) {
+      postSpecificComments = [
+        {
+          id: 201,
+          username: 'HistoryBuff',
+          avatar: 'H',
+          text: 'The Muslim Quarter is my favorite part of Xi\'an too! Did you try the persimmon donuts?',
+          time: '2 days ago',
+          likes: 6,
+          isLiked: false,
+          replies: [
+            {
+              id: 2001,
+              username: 'backpacker_li',
+              avatar: 'L',
+              text: 'Yes! They were amazing. I also loved the cold noodles with sesame sauce!',
+              time: '1 day ago',
+              likes: 2,
+              isLiked: false
+            }
+          ]
+        },
+        {
+          id: 202,
+          username: 'BudgetTraveler',
+          avatar: 'B',
+          text: 'How long did it take you to walk the entire city wall? I\'m planning to do it next month.',
+          time: '12 hours ago',
+          likes: 3,
+          isLiked: false,
+          replies: [
+            {
+              id: 2002,
+              username: 'backpacker_li',
+              avatar: 'L',
+              text: 'It took about 4 hours with stops for photos. Definitely bring water and go early to avoid the heat!',
+              time: '6 hours ago',
+              likes: 5,
+              isLiked: false
+            }
+          ]
+        }
+      ];
+    } 
+    // Comments for Post 3: Sanya Luxury by Zhao
+    else if (postId === 3) {
+      postSpecificComments = [
+        {
+          id: 301,
+          username: 'LuxurySeeker',
+          avatar: 'L',
+          text: 'The St. Regis Sanya has been on my bucket list forever! Was the butler service really worth it?',
+          time: '4 days ago',
+          likes: 12,
+          isLiked: false,
+          replies: [
+            {
+              id: 3001,
+              username: 'luxury_zhao',
+              avatar: 'Z',
+              text: 'Absolutely! They unpacked our luggage, arranged a private dinner on the beach, and even prepared a bath with rose petals. Unforgettable!',
+              time: '3 days ago',
+              likes: 8,
+              isLiked: false
+            }
+          ]
+        },
+        {
+          id: 302,
+          username: 'TravelInfluencer',
+          avatar: 'T',
+          text: 'Your photos are stunning! Which restaurant would you say had the best overall experience?',
+          time: '2 days ago',
+          likes: 5,
+          isLiked: false,
+          replies: []
+        },
+        {
+          id: 303,
+          username: 'HoneymoonerSoon',
+          avatar: 'H',
+          text: 'Planning a honeymoon here next year. How were the prices for food and activities?',
+          time: '1 day ago',
+          likes: 3,
+          isLiked: false,
+          replies: [
+            {
+              id: 3002,
+              username: 'luxury_zhao',
+              avatar: 'Z',
+              text: 'Definitely on the higher side, but the quality matches the price. Budget around ¥800-1000 per person for dinner at the nicer restaurants.',
+              time: '12 hours ago',
+              likes: 4,
+              isLiked: false
+            }
+          ]
+        }
+      ];
+    } 
+    // Comments for Post 4: Rock Climbing by Yan
+    else if (postId === 4) {
+      postSpecificComments = [
+        {
+          id: 401,
+          username: 'ClimbingFanatic',
+          avatar: 'C',
+          text: 'Yangshuo is climbing paradise! Did you check out Wine Bottle Cliff? One of my favorites there.',
+          time: '5 days ago',
+          likes: 7,
+          isLiked: false,
+          replies: [
+            {
+              id: 4001,
+              username: 'adventure_yan',
+              avatar: 'Y',
+              text: 'We did! It was incredible. The holds were so unique. Did you stay in town or closer to the climbing sites?',
+              time: '4 days ago',
+              likes: 2,
+              isLiked: false
+            }
+          ]
+        },
+        {
+          id: 402,
+          username: 'OutdoorEnthusiast',
+          avatar: 'O',
+          text: 'That video of your climb is giving me serious vertigo! How difficult would you rate the routes for beginners?',
+          time: '3 days ago',
+          likes: 5,
+          isLiked: false,
+          replies: []
+        },
+        {
+          id: 403,
+          username: 'TravelingClimber',
+          avatar: 'T',
+          text: 'Looking to visit in October. Is that a good time for climbing there? Any recommendations for guides?',
+          time: '1 day ago',
+          likes: 3,
+          isLiked: false,
+          replies: [
+            {
+              id: 4002,
+              username: 'LocalClimber',
+              avatar: 'L',
+              text: 'October is perfect! Lower humidity and cooler temps. Check out Black Rock Climbing for guides - they know all the secret spots!',
+              time: '6 hours ago',
+              likes: 2,
+              isLiked: false
+            }
+          ]
+        }
+      ];
+    } 
+    // Comments for Post 5: Food Tour by Zhang
+    else if (postId === 5) {
+      postSpecificComments = [
+        {
+          id: 501,
+          username: 'SpiceLover',
+          avatar: 'S',
+          text: 'I dream about Chengdu dan dan noodles at least once a week! Did you try the rabbit head? I couldn\'t bring myself to do it.',
+          time: '3 days ago',
+          likes: 9,
+          isLiked: false,
+          replies: [
+            {
+              id: 5001,
+              username: 'foodie_zhang',
+              avatar: 'Z',
+              text: 'I did! It\'s definitely not for everyone, but the flavor is incredible. The cheek meat is the best part!',
+              time: '2 days ago',
+              likes: 4,
+              isLiked: false
+            }
+          ]
+        },
+        {
+          id: 502,
+          username: 'CulinaryTraveler',
+          avatar: 'C',
+          text: 'That mapo tofu looks incredible! Did you find the peppercorn numbing effect overwhelming at first?',
+          time: '2 days ago',
+          likes: 6,
+          isLiked: false,
+          replies: []
+        },
+        {
+          id: 503,
+          username: 'FoodieExplorer',
+          avatar: 'F',
+          text: 'I\'m headed to Chengdu next month and I\'m all about street food. Any specific stalls at Chunxi Road you\'d recommend?',
+          time: '1 day ago',
+          likes: 3,
+          isLiked: false,
+          replies: [
+            {
+              id: 5002,
+              username: 'foodie_zhang',
+              avatar: 'Z',
+              text: 'Look for the stall with the longest line at the corner of the food street! Their chili wontons are life-changing.',
+              time: '12 hours ago',
+              likes: 5,
+              isLiked: false
+            }
+          ]
+        },
+        {
+          id: 504,
+          username: 'VeganWanderer',
+          avatar: 'V',
+          text: 'Any recommendations for plant-based options? I\'m going in a few weeks but worried about finding vegan food.',
+          time: '6 hours ago',
+          likes: 2,
+          isLiked: false,
+          replies: []
+        }
+      ];
+    } 
+    // Default comments if no specific post matches
+    else {
+      postSpecificComments = [
+        {
+          id: 1,
+          username: `Commenter${postId}_1`,
+          avatar: 'S',
+          text: `This is a great post about ${post?.title || 'travel'}! What's your favorite part of this location?`,
+          time: '3 days ago',
+          likes: 8,
+          isLiked: false,
+          replies: [
+            {
+              id: 101,
+              username: post?.username || 'TravelExplorer',
+              avatar: 'T',
+              text: 'Thanks for your comment! I loved the local cuisine and the amazing views!',
+              time: '2 days ago',
+              likes: 3,
+              isLiked: false
+            }
+          ]
+        },
+        {
+          id: 2,
+          username: `Commenter${postId}_2`,
+          avatar: 'C',
+          text: `I've been wanting to visit. Is it suitable for a family trip?`,
+          time: '1 day ago',
+          likes: 4,
+          isLiked: false,
+          replies: []
+        }
+      ];
+    }
+    
+    setInitialComments(postSpecificComments);
+    setComments(postSpecificComments);
+  }, [post, postId]);
   
   // Check if localStorage is available and load liked/bookmarked status
   useEffect(() => {
@@ -141,60 +464,6 @@ export default function PostDetail({ params }: { params: { id: string } }) {
     }
   };
   
-  // Define initial comments for each post
-  const initialComments = [
-    {
-      id: 1,
-      username: 'ShanghaiExplorer',
-      avatar: 'S',
-      text: 'The Bund is absolutely stunning! What time did you visit to get these views?',
-      time: '3 days ago',
-      likes: 8,
-      isLiked: false,
-      replies: [
-        {
-          id: 101,
-          username: 'TravelExplorer',
-          avatar: 'T',
-          text: 'I went around sunset - the lights of Pudong make for an incredible backdrop!',
-          time: '2 days ago',
-          likes: 3,
-          isLiked: false
-        }
-      ]
-    },
-    {
-      id: 2,
-      username: 'ChinaTravel',
-      avatar: 'C',
-      text: 'Did you get to try the xiaolongbao at Din Tai Fung? Their dumplings are legendary!',
-      time: '1 day ago',
-      likes: 4,
-      isLiked: false,
-      replies: []
-    },
-    {
-      id: 3,
-      username: 'WorldTraveler',
-      avatar: 'W',
-      text: 'I\'m planning a trip to Shanghai next month. Any neighborhoods that are less touristy?',
-      time: '10 hours ago',
-      likes: 1,
-      isLiked: false,
-      replies: [
-        {
-          id: 301,
-          username: 'LocalShanghainese',
-          avatar: 'L',
-          text: 'Check out the French Concession! Much more authentic and the architecture is beautiful.',
-          time: '5 hours ago',
-          likes: 2,
-          isLiked: false
-        }
-      ]
-    }
-  ];
-  
   // Calculate initial comment count (including replies)
   const calculateCommentCount = (comments: Comment[]): number => {
     return comments.reduce((total: number, comment: Comment) => {
@@ -208,8 +477,8 @@ export default function PostDetail({ params }: { params: { id: string } }) {
     }, 0);
   };
   
-  const [comments, setComments] = useState(initialComments);
-  const [commentCount, setCommentCount] = useState(calculateCommentCount(initialComments));
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentCount, setCommentCount] = useState(0);
   const [commentText, setCommentText] = useState('');
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyText, setReplyText] = useState('');
@@ -222,7 +491,30 @@ export default function PostDetail({ params }: { params: { id: string } }) {
   }, [comments]);
   
   if (!post) {
-    return <div className="container-app py-20 text-center">Post not found</div>
+    return (
+      <main className="min-h-screen bg-white">
+        <header className="sticky top-0 bg-white z-20 border-b border-gray-100">
+          <div className="container-app">
+            <div className="flex items-center justify-between py-1.5">
+              <Link href="/" className="p-1.5 transition-transform hover:scale-110 active:scale-95">
+                <FiArrowLeft className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+        </header>
+        
+        <div className="container-app py-20 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <FiBookmark className="w-6 h-6 text-gray-400" />
+          </div>
+          <h1 className="text-2xl font-bold mb-2">Post Not Found</h1>
+          <p className="text-gray-500 mb-6">The post you're looking for doesn't exist or has been removed.</p>
+          <Link href="/" className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            Return to Home
+          </Link>
+        </div>
+      </main>
+    );
   }
 
   // Create a username from author (simulating a user ID)
@@ -403,7 +695,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
         return (
           <Link 
             key={`mention-${index}`}
-            href={`/account/${part}`}
+            href={`/user/${part}`}
             className="font-medium text-primary hover:underline"
           >
             @{part}
@@ -425,7 +717,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
             </Link>
             
             {/* Center section - Profile and username */}
-            <Link href={`/account/${username}`} className="flex items-center transition-transform hover:scale-105 active:scale-95">
+            <Link href={`/user/${post.username}`} className="flex items-center transition-transform hover:scale-105 active:scale-95">
               <div className="relative w-6 h-6 rounded-full overflow-hidden bg-gray-200 mr-2">
                 <Image 
                   src={`https://picsum.photos/200/200?random=${post.author.charAt(0)}`}
@@ -434,7 +726,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                   className="object-cover"
                 />
               </div>
-              <span className="font-medium text-sm">@{username}</span>
+              <span className="font-medium text-sm">@{post.username}</span>
             </Link>
             
             {/* Right section - Share button */}
@@ -488,7 +780,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                   {post.taggedAccounts.map(account => (
                     <Link 
                       key={account.id}
-                      href={`/account/${account.username}`} 
+                      href={`/user/${account.username}`} 
                       className="flex items-center bg-gray-100 rounded-md px-4 py-2 hover:bg-gray-200 transition-colors relative"
                     >
                       <div className="relative w-6 h-6 rounded-md overflow-hidden bg-primary mr-2.5 flex-shrink-0">

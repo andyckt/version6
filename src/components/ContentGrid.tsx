@@ -6,6 +6,7 @@ import { FiHeart, FiBookmark } from 'react-icons/fi';
 import { FaHeart, FaBookmark } from 'react-icons/fa';
 import Image from 'next/image';
 import { travelPosts } from '@/data/posts';
+import { getUserByUsername } from '@/data/users';
 import BlurImage from './BlurImage';
 
 // Define categories with GIF icons
@@ -200,7 +201,7 @@ export default function ContentGrid() {
       </div>
       
       {/* Content grid */}
-      <div className="grid grid-cols-2 gap-x-1 md:gap-3 px-1 md:px-0">
+      <div className="grid grid-cols-2 gap-x-1 gap-y-1 md:gap-x-1 px-1 md:px-0">
         {filteredPosts.map((post, index) => (
           <div 
             key={post.id} 
@@ -219,7 +220,13 @@ export default function ContentGrid() {
                       ? post.media[0].url 
                       : (post.image || 'https://picsum.photos/600/600?random=default')} 
                     alt={post.title}
-                    aspectRatio="pb-[100%]"
+                    aspectRatio={
+                      post.media && post.media.length > 0 && post.media[0].width && post.media[0].height
+                        ? post.media[0].width > post.media[0].height 
+                          ? "pb-[56.25%]" // 16:9 for landscape
+                          : "pb-[133.33%]" // 3:4 for portrait
+                        : "pb-[133.33%]" // Default
+                    }
                     sizes="(max-width: 768px) 50vw, 33vw"
                   />
                   {/* Image overlay gradient */}
@@ -248,11 +255,17 @@ export default function ContentGrid() {
                 
                 <div className="flex items-center justify-between mt-2.5">
                   <Link 
-                    href={`/account/${post.author.toLowerCase().replace(/\s+/g, '')}`} 
+                    href={`/user/${post.username}`} 
                     className="flex items-center group/author"
                   >
                     <div className="w-5 h-5 rounded-full bg-gray-200 mr-2 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
-                      {/* This could be a real avatar image */}
+                      <Image
+                        src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.id}`}
+                        alt={post.author}
+                        width={20}
+                        height={20}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <span className="text-xs font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">{post.author}</span>
                   </Link>

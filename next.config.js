@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     // Deprecated, but keeping for backward compatibility
-    domains: ['placehold.co', 'picsum.photos', 'storage.googleapis.com', 'images.pexels.com', 'player.vimeo.com'],
+    domains: ['placehold.co', 'picsum.photos', 'storage.googleapis.com', 'images.pexels.com', 'player.vimeo.com', 'images.unsplash.com'],
     // New recommended way to configure remote images
     remotePatterns: [
       {
@@ -29,6 +29,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'player.vimeo.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
         pathname: '**',
       },
     ],

@@ -173,15 +173,22 @@ export default function Account() {
       
       {/* Hamburger menu button - fixed position on both mobile and desktop */}
       <motion.button
-        className="fixed top-5 right-5 z-50 bg-white p-2 rounded-full shadow-md"
+        className="fixed top-5 right-5 z-50 bg-white p-2 rounded-full shadow-md overflow-hidden"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setShowInviteMenu(!showInviteMenu)}
       >
-        {showInviteMenu ? 
-          <FiX className="w-6 h-6 text-gray-800" /> : 
-          <FiMenu className="w-6 h-6 text-gray-800" />
-        }
+        {showInviteMenu ? (
+          <FiX className="w-6 h-6 text-gray-800" />
+        ) : (
+          <div className="w-6 h-6 flex items-center justify-center">
+            <img 
+              src="/icons/gif-food.gif" 
+              alt="Menu" 
+              className="w-full h-full object-cover" 
+            />
+          </div>
+        )}
       </motion.button>
       
       {/* Mobile fullscreen sidebar - only shown on mobile */}

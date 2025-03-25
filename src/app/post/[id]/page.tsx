@@ -6,6 +6,7 @@ import { useState, Fragment, useEffect } from 'react'
 import { FiArrowLeft, FiHeart, FiMessageSquare, FiBookmark, FiShare2, FiMoreHorizontal } from 'react-icons/fi'
 import { FaHeart, FaBookmark } from 'react-icons/fa'
 import { travelPosts, TaggedAccount } from '@/data/posts'
+import { getUserByUsername } from '@/data/users'
 import Navigation from '@/components/Navigation'
 import PageTransition from '@/components/PageTransition'
 import BlurImage from '@/components/BlurImage'
@@ -66,6 +67,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
     // Create different comments for each post to make them unique
     let postSpecificComments: Comment[] = [];
     
+    /* 
     // Comments for Post 1: Shanghai by Emma
     if (postId === 1) {
       postSpecificComments = [
@@ -120,7 +122,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
           ]
         }
       ];
-    } 
+    }
     // Comments for Post 2: Xi'an by Li
     else if (postId === 2) {
       postSpecificComments = [
@@ -165,7 +167,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
           ]
         }
       ];
-    } 
+    }
     // Comments for Post 3: Sanya Luxury by Zhao
     else if (postId === 3) {
       postSpecificComments = [
@@ -220,7 +222,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
           ]
         }
       ];
-    } 
+    }
     // Comments for Post 4: Rock Climbing by Yan
     else if (postId === 4) {
       postSpecificComments = [
@@ -275,7 +277,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
           ]
         }
       ];
-    } 
+    }
     // Comments for Post 5: Food Tour by Zhang
     else if (postId === 5) {
       postSpecificComments = [
@@ -341,41 +343,47 @@ export default function PostDetail({ params }: { params: { id: string } }) {
         }
       ];
     } 
+    */
+    
     // Default comments if no specific post matches
-    else {
-      postSpecificComments = [
-        {
-          id: 1,
-          username: `Commenter${postId}_1`,
-          avatar: 'S',
-          text: `This is a great post about ${post?.title || 'travel'}! What's your favorite part of this location?`,
-          time: '3 days ago',
-          likes: 8,
-          isLiked: false,
-          replies: [
-            {
-              id: 101,
-              username: post?.username || 'TravelExplorer',
-              avatar: 'T',
-              text: 'Thanks for your comment! I loved the local cuisine and the amazing views!',
-              time: '2 days ago',
-              likes: 3,
-              isLiked: false
-            }
-          ]
-        },
-        {
-          id: 2,
-          username: `Commenter${postId}_2`,
-          avatar: 'C',
-          text: `I've been wanting to visit. Is it suitable for a family trip?`,
-          time: '1 day ago',
-          likes: 4,
-          isLiked: false,
-          replies: []
-        }
-      ];
-    }
+    // This code will now run for all posts since the specific post conditions are commented out
+    /*
+    postSpecificComments = [
+      {
+        id: 1,
+        username: `Commenter${postId}_1`,
+        avatar: 'S',
+        text: `This is a great post about ${post?.title || 'travel'}! What's your favorite part of this location?`,
+        time: '3 days ago',
+        likes: 8,
+        isLiked: false,
+        replies: [
+          {
+            id: 101,
+            username: post?.username || 'TravelExplorer',
+            avatar: 'T',
+            text: 'Thanks for your comment! I loved the local cuisine and the amazing views!',
+            time: '2 days ago',
+            likes: 3,
+            isLiked: false
+          }
+        ]
+      },
+      {
+        id: 2,
+        username: `Commenter${postId}_2`,
+        avatar: 'C',
+        text: `I've been wanting to visit. Is it suitable for a family trip?`,
+        time: '1 day ago',
+        likes: 4,
+        isLiked: false,
+        replies: []
+      }
+    ];
+    */
+    
+    // Initialize with empty comments array
+    postSpecificComments = [];
     
     setInitialComments(postSpecificComments);
     setComments(postSpecificComments);
@@ -517,9 +525,6 @@ export default function PostDetail({ params }: { params: { id: string } }) {
     );
   }
 
-  // Create a username from author (simulating a user ID)
-  const username = post.author.toLowerCase().replace(/\s+/g, '');
-  
   // Handle like button click
   const handleLikeClick = () => {
     const newLikedState = !isLiked;
@@ -720,8 +725,8 @@ export default function PostDetail({ params }: { params: { id: string } }) {
             <Link href={`/user/${post.username}`} className="flex items-center transition-transform hover:scale-105 active:scale-95">
               <div className="relative w-6 h-6 rounded-full overflow-hidden bg-gray-200 mr-2">
                 <Image 
-                  src={`https://picsum.photos/200/200?random=${post.author.charAt(0)}`}
-                  alt={post.author}
+                  src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.username.charAt(0)}`}
+                  alt={post.username}
                   fill
                   className="object-cover"
                 />
@@ -767,7 +772,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
           
         <div className="container-app">
           {/* Post content */}
-          <div className="mb-6">
+          <div className="mb-2">
             <h2 className="text-xl font-bold mb-3">{post.title}</h2>
             <p className="text-base leading-relaxed mb-4">
               {renderDescriptionWithMentions(post.description || `Exploring the beautiful ${post.hashtags.join(' and ')} areas. This trip was amazing and I'd recommend it to anyone looking for an authentic travel experience. The local culture, food, and scenery were absolutely breathtaking.`)}
@@ -796,6 +801,14 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                           ) : account.accountType === 'attraction' ? (
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                               <path d="M21 16v5H3v-5H1v-2h20v2h-2zm-8-8V5h-2v3H7l5 5 5-5h-4z"/>
+                            </svg>
+                          ) : account.accountType === 'barandclub' ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                              <path d="M21 5V3H3v2l8 8v5H6v2h12v-2h-5v-5l8-8zM7.43 7L5.66 5h12.69l-1.78 2H7.43z"/>
+                            </svg>
+                          ) : account.accountType === 'shopping' ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                              <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
                             </svg>
                           ) : (
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
@@ -844,8 +857,12 @@ export default function PostDetail({ params }: { params: { id: string } }) {
             <p className="text-xs text-gray-500">Posted 2 days ago</p>
           </div>
 
-          {/* Comments section */}
-          <div className="border-t border-gray-100 pt-4 mb-20">
+          {/* Empty space between post content and bottom bar when no comments */}
+          {comments.length === 0 && <div className="mb-4"></div>}
+          
+          {/* Comments section - only show when there are comments */}
+          {comments.length > 0 && (
+          <div className="border-t border-gray-100 pt-4 mb-4">
             <h3 className="font-medium mb-4">Comments</h3>
             
             <div className="space-y-6">
@@ -955,6 +972,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
               ))}
             </div>
           </div>
+          )}
         </div>
       </PageTransition>
       
@@ -1013,13 +1031,15 @@ export default function PostDetail({ params }: { params: { id: string } }) {
               </span>
             </button>
             
-            {/* Comment button */}
+            {/* Comment count button - hide if no comments */}
+            {commentCount > 0 && (
             <button className="flex items-center transition-transform hover:scale-110 active:scale-95">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[22px] h-[22px]">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
               </svg>
               <span className="text-sm ml-1 text-gray-800">{commentCount}</span>
             </button>
+            )}
           </div>
         </div>
       </div>

@@ -184,13 +184,13 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
                         <div className="w-5 h-5 rounded-full bg-gray-200 mr-2 overflow-hidden">
                           <Image
                             src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.id}`}
-                            alt={post.author}
+                            alt={post.username}
                             width={20}
                             height={20}
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <span className="text-xs text-gray-700">{post.author}</span>
+                        <span className="text-xs text-gray-700">@{post.username}</span>
                       </Link>
                     </div>
                   </div>

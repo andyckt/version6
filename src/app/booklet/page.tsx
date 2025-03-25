@@ -5,6 +5,7 @@ import BlurImage from '@/components/BlurImage'
 import { FiBookmark } from 'react-icons/fi'
 import Link from 'next/link'
 import { travelPosts } from '@/data/posts'
+import { getUserByUsername } from '@/data/users'
 
 export default function Booklet() {
   // For demo purposes, we'll show the first two posts as saved
@@ -47,7 +48,7 @@ export default function Booklet() {
                         {post.description?.substring(0, 80)}...
                       </p>
                       <div className="flex items-center mt-2">
-                        <span className="text-xs text-gray-500">{post.author}</span>
+                        <span className="text-xs text-gray-500">@{post.username}</span>
                         <FiBookmark className="w-3 h-3 ml-auto text-primary" />
                       </div>
                     </div>
@@ -85,7 +86,7 @@ export default function Booklet() {
                     <div className="p-2">
                       <h3 className="font-medium text-sm line-clamp-2">{post.title}</h3>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs text-gray-500">{post.author}</span>
+                        <span className="text-xs text-gray-500">@{post.username}</span>
                       </div>
                     </div>
                   </Link>

@@ -336,13 +336,13 @@ export default function ContentGrid() {
                     <div className="w-4 h-4 rounded-full bg-gray-200 mr-1.5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
                       <Image
                         src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.id}`}
-                        alt={post.author}
+                        alt={post.username}
                         width={16}
                         height={16}
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <span className="text-[10px] font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">{post.author}</span>
+                    <span className="text-[10px] font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">@{post.username}</span>
                   </Link>
                   
                   <div className="flex items-center space-x-3">

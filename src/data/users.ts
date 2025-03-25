@@ -41,6 +41,25 @@ export const users: User[] = [
     }
   },
   {
+    id: 106,
+    username: "andyckt123",
+    displayName: "Andy Cheung (the founder of Bobe) 🤔",
+    bio: "Travel photographer & writer exploring hidden gems in Asia.",
+    profileImage: "",
+    coverImage: "",
+    verified: true,
+    location: "Currently: Shanghai, China",
+    homeLocation: "Hong Kong, China",
+    website: "",
+    joinDate: "March 2025",
+    role: "user",
+    stats: {
+      posts: 8,
+      followers: 0,
+      following: 0
+    }
+  },
+  {
     id: 102,
     username: "backpacker_li",
     displayName: "Li Wei 🎒",

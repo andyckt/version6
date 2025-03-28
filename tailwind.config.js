@@ -19,6 +19,8 @@ module.exports = {
         'scale-in': 'scaleIn 0.3s ease forwards',
         'slide-in': 'slideIn 0.3s ease forwards',
         'shimmer': 'shimmer 1.5s infinite',
+        'pulse-green': 'pulseGreen 1.5s ease-in-out infinite',
+        'pulse-red': 'pulseRed 1.5s ease-in-out infinite',
       },
       keyframes: {
         pulse: {
@@ -40,6 +42,40 @@ module.exports = {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        pulseGreen: {
+          '0%': { 
+            boxShadow: '0 0 0 0 rgba(34, 197, 94, 0.7)',
+            opacity: 0.9
+          },
+          '50%': {
+            opacity: 1
+          },
+          '70%': { 
+            boxShadow: '0 0 0 8px rgba(34, 197, 94, 0)',
+            opacity: 0.9
+          },
+          '100%': { 
+            boxShadow: '0 0 0 0 rgba(34, 197, 94, 0)',
+            opacity: 0.9 
+          },
+        },
+        pulseRed: {
+          '0%': { 
+            boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.7)',
+            opacity: 0.9
+          },
+          '50%': {
+            opacity: 1
+          },
+          '70%': { 
+            boxShadow: '0 0 0 8px rgba(239, 68, 68, 0)',
+            opacity: 0.9
+          },
+          '100%': { 
+            boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)',
+            opacity: 0.9
+          },
         },
       },
       transitionProperty: {

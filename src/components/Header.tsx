@@ -137,10 +137,25 @@ export default function Header() {
   const [hasNotifications, setHasNotifications] = useState(true);
   const [currentIconIndex, setCurrentIconIndex] = useState(0); // Start with Feather Bell (index 0)
   const [showLightIcons, setShowLightIcons] = useState(true); // Toggle between light and bold icons
+  const [hasScrolled, setHasScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const notificationsScrollRef = useRef<HTMLDivElement>(null);
   
+  // Handle scroll events to apply shadow
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setHasScrolled(true);
+      } else {
+        setHasScrolled(false);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
     if (isNotificationsOpen) setIsNotificationsOpen(false);
@@ -248,7 +263,10 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 bg-white z-20 border-b border-gray-100">
+      <header 
+        className={`sticky top-0 z-20 border-b border-gray-100 transition-all duration-200 
+        ${hasScrolled ? 'shadow-sm bg-white' : 'bg-white/95 backdrop-blur-sm'}`}
+      >
         <div className="container-app">
           <div className="flex items-center justify-between py-1.5 relative">
             {/* Left section */}

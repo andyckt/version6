@@ -492,11 +492,26 @@ export default function PostDetail({ params }: { params: { id: string } }) {
   const [replyText, setReplyText] = useState('');
   const [pinnedMerchants, setPinnedMerchants] = useState<number[]>([]);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   
   // Sync comment count when comments change
   useEffect(() => {
     setCommentCount(calculateCommentCount(comments));
   }, [comments]);
+  
+  // Handle scroll events to apply shadow
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setHasScrolled(true);
+      } else {
+        setHasScrolled(false);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   if (!post) {
     return (
@@ -700,7 +715,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
         return (
           <Link 
             key={`mention-${index}`}
-            href={`/user/${part}`}
+            href={`/merchant/${part}`}
             className="font-medium text-primary hover:underline"
           >
             @{part}
@@ -713,7 +728,10 @@ export default function PostDetail({ params }: { params: { id: string } }) {
   return (
     <main className="pb-12 bg-white min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 bg-white z-20 border-b border-gray-100">
+      <header 
+        className={`sticky top-0 z-20 border-b border-gray-100 transition-all duration-200 
+        ${hasScrolled ? 'shadow-sm bg-white' : 'bg-white/95 backdrop-blur-sm'}`}
+      >
         <div className="container-app">
           <div className="flex items-center justify-between py-1.5">
             {/* Left section - Back button */}
@@ -722,16 +740,21 @@ export default function PostDetail({ params }: { params: { id: string } }) {
             </Link>
             
             {/* Center section - Profile and username */}
-            <Link href={`/user/${post.username}`} className="flex items-center transition-transform hover:scale-105 active:scale-95">
-              <div className="relative w-6 h-6 rounded-full overflow-hidden bg-gray-200 mr-2">
-                <Image 
-                  src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.username.charAt(0)}`}
+            <Link 
+              href={`/user/${post.username}`}
+              className="flex items-center gap-2.5 group"
+            >
+              <div className="w-9 h-9 rounded-full overflow-hidden">
+                <img 
+                  src={getUserByUsername(post.username)?.profileImage || '/placeholder-profile.jpg'} 
                   alt={post.username}
-                  fill
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
-              <span className="font-medium text-sm">@{post.username}</span>
+              <div className="flex flex-col">
+                <span className="font-medium group-hover:underline">{getUserByUsername(post.username)?.displayName || post.username}</span>
+                <span className="text-xs text-gray-500">@{post.username}</span>
+              </div>
             </Link>
             
             {/* Right section - Share button */}
@@ -785,7 +808,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                   {post.taggedAccounts.map(account => (
                     <Link 
                       key={account.id}
-                      href={`/user/${account.username}`} 
+                      href={`/merchant/${account.username}`} 
                       className="flex items-center bg-gray-100 rounded-md px-4 py-2 hover:bg-gray-200 transition-colors relative"
                     >
                       <div className="relative w-6 h-6 rounded-md overflow-hidden bg-primary mr-2.5 flex-shrink-0">

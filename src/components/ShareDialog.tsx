@@ -122,7 +122,7 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
         const url = customUrl 
           ? `${window.location.origin}${customUrl}` 
           : `${window.location.origin}/post/${postId}`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(`Check out: ${postTitle} ${url}`)}`, '_blank');
+        window.open(`https://wa.me/?text=${encodeURIComponent(`${postTitle} ${url}`)}`, '_blank');
         onClose();
       },
       color: 'bg-green-500',

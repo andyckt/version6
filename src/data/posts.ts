@@ -39,7 +39,7 @@ export interface TaggedAccount {
 export const travelPosts: TravelPost[] = [
   {
     id: 1001,
-    title: 'Stunning view from Shanghai Tower',
+    title: 'Ultimate Shanghai Guide: Every Place You Need to Visit',
     media: [
       {
         id: 10001,
@@ -57,13 +57,85 @@ export const travelPosts: TravelPost[] = [
     likes: 124,
     bookmarks: 45,
     views: 356,
-    hashtags: ['#shanghai', '#superpicture', '#view', '#skyscraper'],
-    description: 'The view from Shanghai Tower is absolutely breathtaking! You can see the entire city layout from up here.',
-    location: 'Shanghai Tower, Shanghai, China'
+    hashtags: ['#shanghai', '#guide', '#travel', '#mustvisit'],
+    description: 'Your complete guide to Shanghai! From amazing dumplings at @shanghaitaste and @dumplinghouse to cultural experiences at @shanghaimuseum. Stay at the historic @peacehotel, enjoy drinks at @speaklow, explore the artsy @taikangroad, shop at @iapmmall, and grab snacks at @seveneleven, @familymart, or @lawson. This post covers all the must-visit spots!',
+    location: 'Shanghai, China',
+    taggedAccounts: [
+      {
+        id: 501,
+        username: 'shanghaitaste',
+        displayName: 'Shanghai Taste',
+        accountType: 'restaurant',
+        avatar: 'S'
+      },
+      {
+        id: 502,
+        username: 'dumplinghouse',
+        displayName: 'Dumpling House',
+        accountType: 'restaurant',
+        avatar: 'D'
+      },
+      {
+        id: 503,
+        username: 'shanghaimuseum',
+        displayName: 'Shanghai Museum',
+        accountType: 'attraction',
+        avatar: 'M'
+      },
+      {
+        id: 504,
+        username: 'peacehotel',
+        displayName: 'Peace Hotel Shanghai',
+        accountType: 'hotel',
+        avatar: 'P'
+      },
+      {
+        id: 505,
+        username: 'speaklow',
+        displayName: 'Speak Low',
+        accountType: 'barandclub',
+        avatar: 'S'
+      },
+      {
+        id: 506,
+        username: 'taikangroad',
+        displayName: 'Taikang Road',
+        accountType: 'attraction',
+        avatar: 'T'
+      },
+      {
+        id: 507,
+        username: 'iapmmall',
+        displayName: 'IAPM Shopping Mall',
+        accountType: 'shopping',
+        avatar: 'I'
+      },
+      {
+        id: 508,
+        username: 'seveneleven',
+        displayName: '7-Eleven',
+        accountType: 'restaurant',
+        avatar: '7'
+      },
+      {
+        id: 509,
+        username: 'familymart',
+        displayName: 'Family Mart',
+        accountType: 'restaurant',
+        avatar: 'F'
+      },
+      {
+        id: 510,
+        username: 'lawson',
+        displayName: 'Lawson',
+        accountType: 'restaurant',
+        avatar: 'L'
+      }
+    ]
   },
   {
     id: 1002,
-    title: 'Best hotpot in Chengdu',
+    title: 'Shanghai Food & Shopping Marathon',
     media: [
       {
         id: 10002,
@@ -89,16 +161,79 @@ export const travelPosts: TravelPost[] = [
     likes: 218,
     bookmarks: 87,
     views: 432,
-    hashtags: ['#chengdu', '#food', '#hotpot', '#spicy', '#sichuan'],
-    description: 'Found the most authentic Sichuan hotpot in Chengdu! The broth is incredibly flavorful with the perfect level of spice. Highly recommend @sichuantaste for anyone visiting!',
-    location: 'Chengdu, Sichuan, China',
+    hashtags: ['#shanghai', '#food', '#shopping', '#cityguide'],
+    description: 'Had the most amazing day exploring Shanghai! Started with breakfast at @seveneleven, then amazing dumplings at @shanghaitaste and @dumplinghouse. Visited the incredible @shanghaimuseum, then checked into the luxurious @peacehotel. Evening drinks at @speaklow were perfect! Also explored the charming @taikangroad and did some shopping at @iapmmall. Late night snacks from @familymart and @lawson completed the day!',
+    location: 'Shanghai, China',
     taggedAccounts: [
       {
         id: 501,
-        username: 'sichuantaste',
-        displayName: 'Sichuan Taste',
+        username: 'shanghaitaste',
+        displayName: 'Shanghai Taste',
         accountType: 'restaurant',
         avatar: 'S'
+      },
+      {
+        id: 502,
+        username: 'dumplinghouse',
+        displayName: 'Dumpling House',
+        accountType: 'restaurant',
+        avatar: 'D'
+      },
+      {
+        id: 503,
+        username: 'shanghaimuseum',
+        displayName: 'Shanghai Museum',
+        accountType: 'attraction',
+        avatar: 'M'
+      },
+      {
+        id: 504,
+        username: 'peacehotel',
+        displayName: 'Peace Hotel Shanghai',
+        accountType: 'hotel',
+        avatar: 'P'
+      },
+      {
+        id: 505,
+        username: 'speaklow',
+        displayName: 'Speak Low',
+        accountType: 'barandclub',
+        avatar: 'S'
+      },
+      {
+        id: 506,
+        username: 'taikangroad',
+        displayName: 'Taikang Road',
+        accountType: 'attraction',
+        avatar: 'T'
+      },
+      {
+        id: 507,
+        username: 'iapmmall',
+        displayName: 'IAPM Shopping Mall',
+        accountType: 'shopping',
+        avatar: 'I'
+      },
+      {
+        id: 508,
+        username: 'seveneleven',
+        displayName: '7-Eleven',
+        accountType: 'restaurant',
+        avatar: '7'
+      },
+      {
+        id: 509,
+        username: 'familymart',
+        displayName: 'Family Mart',
+        accountType: 'restaurant',
+        avatar: 'F'
+      },
+      {
+        id: 510,
+        username: 'lawson',
+        displayName: 'Lawson',
+        accountType: 'restaurant',
+        avatar: 'L'
       }
     ]
   },

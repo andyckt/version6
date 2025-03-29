@@ -31,6 +31,7 @@ import LocationSlideUp from '@/components/merchant/LocationSlideUp';
 import PhoneNumberDialog from '@/components/merchant/PhoneNumberDialog';
 import { Navigation, X, Phone, Copy, Car, Train } from "lucide-react";
 import { motion } from "framer-motion";
+import MentionedGrid from '@/components/MentionedGrid';
 
 export default function MerchantProfile() {
   const params = useParams();
@@ -61,21 +62,12 @@ export default function MerchantProfile() {
   // Render loading state
   if (isLoading) {
     return (
-      <main className="pb-16 min-h-screen">
-        <div className="animate-pulse">
-          {/* Skeleton for cover image */}
-          <div className="h-40 md:h-60 w-full bg-gray-200"></div>
-          
-          {/* Skeleton for merchant info */}
-          <div className="container-app relative pt-20">
-            <div className="absolute -top-16 left-4 rounded-full w-24 h-24 bg-gray-300"></div>
-            
-            <div className="space-y-2 mt-4">
-              <div className="h-8 w-48 bg-gray-200 rounded"></div>
-              <div className="h-4 w-32 bg-gray-200 rounded"></div>
-              <div className="h-4 w-full bg-gray-200 rounded"></div>
-            </div>
-          </div>
+      <main className="pb-12 bg-white min-h-screen flex flex-col">
+        <div className="container-app pt-6 space-y-6">
+          <div className="h-8 w-40 bg-gray-200 animate-pulse rounded"></div>
+          <div className="h-4 w-64 bg-gray-200 animate-pulse rounded"></div>
+          <div className="h-20 w-full bg-gray-200 animate-pulse rounded"></div>
+          <div className="h-40 w-full bg-gray-200 animate-pulse rounded"></div>
         </div>
       </main>
     );
@@ -99,7 +91,7 @@ export default function MerchantProfile() {
     // Handle the multi-location merchant case
     if (isMultiLocationMerchant(merchant)) {
       sections.push(
-        <div key="branch-locations">
+        <div key="branch-locations" className="mt-4">
           <BranchList merchant={merchant as MultiLocationMerchant} />
         </div>
       );
@@ -116,49 +108,30 @@ export default function MerchantProfile() {
   return (
     <main className="pb-12 min-h-screen">
       <PageTransition>
-        <MerchantTopNav 
-          merchant={merchant} 
-          onShareClick={() => setShowShareDialog(true)} 
-        />
-        <MerchantHeader merchant={merchant} />
+        <div className="bg-white">
+          <MerchantTopNav 
+            merchant={merchant} 
+            onShareClick={() => setShowShareDialog(true)} 
+          />
+          <MerchantHeader merchant={merchant} />
+        </div>
         
-        <div className="container-app pt-4 pb-6 space-y-6">
+        <div className="container-app pb-6">
           {renderMerchantSpecificSections(merchant)}
           
           {/* Related posts section */}
-          {relatedPosts.length > 0 && (
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="font-bold text-xl mb-4 flex items-center">
-                Posts Mentioning This Place
-                <span className="ml-2 bg-gray-100 text-gray-800 text-xs font-bold px-2 py-0.5 rounded">
+          <div className="pt-5">
+            <h3 className="font-bold text-sm mb-4 flex items-center">
+              Users Mentioning this place
+              <div className="ml-2 w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center">
+                <span className="text-[11px] font-medium text-gray-600">
                   {relatedPosts.length}
                 </span>
-              </h3>
-              
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {relatedPosts.map((post) => (
-                  <Link 
-                    key={post.id}
-                    href={`/post/${post.id}`}
-                    className="aspect-square relative overflow-hidden rounded-lg group"
-                  >
-                    <BlurImage
-                      src={post.media && post.media.length > 0 ? post.media[0].url : (post.image || '')}
-                      alt={post.title}
-                      aspectRatio="aspect-square"
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                      <div className="p-3 text-white">
-                        <p className="text-sm font-medium line-clamp-2">{post.title}</p>
-                        <p className="text-xs opacity-80">@{post.username}</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
               </div>
-            </div>
-          )}
+            </h3>
+            
+            <MentionedGrid posts={relatedPosts} />
+          </div>
         </div>
       </PageTransition>
       

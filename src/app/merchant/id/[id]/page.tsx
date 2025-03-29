@@ -11,6 +11,8 @@ import OpenStatus from '@/components/merchant/OpenStatus';
 import BranchList from '@/components/merchant/BranchList';
 import PageTransition from '@/components/PageTransition';
 import ShareDialog from '@/components/ShareDialog';
+import MentionedGrid from '@/components/MentionedGrid';
+import { travelPosts } from '@/data/posts';
 import { 
   isSingleLocationMerchant,
   isMultiLocationMerchant,
@@ -43,6 +45,11 @@ export default function MerchantProfile() {
   const [activeBranchIndex, setActiveBranchIndex] = useState<number | null>(null);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [showPhoneDialog, setShowPhoneDialog] = useState(false);
+  
+  // Filter posts that mention this merchant
+  const relatedPosts = travelPosts.filter(post => 
+    post.taggedAccounts?.some(account => account.username === merchant?.username)
+  );
   
   // If we're loading, show a loading state
   if (isLoading) {
@@ -171,7 +178,7 @@ export default function MerchantProfile() {
     
     if (isMultiLocationMerchant(merchant)) {
       return (
-        <div key="branch-locations">
+        <div key="branch-locations" className="mt-4">
           <BranchList merchant={merchant as MultiLocationMerchant} />
         </div>
       );
@@ -195,20 +202,30 @@ export default function MerchantProfile() {
   }
   
   return (
-    <main className="pb-12 bg-white min-h-screen flex flex-col">
+    <main className="pb-12 min-h-screen">
       <PageTransition>
-        <MerchantTopNav 
-          merchant={merchant} 
-          onShareClick={() => setShowShareDialog(true)}
-        />
-        <MerchantHeader merchant={merchant} />
+        <div className="bg-white">
+          <MerchantTopNav 
+            merchant={merchant} 
+            onShareClick={() => setShowShareDialog(true)}
+          />
+          <MerchantHeader merchant={merchant} />
+        </div>
         
-        <div className="container-app pt-4 pb-6 space-y-6">
+        <div className="container-app pb-6">
           {renderMerchantSpecificSections(merchant)}
           
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="font-bold text-xl mb-4">Posts Mentioning @{merchant.username}</h3>
-            <p className="text-gray-500 py-8 text-center">No posts yet.</p>
+          {/* Posts Mentioning This Place section */}
+          <div className="pt-5">
+            <h3 className="font-bold text-sm mb-4 flex items-center">
+              Users Mentioning this place
+              <div className="ml-2 w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center">
+                <span className="text-[11px] font-medium text-gray-600">
+                  {relatedPosts.length}
+                </span>
+              </div>
+            </h3>
+            <MentionedGrid posts={relatedPosts} />
           </div>
         </div>
       </PageTransition>

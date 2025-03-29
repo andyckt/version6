@@ -453,10 +453,13 @@ export default function MerchantHeader({ merchant }: MerchantHeaderProps) {
                 <MerchantTypeIcon merchant={merchant} />
                 <span className="ml-1.5">{merchant.merchantType}</span>
               </span>
-              <span className="flex items-center">
-                <FiMapPin className="mr-1.5" size={12} />
-                {merchant.district.join(', ')}
-              </span>
+              {/* Only show district if NOT a MultipleBranch merchant */}
+              {!isMultiLocationMerchant(merchant) && (
+                <span className="flex items-center">
+                  <FiMapPin className="mr-1.5" size={12} />
+                  {merchant.district.join(', ')}
+                </span>
+              )}
             
               {/* Price displays for different merchant types */}
               {isAttractionMerchant(merchant) && (

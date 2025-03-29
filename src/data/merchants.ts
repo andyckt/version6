@@ -463,7 +463,7 @@ export const merchants: BaseMerchant[] = [
       needBooking: 'Recommended on weekends',
       peakTime: '21:00-01:00'
     },
-    pricePerPerson: 300,
+    pricePerPerson: 100,
     nearbyMidnightFood: ['seveneleven', 'familymart', 'lawson'],
     clubCategories: ['Cocktail Bar', 'Speakeasy', 'Jazz'],
     michelinStars: 2

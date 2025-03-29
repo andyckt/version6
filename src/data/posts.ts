@@ -29,11 +29,7 @@ export interface MediaItem {
 }
 
 export interface TaggedAccount {
-  id: number;
-  username: string;
-  displayName: string;
-  accountType: 'user' | 'restaurant' | 'hotel' | 'attraction' | 'barandclub' | 'shopping';
-  avatar?: string;
+  username: string;  // Reference to merchant username - merchant data will be fetched from merchant store
 }
 
 export const travelPosts: TravelPost[] = [
@@ -62,74 +58,34 @@ export const travelPosts: TravelPost[] = [
     location: 'Shanghai, China',
     taggedAccounts: [
       {
-        id: 501,
-        username: 'shanghaitaste',
-        displayName: 'Shanghai Taste',
-        accountType: 'restaurant',
-        avatar: 'S'
+        username: 'shanghaitaste'
       },
       {
-        id: 502,
-        username: 'dumplinghouse',
-        displayName: 'Dumpling House',
-        accountType: 'restaurant',
-        avatar: 'D'
+        username: 'dumplinghouse'
       },
       {
-        id: 503,
-        username: 'shanghaimuseum',
-        displayName: 'Shanghai Museum',
-        accountType: 'attraction',
-        avatar: 'M'
+        username: 'shanghaimuseum'
       },
       {
-        id: 504,
-        username: 'peacehotel',
-        displayName: 'Peace Hotel Shanghai',
-        accountType: 'hotel',
-        avatar: 'P'
+        username: 'peacehotel'
       },
       {
-        id: 505,
-        username: 'speaklow',
-        displayName: 'Speak Low',
-        accountType: 'barandclub',
-        avatar: 'S'
+        username: 'speaklow'
       },
       {
-        id: 506,
-        username: 'taikangroad',
-        displayName: 'Taikang Road',
-        accountType: 'attraction',
-        avatar: 'T'
+        username: 'taikangroad'
       },
       {
-        id: 507,
-        username: 'iapmmall',
-        displayName: 'IAPM Shopping Mall',
-        accountType: 'shopping',
-        avatar: 'I'
+        username: 'iapmmall'
       },
       {
-        id: 508,
-        username: 'seveneleven',
-        displayName: '7-Eleven',
-        accountType: 'restaurant',
-        avatar: '7'
+        username: 'seveneleven'
       },
       {
-        id: 509,
-        username: 'familymart',
-        displayName: 'Family Mart',
-        accountType: 'restaurant',
-        avatar: 'F'
+        username: 'familymart'
       },
       {
-        id: 510,
-        username: 'lawson',
-        displayName: 'Lawson',
-        accountType: 'restaurant',
-        avatar: 'L'
+        username: 'lawson'
       }
     ]
   },
@@ -166,74 +122,34 @@ export const travelPosts: TravelPost[] = [
     location: 'Shanghai, China',
     taggedAccounts: [
       {
-        id: 501,
-        username: 'shanghaitaste',
-        displayName: 'Shanghai Taste',
-        accountType: 'restaurant',
-        avatar: 'S'
+        username: 'shanghaitaste'
       },
       {
-        id: 502,
-        username: 'dumplinghouse',
-        displayName: 'Dumpling House',
-        accountType: 'restaurant',
-        avatar: 'D'
+        username: 'dumplinghouse'
       },
       {
-        id: 503,
-        username: 'shanghaimuseum',
-        displayName: 'Shanghai Museum',
-        accountType: 'attraction',
-        avatar: 'M'
+        username: 'shanghaimuseum'
       },
       {
-        id: 504,
-        username: 'peacehotel',
-        displayName: 'Peace Hotel Shanghai',
-        accountType: 'hotel',
-        avatar: 'P'
+        username: 'peacehotel'
       },
       {
-        id: 505,
-        username: 'speaklow',
-        displayName: 'Speak Low',
-        accountType: 'barandclub',
-        avatar: 'S'
+        username: 'speaklow'
       },
       {
-        id: 506,
-        username: 'taikangroad',
-        displayName: 'Taikang Road',
-        accountType: 'attraction',
-        avatar: 'T'
+        username: 'taikangroad'
       },
       {
-        id: 507,
-        username: 'iapmmall',
-        displayName: 'IAPM Shopping Mall',
-        accountType: 'shopping',
-        avatar: 'I'
+        username: 'iapmmall'
       },
       {
-        id: 508,
-        username: 'seveneleven',
-        displayName: '7-Eleven',
-        accountType: 'restaurant',
-        avatar: '7'
+        username: 'seveneleven'
       },
       {
-        id: 509,
-        username: 'familymart',
-        displayName: 'Family Mart',
-        accountType: 'restaurant',
-        avatar: 'F'
+        username: 'familymart'
       },
       {
-        id: 510,
-        username: 'lawson',
-        displayName: 'Lawson',
-        accountType: 'restaurant',
-        avatar: 'L'
+        username: 'lawson'
       }
     ]
   },
@@ -340,18 +256,10 @@ export const travelPosts: TravelPost[] = [
     location: 'Shanghai, China',
     taggedAccounts: [
       {
-        id: 502,
-        username: 'speaklow',
-        displayName: 'Speak Low',
-        accountType: 'barandclub',
-        avatar: 'S'
+        username: 'speaklow'
       },
       {
-        id: 503,
-        username: 'uniontrading',
-        displayName: 'Union Trading Company',
-        accountType: 'barandclub',
-        avatar: 'U'
+        username: 'uniontrading'
       }
     ]
   },
@@ -513,46 +421,22 @@ export const travelPosts: TravelPost[] = [
     description: 'Shanghai\'s hidden gems are absolutely incredible! From the historic Bund to the modern skyscrapers, there\'s something for everyone. I spent a week exploring different neighborhoods and my favorite was definitely Tianzifang. Had the most amazing dumplings at @shanghaitaste restaurant - they\'re juicy, flavorful, and perfectly steamed! Also visited the famous @shanghaigarden where the traditional architecture and peaceful ponds create a perfect escape from the city. My local friend @shanghaiguide showed me some hidden gems away from the tourist spots. Don\'t miss the xiaolongbao (soup dumplings) at @dumplinghouse stand!',
     taggedAccounts: [
       {
-        id: 201,
-        username: 'shanghaitaste',
-        displayName: 'Shanghai Taste',
-        accountType: 'restaurant',
-        avatar: 'S'
+        username: 'shanghaitaste'
       },
       {
-        id: 202,
-        username: 'shanghaigarden',
-        displayName: 'Shanghai Garden',
-        accountType: 'attraction',
-        avatar: 'G'
+        username: 'shanghaigarden'
       },
       {
-        id: 203,
-        username: 'shanghaiguide',
-        displayName: 'Shanghai Local Guide',
-        accountType: 'user',
-        avatar: 'S'
+        username: 'shanghaiguide'
       },
       {
-        id: 204,
-        username: 'dumplinghouse',
-        displayName: 'Dumpling House',
-        accountType: 'restaurant',
-        avatar: 'D'
+        username: 'dumplinghouse'
       },
       {
-        id: 205,
-        username: 'shanghailounge',
-        displayName: 'Shanghai Lounge Bar',
-        accountType: 'barandclub',
-        avatar: 'L'
+        username: 'shanghailounge'
       },
       {
-        id: 206,
-        username: 'silkmarket',
-        displayName: 'Shanghai Silk Market',
-        accountType: 'shopping',
-        avatar: 'M'
+        username: 'silkmarket'
       }
     ]
   },
@@ -581,11 +465,7 @@ export const travelPosts: TravelPost[] = [
     description: 'One of the most iconic views in Shanghai - watching the sunset over the historic Bund waterfront with the futuristic Pudong skyline as a backdrop.',
     taggedAccounts: [
       {
-        id: 6,
-        username: 'shanghaiguide',
-        displayName: 'Shanghai Official Guide',
-        accountType: 'attraction',
-        avatar: 'https://picsum.photos/64/64?random=6'
+        username: 'shanghaiguide'
       }
     ],
     location: 'The Bund, Shanghai, China'
@@ -731,11 +611,7 @@ export const travelPosts: TravelPost[] = [
     location: 'Jeju Island, South Korea',
     taggedAccounts: [
       {
-        id: 14,
-        username: 'visitjeju',
-        displayName: 'Visit Jeju',
-        accountType: 'attraction',
-        avatar: 'https://picsum.photos/64/64?random=14'
+        username: 'visitjeju'
       }
     ]
   },
@@ -765,11 +641,7 @@ export const travelPosts: TravelPost[] = [
     location: 'Ginza, Tokyo, Japan',
     taggedAccounts: [
       {
-        id: 15,
-        username: 'tokyodrinks',
-        displayName: 'Tokyo Cocktail Tours',
-        accountType: 'attraction',
-        avatar: 'https://picsum.photos/64/64?random=15'
+        username: 'tokyodrinks'
       }
     ]
   },
@@ -799,11 +671,7 @@ export const travelPosts: TravelPost[] = [
     location: 'Nantou County, Taiwan',
     taggedAccounts: [
       {
-        id: 16,
-        username: 'taiwanglamp',
-        displayName: 'Taiwan Glamping Co.',
-        accountType: 'hotel',
-        avatar: 'https://picsum.photos/64/64?random=16'
+        username: 'taiwanglamp'
       }
     ]
   },
@@ -849,39 +717,19 @@ export const travelPosts: TravelPost[] = [
     location: 'Shenzhen, Guangdong, China',
     taggedAccounts: [
       {
-        id: 301,
-        username: 'huaqiangbei',
-        displayName: 'Huaqiangbei Electronics Market',
-        accountType: 'shopping',
-        avatar: 'H'
+        username: 'huaqiangbei'
       },
       {
-        id: 302,
-        username: 'cococity',
-        displayName: 'Coco City Shopping Center',
-        accountType: 'shopping',
-        avatar: 'C'
+        username: 'cococity'
       },
       {
-        id: 303,
-        username: 'szfusion',
-        displayName: 'Shenzhen Fusion Restaurant',
-        accountType: 'restaurant',
-        avatar: 'F'
+        username: 'szfusion'
       },
       {
-        id: 304,
-        username: 'skybarlounge',
-        displayName: 'Sky Bar & Lounge',
-        accountType: 'barandclub',
-        avatar: 'S'
+        username: 'skybarlounge'
       },
       {
-        id: 305,
-        username: 'pulseclub',
-        displayName: 'Pulse Nightclub',
-        accountType: 'barandclub',
-        avatar: 'P'
+        username: 'pulseclub'
       }
     ]
   }

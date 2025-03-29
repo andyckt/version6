@@ -1,6 +1,7 @@
 import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { MerchantDataProvider } from '@/components/providers/MerchantDataProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} overflow-x-hidden`}>
-        {children}
+        <MerchantDataProvider>
+          {children}
+        </MerchantDataProvider>
       </body>
     </html>
   )

@@ -1,6 +1,6 @@
 "use client";
 
-import { FiHome, FiBook, FiUser } from 'react-icons/fi'
+import { FiHome, FiBook, FiUser, FiShoppingBag } from 'react-icons/fi'
 import Link from 'next/link'
 
 export default function Navigation() {
@@ -11,6 +11,11 @@ export default function Navigation() {
           <Link href="/" className="flex flex-col items-center flex-1">
             <FiHome className="w-5 h-5" />
             <span className="text-[10px] mt-0.5">Home</span>
+          </Link>
+          
+          <Link href="/merchants" className="flex flex-col items-center flex-1">
+            <FiShoppingBag className="w-5 h-5" />
+            <span className="text-[10px] mt-0.5">Merchants</span>
           </Link>
           
           <Link href="/booklet" className="flex flex-col items-center flex-1">

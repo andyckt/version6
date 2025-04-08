@@ -1,7 +1,9 @@
+"use client";
+
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { FiMapPin, FiCheckCircle, FiShare2, FiUser, FiExternalLink, FiAward, FiStar, FiTag, FiClock, FiChevronDown, FiCoffee, FiLock, FiMusic, FiMic, FiRadio } from 'react-icons/fi';
-import { BaseMerchant, isSingleLocationMerchant, isMultiLocationMerchant, isAttractionMerchant, isHotelMerchant, isBarClubMerchant, isBuildingMerchant, isStreetMerchant, isMerchantOpen, OpeningHoursItem } from '@/data/merchants';
+import { BaseMerchant, ProfileInterface, isSingleLocationMerchant, isMultiLocationMerchant, isAttractionMerchant, isHotelMerchant, isBarClubMerchant, isBuildingMerchant, isStreetMerchant, isMerchantOpen, OpeningHoursItem } from '@/data/merchants';
 import { Navigation, X, Phone, Copy, Car, Train } from "lucide-react";
 import { motion } from "framer-motion";
 import BusinessInfo from './BusinessInfo';
@@ -9,9 +11,10 @@ import OpenStatus from './OpenStatus';
 import AnimatedStars from './AnimatedStars';
 import ScrollableAmenityTags from './ScrollableAmenityTags';
 import { createPortal } from 'react-dom';
+import { MerchantDocument } from '@/models/merchant';
 
 interface MerchantHeaderProps {
-  merchant: BaseMerchant;
+  merchant: MerchantDocument;
 }
 
 const MerchantTypeIcon = ({ merchant }: { merchant: BaseMerchant }) => {
@@ -56,19 +59,23 @@ const MerchantTypeIcon = ({ merchant }: { merchant: BaseMerchant }) => {
 };
 
 // Calculate status text based on merchant opening hours
-const getStatusText = (merchant: BaseMerchant): string => {
+const getStatusText = (merchant: MerchantDocument): string => {
   // For merchants with no applicable business hours
-  if (isHotelMerchant(merchant) || isStreetMerchant(merchant)) {
+  if (merchant.profileInterface === ProfileInterface.Hotel || 
+      merchant.profileInterface === ProfileInterface.Street) {
     return '';
   }
   
   // Get the opening hours
   let openingHours: OpeningHoursItem[] = [];
-  if (isSingleLocationMerchant(merchant) || isBuildingMerchant(merchant) || 
-      isAttractionMerchant(merchant) || isBarClubMerchant(merchant)) {
+  if (merchant.profileInterface === ProfileInterface.SingleShopRestaurant || 
+      merchant.profileInterface === ProfileInterface.Building || 
+      merchant.profileInterface === ProfileInterface.Attraction || 
+      merchant.profileInterface === ProfileInterface.BarClub) {
     if (!merchant.businessInfo?.openingHours) return '';
     openingHours = merchant.businessInfo.openingHours;
-  } else if (isMultiLocationMerchant(merchant)) {
+  } else if (merchant.profileInterface === ProfileInterface.MultipleBranchMerchant) {
+    if (!merchant.branches) return '';
     merchant.branches.forEach(branch => {
       openingHours = [...openingHours, ...branch.openingHours];
     });

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FiChevronLeft, FiShare2, FiBookmark } from 'react-icons/fi';
+import { FiChevronLeft, FiShare2, FiBookmark, FiArrowLeft } from 'react-icons/fi';
 import { FaBookmark } from 'react-icons/fa';
 import { BaseMerchant } from '@/data/merchants';
+import { MerchantDocument } from '@/models/merchant';
+import Link from 'next/link';
 
 interface MerchantTopNavProps {
-  merchant: BaseMerchant;
+  merchant: MerchantDocument;
   onShareClick: () => void;
 }
 
@@ -44,13 +46,9 @@ export default function MerchantTopNav({ merchant, onShareClick }: MerchantTopNa
       <div className="container-app">
         <div className="flex items-center justify-between py-1.5">
           {/* Left - Back button */}
-          <button
-            onClick={handleBackClick}
-            className="p-1.5 transition-transform hover:scale-110 active:scale-95"
-            aria-label="Go back"
-          >
-            <FiChevronLeft className="w-5 h-5" />
-          </button>
+          <Link href="/merchants" className="text-gray-800 hover:text-primary">
+            <FiArrowLeft className="w-5 h-5" />
+          </Link>
           
           {/* Center - Username - Made clickable */}
           <button 

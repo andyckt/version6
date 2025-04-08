@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { MultiLocationMerchant } from '@/data/merchants';
+import { MerchantDocument } from '@/models/merchant';
 import BranchCard from './BranchCard';
 
 interface BranchListProps {
-  merchant: MultiLocationMerchant;
+  merchant: MerchantDocument;
   className?: string;
 }
 
@@ -33,6 +34,11 @@ export default function BranchList({ merchant, className = '' }: BranchListProps
     };
   }, []);
 
+  // Check if merchant has branches
+  if (!merchant.branches || merchant.branches.length === 0) {
+    return null;
+  }
+
   return (
     <div className={className}>
       {/* Horizontal scroll container */}
@@ -47,7 +53,7 @@ export default function BranchList({ merchant, className = '' }: BranchListProps
       >
         {merchant.branches.map((branch, index) => (
           <div 
-            key={`${merchant.id}-branch-${index}`}
+            key={`branch-${merchant._id}-${index}`}
             className="flex-shrink-0 w-[260px] snap-start origin-top-left"
             style={{ transform: 'scale(0.85)', marginRight: '-40px' }}
           >
@@ -68,7 +74,7 @@ export default function BranchList({ merchant, className = '' }: BranchListProps
                 }
               }}
               index={index}
-              merchant={merchant}
+              merchant={merchant as any}
             />
           </div>
         ))}

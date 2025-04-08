@@ -11,6 +11,7 @@ import BusinessInfo from '@/components/merchant/BusinessInfo';
 import OpenStatus from '@/components/merchant/OpenStatus';
 import BranchList from '@/components/merchant/BranchList';
 import { 
+  ProfileInterface,
   isSingleLocationMerchant,
   isMultiLocationMerchant,
   isHotelMerchant, 
@@ -32,6 +33,7 @@ import PhoneNumberDialog from '@/components/merchant/PhoneNumberDialog';
 import { Navigation, X, Phone, Copy, Car, Train } from "lucide-react";
 import { motion } from "framer-motion";
 import MentionedGrid from '@/components/MentionedGrid';
+import { MerchantDocument } from '@/models/merchant';
 
 export default function MerchantProfile() {
   const params = useParams();
@@ -85,20 +87,20 @@ export default function MerchantProfile() {
   }
   
   // Function to render merchant-specific sections
-  const renderMerchantSpecificSections = (merchant: BaseMerchant) => {
+  const renderMerchantSpecificSections = (merchant: MerchantDocument) => {
     const sections = [];
 
     // Handle the multi-location merchant case
-    if (isMultiLocationMerchant(merchant)) {
+    if (merchant.profileInterface === ProfileInterface.MultipleBranchMerchant && merchant.branches) {
       sections.push(
         <div key="branch-locations" className="mt-4">
-          <BranchList merchant={merchant as MultiLocationMerchant} />
+          <BranchList merchant={merchant} />
         </div>
       );
     }
 
     // Remove any building merchant specific sections since we don't want Featured Shops
-    if (isBuildingMerchant(merchant)) {
+    if (merchant.profileInterface === ProfileInterface.Building) {
       // No sections to add for building merchants
     }
 

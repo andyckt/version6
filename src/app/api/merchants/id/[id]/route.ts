@@ -1,31 +1,49 @@
 import { NextResponse } from 'next/server';
-import { getMerchantById } from '@/data/merchants';
+import { findMerchantById } from '@/models/merchant';
+import { ObjectId } from 'mongodb';
+
+// Cache control helper
+function setCacheHeaders(response: NextResponse) {
+  response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+  return response;
+}
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const id = parseInt(params.id);
-  
-  // Check if id is a valid number
-  if (isNaN(id)) {
+  try {
+    const { id } = params;
+    
+    // Validate ObjectId format
+    if (!ObjectId.isValid(id)) {
+      return NextResponse.json(
+        { error: 'Invalid ID format' },
+        { status: 400 }
+      );
+    }
+    
+    // Convert string ID to ObjectId
+    const objectId = new ObjectId(id);
+    
+    // Get merchant from database
+    const merchant = await findMerchantById(objectId);
+    
+    if (!merchant) {
+      return NextResponse.json(
+        { error: `Merchant with ID ${id} not found` },
+        { status: 404 }
+      );
+    }
+    
+    // Return merchant data with cache headers
+    return setCacheHeaders(NextResponse.json(merchant));
+    
+  } catch (error) {
+    console.error(`Error fetching merchant by ID:`, error);
     return NextResponse.json(
-      { error: 'Invalid merchant ID' },
-      { status: 400 }
+      { error: 'Failed to fetch merchant data' },
+      { status: 500 }
     );
   }
-  
-  // Find the merchant with the matching id
-  const merchant = getMerchantById(id);
-  
-  // If merchant not found, return 404
-  if (!merchant) {
-    return NextResponse.json(
-      { error: 'Merchant not found' },
-      { status: 404 }
-    );
-  }
-  
-  // Return the merchant data
-  return NextResponse.json(merchant);
 } 

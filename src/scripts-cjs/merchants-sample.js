@@ -1,0 +1,106 @@
+// Sample merchants data to test migration
+module.exports = [
+  // Add 3 sample merchants in pure JavaScript format
+  {
+    id: 508,
+    accountType: 'shopping',
+    username: 'seveneleven',
+    displayName: '7-Eleven',
+    verified: true,
+    joinDate: 'October 2022',
+    recommended: true,
+    hashtags: ['#conveniencestore', '#247', '#quickbites', '#latenight'],
+    district: ['Multiple'],
+    merchantType: 'Convenience Store',
+    stats: {
+      mentionedPosts: 45,
+      followers: 2200,
+      following: 30
+    },
+    profileInterface: 1, // SingleShopRestaurant
+    location: {
+      chineseAddress: '上海市静安区南京西路1601号',
+      englishAddress: '1601 West Nanjing Road, Jing\'an District, Shanghai',
+      nearestSubway: 'Line 2 Jing\'an Temple Station, Exit 1 - 100m',
+      telephone: ['021-62888777'],
+      branchDistrict: 'Jing\'an'
+    },
+    businessInfo: {
+      openingHours: [
+        { day: 'Monday-Sunday', hours: '24 hours' }
+      ],
+      peakTime: 'Morning and Evening Rush'
+    },
+    pricePerPerson: 25,
+    languagesSpoken: ['Chinese', 'English']
+  },
+  {
+    id: 509,
+    accountType: 'shopping',
+    username: 'familymart',
+    displayName: 'Family Mart',
+    verified: true,
+    joinDate: 'November 2022',
+    recommended: true,
+    hashtags: ['#conveniencestore', '#familymart', '#latenight', '#quickfood'],
+    district: ['Multiple'],
+    merchantType: 'Convenience Store',
+    stats: {
+      mentionedPosts: 38,
+      followers: 1900,
+      following: 25
+    },
+    profileInterface: 1, // SingleShopRestaurant
+    location: {
+      chineseAddress: '上海市黄浦区南京东路829号',
+      englishAddress: '829 East Nanjing Road, Huangpu District, Shanghai',
+      nearestSubway: 'Line 2/10 East Nanjing Road Station, Exit 2 - 50m',
+      telephone: ['021-63280971'],
+      branchDistrict: 'Huangpu'
+    },
+    businessInfo: {
+      openingHours: [
+        { day: 'All days', hours: '24 hours' }
+      ],
+      peakTime: 'Lunch and Evening'
+    },
+    pricePerPerson: 30,
+    languagesSpoken: ['Chinese', 'English']
+  },
+  {
+    id: 601,
+    accountType: 'hotel',
+    username: 'peacehotel',
+    displayName: 'Peace Hotel (Fairmont)',
+    verified: true,
+    joinDate: 'December 2022',
+    recommended: true,
+    hashtags: ['#luxuryhotel', '#historic', '#thebund', '#fivestar'],
+    district: ['Huangpu'],
+    merchantType: 'Luxury Hotel',
+    stats: {
+      mentionedPosts: 78,
+      followers: 4500,
+      following: 20
+    },
+    profileInterface: 6, // Hotel
+    location: {
+      chineseAddress: '上海市黄浦区中山东一路20号',
+      englishAddress: '20 Nanjing East Road, Huangpu District, Shanghai',
+      nearestSubway: 'Line 2/10 East Nanjing Road Station, Exit 1 - 300m',
+      telephone: ['021-61386888'],
+      branchDistrict: 'Huangpu'
+    },
+    pricePerNight: 1800,
+    stars: 5,
+    amenities: [
+      'Free WiFi', 
+      'Swimming Pool', 
+      'Spa', 
+      'Fitness Center', 
+      'Restaurant', 
+      'Room Service',
+      'Airport Shuttle'
+    ]
+  }
+]; 

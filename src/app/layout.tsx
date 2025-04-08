@@ -5,6 +5,13 @@ import { MerchantDataProvider } from '@/components/providers/MerchantDataProvide
 
 const inter = Inter({ subsets: ['latin'] })
 
+// Cache prewarming initialization - server-side only
+if (typeof window === 'undefined') {
+  import('@/utils/cachePrewarming').then(({ initializeCacheOnStartup }) => {
+    initializeCacheOnStartup().catch(console.error);
+  });
+}
+
 export const metadata: Metadata = {
   title: 'Travel Platform',
   description: 'Discover authentic travel experiences',

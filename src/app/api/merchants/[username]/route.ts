@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getMerchantByUsername } from '@/data/merchants';
+import { getMerchantByUsername } from '@/lib/merchantRepository';
 
 export async function GET(
   request: Request,
@@ -7,17 +7,25 @@ export async function GET(
 ) {
   const username = params.username;
   
-  // Find the merchant with the matching username
-  const merchant = getMerchantByUsername(username);
-  
-  // If merchant not found, return 404
-  if (!merchant) {
+  try {
+    // Find the merchant with the matching username using our repository
+    const merchant = await getMerchantByUsername(username);
+    
+    // If merchant not found, return 404
+    if (!merchant) {
+      return NextResponse.json(
+        { error: 'Merchant not found' },
+        { status: 404 }
+      );
+    }
+    
+    // Return the merchant data
+    return NextResponse.json(merchant);
+  } catch (error) {
+    console.error(`Error fetching merchant ${username}:`, error);
     return NextResponse.json(
-      { error: 'Merchant not found' },
-      { status: 404 }
+      { error: 'Internal server error' },
+      { status: 500 }
     );
   }
-  
-  // Return the merchant data
-  return NextResponse.json(merchant);
 } 

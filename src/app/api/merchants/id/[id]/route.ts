@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
-import { getMerchantById } from '@/data/merchants';
+import { getMerchantById } from '@/lib/merchantRepository';
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const id = parseInt(params.id);
+  const idStr = params.id;
+  const id = parseInt(idStr, 10);
   
-  // Check if id is a valid number
+  // Check if ID is a valid number
   if (isNaN(id)) {
     return NextResponse.json(
       { error: 'Invalid merchant ID' },
@@ -15,17 +16,25 @@ export async function GET(
     );
   }
   
-  // Find the merchant with the matching id
-  const merchant = getMerchantById(id);
-  
-  // If merchant not found, return 404
-  if (!merchant) {
+  try {
+    // Find the merchant with the matching ID using our repository
+    const merchant = await getMerchantById(id);
+    
+    // If merchant not found, return 404
+    if (!merchant) {
+      return NextResponse.json(
+        { error: 'Merchant not found' },
+        { status: 404 }
+      );
+    }
+    
+    // Return the merchant data
+    return NextResponse.json(merchant);
+  } catch (error) {
+    console.error(`Error fetching merchant with ID ${id}:`, error);
     return NextResponse.json(
-      { error: 'Merchant not found' },
-      { status: 404 }
+      { error: 'Internal server error' },
+      { status: 500 }
     );
   }
-  
-  // Return the merchant data
-  return NextResponse.json(merchant);
 } 

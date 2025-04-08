@@ -1,0 +1,314 @@
+ProfileInterface is BarClub
+accountType barandclub
+merchantType: string;
+
+pricePerPerson?: number;  
+entryFee?: number;        
+nearbyMidnightFood?: string[];
+clubCategories: string[];   
+
+  languagesSpoken?: string[];
+  michelinStars?: number;
+
+district
+branchDistrict
+(Hongkou, Huangpu, Pudong, Minhang, Jingan, Xuhui, Putuo, Changning, Yangpu)
+
+-------------------------
+ProfileInterface is BarClub
+accountType barandclub
+merchantType: string;
+
+ 
+entryFee?: number;        
+nearbyMidnightFood?: string[];
+clubCategories: string[];   
+
+  languagesSpoken?: string[];
+  michelinStars?: number;
+
+district
+
+ Max Shanghai @MaxClub
+    
+    hashtags: club, alcohol, techno / bounce / House, Huangpu
+
+营业时间：周一至周日 20:30-次日06:00
+
+entryFee: 平时门票88一人，周末158一人送一瓶啤酒
+
+Song Vibe: Bounce / Techno / House
+
+Chinese address:
+
+Max Club 淮海中路98号2-3F
+
+English address:
+Max Club, 2-3F, 98 Huaihai Middle Road, Shanghai
+
+Nearest station:
+
+8/14号線大世界 - 175m
+Line 8/14: Dashijie Station (175m walk)
+
+clubCategories: techno / bounce / House
+
+--------
+
+- Hood Shanghai @HoodClub
+    
+    hashtags: club, alcohol, hiphop, recommened
+
+    营业时间：周一至周日 22:00-次日06:00
+
+ticket price：周中🈚️，周末100
+
+Song Vibe: HipHop
+
+Chinese address:
+
+Hood 巨鹿路158号地下一层
+
+English address:
+Hood, B1, 158 Julu Road, Shanghai
+
+Nearest station:
+
+13号線淮海中路 - 288m
+Line 13: Middle Huaihai Road (288m walk)
+
+
+clubCategories: large dance pool, hiphop
+
+------
+
+- ORii @OriiClub
+    
+    hashtag: club, alcohol, Kpop, HipHop, recommend
+
+    clubCategories: Diversified, Kpop, HipHop, EDM, R&B
+
+    Entry fee: 平时门票100一人，周末150一人送一瓶啤酒
+
+营业时间：
+
+ticket price：Address:
+
+Chinese address: 
+ORii 黄浦区淮海中路566号二楼
+
+English address:
+ORii, 2F, 566 Huaihai Middle Road, Huangpu, Shanghai
+
+nearest station:
+13号線淮海中路 - 350m
+Line 13: Middle Huaihai Road (350m walk)
+
+--------
+
+- Kezee  @KezeeLiveHouse
+    
+    hashtags: club, alcohol, LiveHouse， 避雷
+营业时间：周一至周日 20:00-次日04:00
+
+ticket price：must have 卡座周中抵消3k，周末5k-8k
+
+Song Vibe: LiveHouse Singing
+
+Chinese address:
+
+Kezee 雁荡路109号Ins復興樂園3楼
+
+English address:
+Kezee, 3F, 109 Yandang Road, Ins Park, Shanghai
+
+Nearest station:
+
+10/13号線一大会址·新天地 - 477m
+Line 10/13: Site of the First National Congress of the CPC · Xintiandi Station (477m walk)
+
+
+
+--------
+- DirtyHouse  @DirtyHouseClub
+    
+    hashtags: club, alcohol, Techno
+
+    营业时间：周五至周日 23:00-次日05:00
+
+ticket price：included in the 通票 with a free drink自选鸡尾酒，基本是基酒➕可乐或者苏打水。 | 周末100 with a drink / 158 with unlimited drink
+
+Song Vibe: Techno
+
+Chinese address:
+
+Dirty House 雁荡路109号Ins復興樂園4楼
+
+English address:
+Dirty House, 4F, 109 Yandang Road, Ins Park, Shanghai
+
+Nearest station:
+
+10/13号線一大会址·新天地 - 477m
+Line 10/13: Site of the First National Congress of the CPC · Xintiandi Station (477m walk)
+
+----------
+- Friends  @FriendsClub
+    
+    hashtags: club, alcohol, Pop songs
+
+    营业时间：周三至周日 21:30-次日04:30
+
+ticket price：周中128💰，周末统一168💰 吧台畅饮
+
+Song Vibe: Pop songs mixing with many Chinese DJ songs
+
+Chinese address:
+
+Friends 雁荡路109号Ins復興樂園5楼
+
+English address:
+Friends, 5F, 109 Yandang Road, Ins Park, Shanghai
+
+Nearest station:
+
+10/13号線一大会址·新天地 - 477m
+Line 10/13: Site of the First National Congress of the CPC · Xintiandi Station (477m walk)
+
+-----------
+
+
+- AnotherSide  @AnotherSideClub
+    
+    hashtags: club, alcohol, EDM, Pop songs
+
+    营业时间：周五至周日 22:00-次日05:00
+
+ticket price：周中150💰，周末统一188💰 with two drinks | one free drink for 通票
+
+Song Vibe: 音乐风格比较综合，整体偏Edm
+
+Chinese address:
+
+Another Side 雁荡路109号Ins復興樂園6楼
+
+English address:
+Another Side, 6F, 109 Yandang Road, Ins Park, Shanghai
+
+Nearest station:
+
+10/13号線一大会址·新天地 - 477m
+Line 10/13: Site of the First National Congress of the CPC · Xintiandi Station (477m walk)
+
+
+-----------
+- Freshmen  @FreshmenClub
+    
+    hashtags: club, alcohol, Pop songs, Big Dance Floor
+    营业时间：周五至周日 22:00-次日04:00
+
+ticket price：included in the 通票 and has a 一杯瓶装啤酒 | 周中98💰，周末统一188💰 吧台畅饮
+
+Song Vibe: American Pop songs
+
+Chinese address:
+
+Freshmen 雁荡路109号Ins復興樂園1楼
+
+English address:
+Freshmen, 1F, 109 Yandang Road, Ins Park, Shanghai
+
+Nearest station:
+
+10/13号線一大会址·新天地 - 477m
+Line 10/13: Site of the First National Congress of the CPC · Xintiandi Station (477m walk)
+
+---------
+- Lafin  @LafinClub
+    
+    hashtags: club, alcohol, HipHop, Pop songs, recommend
+
+    营业时间：周五至周日 22:00-次日05:00
+
+ticket price：周中150💰，周末统一188💰 with two drinks
+
+Song Vibe: 音乐风格比较综合，整体偏Hip-hop
+
+Chinese address:
+
+Lafin 雁荡路109号Ins復興樂園6楼
+
+English address:
+Lafin, 6F, 109 Yandang Road, Ins Park, Shanghai
+
+Nearest station:
+
+10/13号線一大会址·新天地 - 477m
+Line 10/13: Site of the First National Congress of the CPC · Xintiandi Station (477m walk)
+
+----------
+- Radi  @RadiClub
+    
+    hashtags: club, alcohol, EDM, Pop songs, recommend
+    营业时间：周三至周日 22:00-次日06:00
+
+ticket price：included in the 通票自选6选一鸡尾酒，我选的菠萝的还行，最好喝的一家。| 周中120💰，周末统一180💰 with a drink
+
+Song Vibe: 多元化电子音乐酒吧，流行音乐
+
+Chinese address:
+
+Radi 雁荡路109号Ins復興樂園3楼
+
+English address:
+Radi, 3F, 109 Yandang Road, Ins Park, Shanghai
+
+Nearest station:
+
+10/13号線一大会址·新天地 - 477m
+Line 10/13: Site of the First National Congress of the CPC · Xintiandi Station (477m walk)
+
+--------------
+- Hush  @HushClub
+    
+    hashtags: club, alcohol, Hip Hop, Pop songs, recommend
+营业时间：周三至周日 22:00-次日04:00
+
+ticket price：included in the 通票 and has 两杯随机鸡尾酒，还挺好喝 | 周中88💰、周末158 买票均可吧台畅饮8种鸡尾酒。
+
+Song Vibe: 音乐偏Hip-hop，气氛超嗨，喷气最猛最凉快。
+
+Chinese address:
+
+Hush 雁荡路109号Ins復興樂園2楼
+
+English address:
+Hush, 2F, 109 Yandang Road, Ins Park, Shanghai
+
+Nearest station:
+
+10/13号線一大会址·新天地 - 477m
+Line 10/13: Site of the First National Congress of the CPC · Xintiandi Station (477m walk)
+
+
+-------------
+    - Culture  @CultureClub
+    
+    hashtags: club, alcohol, LGBT, HipHop, Pop songs, recommend
+    
+    营业时间：周五至周日 22:00-次日05:00
+    
+    ticket price：included in the 通票 with 一杯shot，不好喝，酒量不行的别喝 ｜ $100 with a drink (for boys)
+    
+                       $159 with a drink (for girls)
+    
+    Song Vibe: Hiphop, pop songs
+    
+Chinese address: 
+Culture 雁荡路109号Ins復興樂園4楼
+English address:
+Culture, 4F, 109 Yandang Road, Ins Park, Shanghai
+    
+    Nearest station:
+    10/13号線一大会址·新天地 - 477m
+    Line 10/13: Site of the First National Congress of the CPC · Xintiandi Station (477m walk)

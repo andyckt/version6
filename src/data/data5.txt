@@ -1,0 +1,463 @@
+ProfileInterface is BarClub
+accountType barandclub
+merchantType: string;
+
+pricePerPerson?: number;  
+entryFee?: number;        
+nearbyMidnightFood?: string[];
+clubCategories: string[];   
+
+  languagesSpoken?: string[];
+  michelinStars?: number;
+
+district
+branchDistrict
+---------
+district
+branchDistrict
+clubCategories : conditioanl rendering
+what are the options for clubCategories right now?
+
+---------
+ProfileInterface is BarClub
+accountType barandclub
+merchantType: MusicBar   
+clubCategories: 'Cool Ceiling'
+Insomnia  @InsomniaBar
+hashtags: takepicture, bar, alcohol, RedFlag, Huangpu
+营业时间：周一至周日 19:00-02:00
+pricePerPerson =  $110
+
+Phone:13641755928
+
+Chinese address:
+Insomnia 淮海中路新歌766号1-03室
+
+English address:
+
+
+Nearest station:
+
+13号線淮海中路2出口 - 110m
+
+-------
+ProfileInterface is BarClub
+accountType barandclub
+merchantType: StreetBar   
+- Jolly Bar  @JollyBar
+    
+    hashtags: 黃埔區, 进贤路, good drink, bar, alcohol, recommend, affordable
+营业时间：周一至周日 16:30-00:30
+
+pricePerPerson: $30
+clubCategories: great food, great drink
+Need booking? No need
+
+Phone : 19301449569
+
+Chinese address: 
+Jolly Bar 进贤路151号
+
+English address:
+
+
+Nearest station:
+
+13号線淮海中路 - 540m
+
+-------
+
+ProfileInterface is BarClub
+accountType barandclub
+merchantType: JapaneseBar   
+clubCategories:
+
+Southern Cross  @SourthernCrossBar
+    
+    hashtags: date, quiet bar, good drink, bar, alcohol, recommend,
+
+营业时间：周一至周日 19:00-02:00 
+
+pricePerPerson：around $130 a drink
+
+Need booking? No need, can walk in,
+
+Phone: 021-54047211 / 15900595192
+
+Chinese address:
+南十字星 淮海中路1276号（近华亭路）
+
+English address:
+
+Nearest station:
+1号線 常熟路 - 66m
+
+-------
+accountType barandclub
+merchantType: WorldTop50  
+clubCategories:
+
+SpeakLow @SpeakLowBar
+hashtags: barfood, good drink, bar, alcohol, long queue
+
+营业时间：周一至周四,周日 18:00-02:00 周五,周六 18:00-03:00 
+
+pricePerPerson： $120
+
+Need booking? Not accept booking, only walk in, after 6:30pm seats are full, recommend arrive earlier (三楼需要提前预约)
+
+Phone: 021-64160133
+
+Chinese address: 
+Speak Low 彼楼复兴中路579号（近瑞金二路）
+
+English address:
+
+Nearest station:
+
+13号線淮海中路路 - walk 740m
+
+--------
+ProfileInterface is BarClub
+accountType barandclub
+merchantType: Martini  
+clubCategories: Japanese, 
+- Suzu  @SuzuBar
+    
+    hashtags: Japanese, martini, good drink, bar, alcohol, recommend
+
+    营业时间：周一至周日 19:00-02:00 
+
+ a cocktail drink：$130 a drink
+
+Need booking? 周末很火 建议提前电话预约
+
+Click Phone Icon: 021-31029289
+
+[Click Address:
+
+Show this to Taxi Driver:
+Suzu 华山路301号MORE华山一楼A5
+
+English address:
+
+Copy and paste to Baidu map
+
+Nearest station:
+
+14号線靜安寺站12口 - 220m]
+
+-------
+ProfileInterface is BarClub
+accountType barandclub
+merchantType: Martini  
+clubCategories: Japanese, 
+
+- Aba Whisky Bar  @AbaWhiskyBar
+    
+    hashtags: 打卡, barfood, good drink, date, whisky, quiet, bar, alcohol, recommend,
+
+    营业时间：周五,周六 18:00-02:00 周一至周四,周日 18:00-01:00
+
+ pricePerPerson: $120
+
+Need booking? No need, Can walk in
+Phone 021-53099556
+
+Chinese address: 
+Aba Whisky Bar 瑞金二路街道瑞金二路89号
+
+English address:
+
+
+Nearest station:
+
+1号線陝西南路 - 533m
+
+--------
+ProfileInterface is BarClub
+accountType barandclub
+merchantType: Martini  
+clubCategories: Japanese, 
+
+- Paal  @PaalBar
+    
+    hashtags: good drink, bar, alcohol, recommend
+
+    营业时间：周一至周日 19:30-02:00 
+
+ a cocktail drink：$98 a drink
+
+Need booking? No need, can walk in, highly recommend arrive earlier
+
+Click Phone Icon: no phone no
+
+[Click Address:
+
+Show this to Taxi Driver:
+Paal 南昌路94号
+
+English address:
+
+Copy and paste to Baidu map
+
+Nearest station:
+
+13号線淮海中路 - 570m]
+
+-------
+
+- PonyUp  @PonyUpBar
+    
+    hashtags: barfood, good drink, bar, alcohol, recommend
+
+    营业时间：周一至周四,周日 13:00-01:00 周五,周六 13:00-02:00
+
+ a cocktail drink：around $95
+
+Need booking? No need, Can walk in, 9:30pm peak time, try to arrive earlier
+
+Click Phone Icon: 13472467476
+
+[Click Address:
+
+Show this to Taxi Driver:
+Pony Up 进贤路230号
+
+English address:
+
+Copy and paste to Baidu map
+
+Nearest station:
+
+1号線陝西南路 - 580m]
+
+-------
+ProfileInterface is BarClub
+accountType barandclub
+merchantType: Rooftop Bar  
+clubCategories: Nightview, date
+
+- Sir Elly’s Terrace  @SirEllys
+    
+    hashtags: 打卡, date, bar, alcohol, nightview, rooftop, popular, recommend, affordable
+
+营业时间：周一至周日 17:00-24:00
+
+ a cocktail drink：$150 and 服务费16.6% 人均比flair低
+
+Need booking? Can walk in, highly recommend arriving earlier, around 8pm, 9-10pm is peak time, more people
+
+Click Phone Icon: 021-23276756 / 021-23272888
+
+[Click Address:
+
+Show this to Taxi Driver:
+艾利爵士露台酒吧 中山东一路32号半岛酒店14楼
+
+English address:
+
+Copy and paste to Baidu map
+
+Nearest station:
+
+2/10号線南京東路站 - 600m]
+
+-------
+
+- 丽思卡尔顿露台酒吧 Flair  @FlairBar
+    
+    hashtags: dinner, date, 打卡, bar, alcohol, nightview, rooftop, popular, recommend, affordable
+
+营业时间：周一至周四,周日 12:00-01:00 周五,周六 12:00-02:00 
+
+ a cocktail drink：$100+
+
+Highly recommend to 提前一天打电话预定一下就行 打他们电话预约, around one day before, super popular
+
+If walk in, recommend arrive earlier, around 6:30pm, building light starts at 7pm
+
+Click Phone Icon: 021-20201717 / 021-20201778
+
+[Click Address:
+
+Show this to Taxi Driver:
+FLAIR顶层餐厅酒吧世纪大道8号国金中心上海浦东丽思卡尔顿酒店58楼
+
+English address:
+
+Copy and paste to Baidu map
+
+Nearest station:
+
+2号線陸家嘴站 - 300m]
+
+
+-------
+
+- 罗斯福公馆色戒 Roosevelt Sky Bar  @RooseveltSkyBar
+    
+    hashtags: 打卡, bar, date, alcohol, nightview, rooftop, popular, recommend
+
+营业时间：周一至周日 14:00-02:00 
+
+ a cocktail drink：酒水价格一杯鸡尾酒～140rmb
+
+Can walk in. recommend to arrive 18:30，人不多 19:00陆家嘴亮灯 可以提前卡好机位
+
+Click Phone Icon: 021-23220800
+
+Click website: https://27bund.com/roosevelt-sky-bar/
+
+[Click Address:
+
+Show this to Taxi Driver:
+罗斯福色戒酒吧(外滩店) 中山东一路27号罗斯福公馆(近北京东路)9楼
+
+English address:
+
+Copy and paste to Baidu map
+
+Nearest station:
+
+2/10号線南京東路 - 555m]
+
+-------
+
+- 外滩18号KEV露台  @KEVBar
+    
+    hashtags: 打卡, date, bar, alcohol, nightview, rooftop, popular, recommend, affordable
+
+营业时间：周一至周日 20:00-04:00
+
+ a cocktail drink：$128
+
+Can walk in. but early, recommend 8pm
+
+can also recommend booking, to book 露台位置
+
+Click Phone Icon: 021-53833657
+
+[Click Address:
+
+Show this to Taxi Driver:
+KEV 中山东一路18号7层
+
+English address:
+
+Copy and paste to Baidu map
+
+Nearest station:
+
+2/10号線南京東路 - 482m
+
+----------
+
+- 船长酒吧 The Captain  @CaptainBar
+    
+    hashtags: 打卡, date, bar, alcohol, nightview, rooftop, popular, recommend, affordable
+
+营业时间：周一至周五 14:00-01:00 周六,周日 11:30-01:00
+
+ 人均：$157
+
+Can walk in. but recommend booking, to book 露台位置
+
+WeChat: thecaptain37
+
+[Click Address:
+
+Show this to Taxi Driver:
+
+The Captain Bar 福州路37号船长酒店6搂
+
+English address:
+
+Copy and paste to Baidu map
+
+Nearest station:
+
+2/10号線南京東路 - 551m]
+
+
+
+
+
+
+
+
+
+
+-------
+ProfileInterface is MultiLocationMerchant
+accountType barandclub
+merchantType: Bar   
+- Perrys  @PerrysBar
+    
+    hashtags: predrink, bar, alcohol, recommend, affordable
+分店1 (close to most of the nightclubs)
+
+Need booking? no need, Can walk in
+
+[Click Address:
+
+Show this to Taxi Driver:
+
+Perrys 淮海百盛店 淮海中路918号百盛购物中心8楼L8 
+
+Copy and paste to Baidu map
+
+English address:
+
+Phone icon: 18930506970
+
+营业时间：周一至周日 19:00-05:00
+
+Nearest station:
+
+号線 路 - m
+
+]
+
+分店2 (close to Max nightcub)
+
+Need booking? no need, Can walk in
+
+[Click Address:
+
+Show this to Taxi Driver:
+
+Perrys 黃浦區新淮海二店 淮海东路45-47号东淮海国际大厦3楼
+
+Copy and paste to Baidu map
+
+English address:
+
+Phone icon: 18930520539
+
+营业时间：周一至周日 19:00-05:00
+
+Nearest station:
+
+号線 路 - m]
+
+分店3 (further away) (close to @水果湯泉 五角场店)
+
+Need booking? no need, Can walk in
+
+[Click Address:
+
+Show this to Taxi Driver:
+Perrys五角场店 国定路335号3层
+
+Copy and paste to Baidu map
+
+English address:
+
+Phone icon: 18939705197
+
+营业时间：周一至周日 19:00-03:00
+
+Nearest station:
+
+号線 路 - m]

@@ -1,0 +1,782 @@
+accounttype: restaurant
+Merchanttype: restaurant - SingleLocationMerchant
+Dong Tai Xiang @dongtaixiang
+hashtags: restaurant, lunch, breakfast, midnight, chinese, pan-fried buns, takepicture, good food, affordable, recommend, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 全天
+人均：$30
+Need booking? 需要到店排隊
+Phone: 021-63595808
+Chinese address:
+东泰祥生煎馆(重庆北路店)
+重庆北路188号
+English address:
+188 Chongqing North Road, Shanghai
+Nearest station:
+14号線 一大會址黃陂南路站4出口 - walk 600m
+Line 14: Site of the First National Congress of the CPC & South Huangpi Road Station, Exit 4 (600m walk)
+———
+accounttype: restaurant
+Merchanttype: - SingleLocationMerchant
+Yang's Dumpling
+@yangsdumpling
+hashtags: restaurant, breakfast, lunch, takepicture, Chinese, pan fried buns, good food, affordable, recommend, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 All Day
+人均：$30
+Need booking? 需要到店排隊
+Phone: 021-63330520
+Chinese address:
+小杨生煎(福州路店) 南京东路街道福州路567号1楼东北侧-b
+English address:
+Unit B, Northeast Section, 1F, 567 Fuzhou Road, Shanghai
+
+Nearest station:
+1号线人民广场站出口 - walk 420m
+Line 1: People's Square Station (420m walk)
+
+
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocationMerchant
+Chongqing Banquet
+@chongqingbanquet
+hashtags: restaurant, dinner, birthday, date, takepicture, luxury, Chinese, Hotpot, good food, recommend, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 11:00-14:00 17:00-22:30
+人均：$800
+Need booking? 需要电话预约
+Phone: 021-63307725
+Chinese address:
+ 宴山城重庆火锅(外滩江景店)
+广东路20号外滩5号6楼江景
+English address:
+6F, No.5 Bund, 20 Guangdong Road, Shanghai (Riverside View)
+
+Nearest station:
+14号线豫园站6出口 - walk 680m
+Line 14: Yuyuan Garden Station, Exit 6 (680m walk)
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Qing Ting Cheung Du Hotpot
+@qingtinghotpot
+hashtags: restaurant, dinner, takepicture, Chinese, Hotpot, good food, recommend, Jingan
+district: ['Jingan']
+营业时间：周一至周日 11:00-02:00
+人均：$150
+Need booking? Always long line, 到店內取號
+Phone: 18916507067  / 021-62170017
+Chinese address: 卿庭·成都鲜货火锅
+靜安區愚园路68号CP静安购物中心7楼L7-09
+English address:
+Unit L7-09, 7F, CP Jingan Shopping Center, 68 Yuyuan Road, Shanghai
+
+Nearest station:
+2号线靜安寺站出口 - walk 310m
+Line 2: Jingan Temple Station (310m walk)
+
+——
+accounttype: restaurant
+Merchanttype:
+MultiLocation
+Seafood Wong Hotpot @wonghotpot
+hashtags: restaurant, lunch, dinner, chinese, hotpot, takepicture, good food, affordable, midnight, recommend, Putuo, Changning, Yangpu
+district: ['Putuo','Changning','Yangpu]
+
+人均：$110
+
+Branch (Changning)
+Need booking? Only accept walk-in
+Chinese address:
+王富贵火锅(中山公园店)
+龙之梦黄中庭9楼
+English address:
+9F, Longemont Zhongting, 1555 Changning Road, Shanghai
+Phone: 18916162530
+营业时间：周一至周日 11:00-05:00
+Nearest station:
+2号線中山公園站出口 - walk 30m
+Line 2: Zhongshan Park Station (30m walk)
+
+
+Branch (Putuo)
+Need booking? Only accept walk-in
+Chinese address:
+王富贵火锅(长寿路店) 长寿路155号巴黎春天5楼
+English address:
+5F, Paris Spring Mall, 155 Changshou Road, Shanghai
+Phone: 15300859052
+营业时间：周一至周日 11:00-05:00
+Nearest station:
+13号線江寧路站4出口- walk 340m
+Line 13: Jiangning Road Station, Exit 4 (340m walk)
+
+Branch (Yangpu)
+Need booking? Only accept walk-in
+Chinese address:
+王富贵火锅(五角场店)
+淞沪路151号诚品国际中环大厦3楼
+English address:
+3F, Chengguo International Zhonghuan Building, 151 Songhu Road, Shanghai
+Phone: 18017213938
+营业时间：周一至周日 11:00-05:00
+Nearest station:
+10号線江灣體育場站6出口 - walk 50m
+Line 10: Jiangwan Stadium Station, Exit 6 (50m walk)
+
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Two Hotpot @twohotpot hashtags: restaurant, lunch, dinner, Chinese, Hotpot, good food, recommend, affordable, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 11:00-02:00
+人均：$120
+Need booking? 到店內取號
+Phone Icon: 021-63368222
+Chinese address:
+Show this to Taxi Driver: 二火锅(上海店)
+浙江中路283号2层B区2-1至2-3
+English address:
+Units 2-1 to 2-3, Area B, 2F, 283 Middle Zhejiang Road, Shanghai
+
+Nearest station:
+1号线人民廣場站14出口 - walk 370m
+Line 1: People's Square Station, Exit 14 (370m walk)
+------
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Ding Te Le Noodles @dingtelenoodles
+hashtags: restaurant, midnight, Chinese, affordable, Huangpu
+营业时间：周一至周日 全天
+人均：$40
+Need booking? No need booking, just walk in
+Phone: 021-63391259 / 13818055200
+Chinese address:
+顶特勒粥面馆(淮海路店)
+淮海中路494弄22号工商银行旁
+English address:
+Unit 22, Lane 494, Middle Huaihai Road (Next to ICBC), Shanghai
+
+Nearest station:
+14号线一大會址黃陂南路站7出口 - walk 450m
+Line 14: Site of the First National Congress of the CPC - Huangpi South Road Station, Exit 7 (450m walk)
+-------
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Zhao Zhou Noodles @zhaozhounoodles
+hashtags: restaurant, midnight, Chinese, affordable, Huangpu
+营业时间：周一至周日 全天
+人均：$30
+Need booking? No need booking, just walk in
+Phone: 13761502036
+Chinese address:
+肇周拉面
+肇周路33号
+English address:
+33 Zhaozhou Road, Shanghai
+
+Nearest station:
+8号线老西門站3出口 - walk 300m
+Line 8: Laoximen Station, Exit 3 (300m walk)
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+LikeSome Chicken Pot @likesomechickenpot
+hashtags: restaurant, midnight, dinner, hotpot, good food, Chinese, affordable, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 17:00-05:00
+人均：$110
+Need booking? No need booking, just walk in
+Phone: 18121332304
+Chinese address:
+禄婶鲜切鸡煲(复兴公园·INS新乐园店)
+雁荡路109号INS复兴公园2楼
+English address:
+2F, INS Fuxing Park, 109 Yandang Road, Shanghai
+
+Nearest station:
+13号线一大會址新天地站5出口 - walk 720m
+Line 13: Site of the First National Congress of the CPC - Xintiandi Station, Exit 5 (720m walk)
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+3 Warehouse @3warehouse
+hashtags: restaurant, dinner, birthday, date, takepicture, Chinese food, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 10:00-21:30
+人均：$150
+Need booking? 不能提前预订 排队时间一个多小时
+Phone: 021-58888829 18721193809
+Chinese address:
+3号仓库·餐厅(新世界城店)
+南京西路2-68号新世界城4楼A29
+English address:
+Unit A29, 4F, New World City, 2-68 West Nanjing Road, Shanghai
+Nearest station:
+2号線人民廣場站 - walk 140m
+Line 2: People's Square Station (140m walk)
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Lao Jie Lin @laojielin
+hashtags: restaurant, lunch, dinner, affordable, birthday, date, takepicture, Chinese, good food, Putuo
+district: ['Putuo']
+营业时间：周一至周日 10:00-24:00
+人均：$110
+Need booking? 需要到店排隊
+Phone: 19921168887
+Chinese address:
+老街邻牛大骨(上海总店) 骊山路26号-10号临
+English address:
+Unit 26-10, 26 Lishan Road, Shanghai
+
+Nearest station:
+3/4号線中潭路站1出口 - walk 970m
+Lines 3/4: Zhongtan Road Station, Exit 1 (970m walk)
+
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+
+Crab & Painting @crabandpainting
+hashtags: restaurant, dinner, luxury, birthday, date, takepicture, Chinese, good food, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 11:00-14:00 17:00-22:30
+人均：$1100
+Need booking?
+Phone: 021-63616660
+Chinese address:
+蟹仙画宴Crab&Painting(外滩五号店)
+广东路20号外滩5号2楼
+English address:
+2F, No.5 Bund, 20 Guangdong Lu, Huangpu District, Shanghai
+
+Nearest station:
+14号線豫園站6出口 - walk 690m
+Line 14: Yuyuan Garden Station, Exit 6 (690m walk)
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+
+Oriental Architecture @orientalarchitecture
+hashtags: restaurant, dinner, luxury, birthday, date, takepicture, Chinese, good food, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 11:00-14:00 17:00-22:30
+人均：$820
+Need booking? 電話預約
+Phone: 13512129077 / 021-63306816
+Chinese address: 成因绕梁Oriental Architecture(外滩27号店)
+中山东一路27号罗斯福公馆2楼202号
+English address:
+No. 202, 2nd Floor, Roosevelt Mansion, No. 27 Zhongshan East 1st Road, Shanghai
+
+Nearest station:
+10号線南京東路站6出口 - walk 600m
+Line 10: East Nanjing Road Station, Exit 6 (600m walk)
+
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Hoxa Bistro @hoxabistro
+hashtags: restaurant, dinner, birthday, date, takepicture, superpicture, western, good food, recommend, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 11:00-23:00
+人均：$140
+Need booking? can book or walk in
+Phone: 18930939307
+Chinese address:
+hoxa bistro现代新疆小酒馆(外滩沙美店)
+北京东路194号沙美大楼二楼
+English address:
+2F, Shamei Building, 194 Beijing East Road, Shanghai
+
+Nearest station:
+10号線南京東路站6出口 - walk 360m
+Line 10: East Nanjing Road Station, Exit 6 (360m walk)
+
+——
+中餐厅 Shanghai Cuisine
+
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Oriental House @orientalhouse
+hashtags: restaurant, dinner, birthday, date, luxury, takepicture, Chinese, good food, recommend, Jingan
+district: ['Jingan']
+营业时间：周一至周四 11:00-14:00 17:00-21:00 周五至周日 11:00-14:00 16:30-21:00
+人均：$320
+Need booking? 不能提前预订 需要现场排队
+Phone: 19521377866
+Chinese address:
+醉东Oriental House(静安嘉里店)
+南京西路嘉里中心北区4层N4-15号
+English address:
+Unit N4-15, 4F North Zone, Kerry Center, West Nanjing Road, Shanghai
+
+Nearest station:
+7号線靜安寺站6出口 - walk 90m
+Line 7: Jing'an Temple Station, Exit 6 (90m walk)
+
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Cheng Long Hang Crab @chenglonghangcrab
+hashtags: restaurant, dinner, birthday, date, luxury, takepicture, Chinese, good food, recommend, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 11:00-15:00 17:00-22:00
+人均：$350
+Need booking? 可以電話预订 或 现场排队
+Phone: 021-63212010
+Chinese address:
+成隆行·蟹王府(九江路店)
+九江路216号
+English address:
+216 Jiujiang Road, Shanghai
+
+Nearest station:
+10号線南京東路站出口 - walk 230m
+Line 10: East Nanjing Road Station (230m walk)
+
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Loong Dock Crab House @loongdockcrabhouse
+hashtags: restaurant, dinner, birthday, date, luxury, takepicture, Chinese, good food, recommend, Huangpu
+district: ['Huangpu']
+营业时间：周一至周五 10:30-14:30 17:00-21:30 周六,周日 10:30-21:30
+人均：$500
+Need booking? 可以電話预订 或 现场排队
+Phone: 021-57939777
+Chiense address:
+龍码头·螃蟹王(博荟店)
+中山南一路788号博荟广场L2层12号
+English address:
+Unit 12, L2, Bo Hui Plaza, 788 South Zhongshan No.1 Road, Shanghai
+
+Nearest station:
+13号線世博會博物館站出口 - walk 10m
+Line 13: World Expo Museum Station (10m walk)
+
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Shi He Yuan @shiheyuan
+hashtags: restaurant, dinner, birthday, date, luxury, takepicture, Chinese, good food, recommend, Pudong
+district: ['Pudong']
+营业时间：周一至周日 11:00-14:00 17:00-20:30
+人均：$300
+Need booking? 電話预订
+Phone: 021-58757773
+Chinese address:
+柿合缘新京菜(国金中心商场店) 世纪大道8号国金中心L4-402&403
+English address:
+Units 402 & 403, 4F, IFC Mall, 8 Century Avenue, Shanghai
+
+Nearest station:
+14号線陸家嘴站7出口 - walk 30m
+Line 14: Lujiazui Station, Exit 7 (30m walk)
+
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Sheng Yong Xing @shengyongxing
+hashtags: restaurant, dinner, birthday, date, luxury, takepicture, Chinese, good food, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 11:30-15:00 17:30-21:30
+人均：$450
+Need booking? 電話预订
+Phone: 021-63302885
+Chinese address:
+晟永興(外滩店)
+外滩5号5楼
+English address:
+5F, Bund 5, Shanghai
+
+Nearest station:
+14号線豫園站6出口 - walk 800m
+Line 14: Yuyuan Garden Station, Exit 6 (800m walk)
+
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Lao Xing Xian @laoxingxian
+hashtags: restaurant, dinner, birthday, date, luxury, takepicture, Chinese, good food, recommend, Huangpu
+district: ['Huangpu']
+营业时间：周一至周日 11:00-14:00 17:00-21:00
+人均：$240
+Need booking? 電話预订
+Phone: 13681653751
+Chinese address:
+老兴鲜(黄浦店)
+淮海中路918号百盛商场5楼
+English address:
+5F, Parkson Shopping Mall, 918 Middle Huaihai Road, Shanghai
+
+Nearest station:
+1号線陝西南路站2出口 - walk 60m
+Line 1: South Shaanxi Road Station, Exit 2 (60m walk)
+
+——
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+Da Bao Kou Fu @dabaokoufu
+hashtags: restaurant, dinner, lunch, takepicture, Chinese, good food, recommend, affordable, Changning
+district: ['Changning']
+营业时间：周一至周日 10:30-22:00
+人均：$130
+Need booking? 現場排隊
+Phone: 15026886222
+Chinese address:
+大寶口福·海鲜排档·平价海鲜(长宁来福士店) 长宁路1191号长宁来福士广场东区4层22-24号
+English address:
+Units 22-24, 4F, Raffles City Changning East Zone, 1191 Changning Road, Shanghai
+
+Nearest station:
+3/4号線中山公園站7出口 - walk 210m
+Lines 3/4: Zhongshan Park Station, Exit 7 (210m walk)
+
+——
+Western Food
+
+accounttype: restaurant
+Merchanttype:
+SingleLocation
+
+COMMUNE RESERVE @communereserve
+hashtags: restaurant, dinner, birthday, date, girls night, italian, western, good food, recommend, affordable, Pudong
+district: ['Pudong']
+营业时间：周一至周五 11:00-02:00 周六,周日 10:00-02:00
+人均: 150
+Need booking? No need booking 工作日去 not many people 但周末人多
+Phone: 19117256073
+Chinese address: COMMUNE RESERVE幻师(上海环球金融中心店)
+世纪大道100号上海环球金融中心B1（
+English address:
+B1, Shanghai World Financial Center, 100 Century Avenue, Shanghai
+
+Nearest station:
+14号線陸家嘴站8出口 - walk 690m
+Line 14: Lujiazui Station, Exit 8 (690m walk)
+-----
+Italian Pizza Shop
+
+accounttype: restaurant
+Merchanttype:
+SingleLocationMerchant
+
+OTF Sicilia @otfsicilia hashtags: restaurant, dinner, lunch, birthday, date, takepicture, italian, western, good food, recommend, Pudong
+district: ['Pudong']
+营业时间：周一至周日 11:00-21:00
+人均：$150
+Need booking? No booking, 排队walk in
+Phone: 17701671603
+Chinese address: 假日餐厅
+东育路500弄1-9号前滩太古里木区W-L3-04a（HUAWEI楼上）
+English address:
+Unit W-L3-04a, Wood Zone, Taikoo Li Qiantan, 500 Dongyu Road, Shanghai
+
+Nearest station:
+6/8/11号线东方体育中心站1出口 - walk 130m
+Lines 6/8/11: Oriental Sports Center Station, Exit 1 (130m walk)
+
+———
+accounttype: restaurant
+Merchanttype:
+SingleLocationMerchant
+Riviera Italian Restaurant @rivieraitalian
+hashtags: restaurant, dinner, lunch, birthday, date, superpicture, takepicture, italian, western, Pudong
+district: ['Pudong']
+营业时间：周一至周日 11:30-23:00
+人均：$188
+Need booking? 排队walk in, highly recommend to arrive at least 5:30pm to get good seats
+Phone: 021-58775966
+Chinese address:
+天水恋意大利餐厅(滨江大道店)
+陆家嘴街道滨江大道3082号(滨江大道富都段滨江花园内近富城路)
+English address:
+3082 Binjiang Avenue, Lujiazui Subdistrict, Shanghai
+
+Nearest station:
+14号线陸家嘴站9B出口 - walk 620m
+Line 14: Lujiazui Station, Exit 9B (620m walk)
+
+———
+accounttype: restaurant
+Merchanttype: 
+SingleLocationMerchant
+Le Jardin Secret @lejardinsecret
+hashtags: restaurant, dinner, birthday, date, takepicture, good food, recommend, affordable, Changning
+district: ['Changning']
+营业时间：周一至周日 11:00-22:00
+人均：$120
+Need booking? Can call to book. Suggest go for lunch instead of dinner for walk-in
+Phone: 021-60821775
+Chinese address:
+秘密花园(法华镇路店)
+新华路街道法华镇路525号创意树林入口处(香花桥路口)
+English address:
+Entrance of Creative Woods, 525 Fahua Town Road, Xinhua Road Subdistrict, Shanghai
+
+Nearest station:
+10号線交通大學站5出口 - walk 1.1km
+Line 10: Shanghai Jiao Tong University Station, Exit 5 (1.1km walk)
+
+———
+accounttype: restaurant
+Merchanttype: 
+SingleLocationMerchant
+
+Don Quixote Spanish Restaurant Wine House @DonQuixote
+hashtags: restaurant, dinner, birthday, date, takepicture, Spanish, good food, recommend, Pudong
+district: ['Pudong']
+营业时间：周一至周日 11:00-24:00
+人均：$180
+Need booking? Need, can walk in if seats are available
+ Phone: 15317206957 18602128217
+Chinese address: Don Quixote堂吉诃德·西班牙餐厅酒馆(陆家嘴滨江店) 富城路14号02单元
+English address:
+Unit 02, 14 Fucheng Road, Shanghai
+
+Nearest station:
+14号線陸家嘴站10出口 - 740m
+Line 14: Lujiazui Station, Exit 10 (740m walk)
+
+———
+accounttype: restaurant
+Merchanttype: 
+SingleLocationMerchant
+
+Lunette By Amanda @lunettebyamanda
+hashtags: restaurant, dinner, birthday, date, takepicture, luxury, French, western, wellington, good food, recommend, Huangpu
+district: ['Huangpu']
+营业时间：周六,周日 11:00-16:00 16:30-23:30 周一至周五 11:30-14:30 16:30-23:30
+人均：$680
+Need booking? 需要电话预约, cannot walk in
+ Phone: 021-63308831 021-63308878
+Chinese address: 弦月窗(外滩店)
+外滩街道四川中路133号7楼(近广东路)
+English address:
+7F, 133 Middle Sichuan Road, The Bund Subdistrict, Shanghai
+
+Nearest station:
+14号线豫园站6出口 - walk 650m
+Line 14: Yuyuan Garden Station, Exit 6 (650m walk)
+
+———
+accounttype: restaurant
+Merchanttype: 
+SingleLocationMerchant
+
+Restaurant Cuivre @restaurantcuivre
+hashtags: restaurant, dinner, birthday, date, takepicture, French, western, good food, recommend, Xuhui
+district: ['Xuhui']
+营业时间：周一至周日 11:30-14:00 17:30-22:00
+人均：$280
+Need booking? no need booking, can walk in
+Phone: 021-64374219
+Chinese address: Restaurant Cuivre古铜法式餐厅
+淮海中路1502号-1临（近乌鲁木齐路）
+English address:
+1502-1 Lin, Middle Huaihai Road, Shanghai (Near Urumqi Road)
+
+Nearest station:
+0号线上海图书馆站2出口 - walk 260m
+Line 10: Shanghai Library Station, Exit 2 (260m walk)
+
+
+———
+accounttype: restaurant
+Merchanttype: 
+SingleLocationMerchant
+
+Jean Georges @jeangeorges
+hashtags: restaurant, dinner, birthday, date, takepicture, French, western, good food, recommend, Huangpu
+district: ['Huangpu']
+
+营业时间：周一至周五 11:30-14:30 17:30-21:30 周六,周日 11:30-15:00 17:30-21:30
+人均：$1000
+Need booking? 需要电话预约
+Click Phone Icon: 021-63217733
+Chinese address:
+Jean Georges 外滩街道中山东一路3号外滩三号4楼(近广东路)
+English address:
+4F, Bund 3, 3 East Zhongshan No.1 Road, Shanghai
+
+Nearest station:
+14号线豫园站7出口 - walk 770m
+Line 14: Yuyuan Garden Station, Exit 7 (770m walk)
+
+—————————
+Korean food
+
+accounttype: restaurant
+Merchanttype: 
+SingleLocation
+
+Choga Soy Sauce Crab 초가 간장게장 @chogacrab
+hashtags: restaurant, dinner, lunch, korean, good food, recommend, Minhang
+district: ['Minhang']
+营业时间：周一至周日 11:00-22:30
+人均：$180
+Need booking? Can book or walk in
+Phone: 13564666418
+Chinese address:
+草家真味酱蟹·炭火牛排专门店(天乐广场店)
+银亭路68-78号天乐广场北楼2楼204
+English address:
+Unit 204, 2F North Building, Tianle Plaza, 68-78 Yinting Road, Shanghai
+
+Nearest station:
+10号線龍柏新村站3出口 - walk 580m
+Line 10: Longbai Xincun Station, Exit 3 (580m walk)
+
+------
+accounttype: restaurant
+Merchanttype: 
+SingleLocation
+
+Nabi 나비 @nabikorean
+hashtags: restaurant, dinner, date, birthday, luxury, korean, good food, recommend, Changning
+district: ['Changning']
+
+营业时间：周二至周六 18:00-23:00
+人均：$1088
+Need booking? Need booking on Wechat App
+Phone:
+Chinese address
+武夷路168号WYSH翡悦里1号楼2层201室
+English address:
+Unit 201, 2F, WYSH Feiyue Li Building 1, 168 Wuyi Road, Shanghai
+
+Nearest station:
+11号線江蘇路站7出口 - walk 1.0km
+Line 11: Jiangsu Road Station, Exit 7 (1.0km walk)
+
+——
+accounttype: restaurant
+Merchanttype: 
+SingleLocation
+
+Sanchuan Grilled Ee 장어구이 @grilledee
+hashtags: restaurant, dinner, korean, Minhang, recommend
+district: ['Minhang']
+营业时间：周一至周日 11:00-22:30
+人均：$200
+Need booking? 建议电话预约 特别是周末时段经常需要排队
+Phone: 021-54573750
+Chinese address:
+山川爱烤鳗鱼(金虹桥·井亭苑店)
+虹莘路3811号2楼
+English address:
+Unit 3811-2, 2F, Di Bao Building, 3811 Hongxin Road, Shanghai
+
+Nearest station:
+10号線紫藤路站出口 - walk 980m
+Line 10: Ziteng Road Station (980m walk)
+
+
+——
+accounttype: restaurant
+Merchanttype: 
+SingleLocation
+
+Zhengsanxi BBQ @zhengsanxi
+hashtags: restaurant, dinner, korean, good food, recommend, Minhang
+district: ['Minhang']
+
+营业时间：周一至周日 11:00-03:00
+人均：$120
+Need booking? can walk in
+Phone: 021-54337255 / 13585946606
+Chinese address: 正三熙by韩国街小木屋烤肉(虹泉路1号店)
+虹泉路1101弄46号一楼
+English address:
+Hongquan Road 1101 Long No.46 F1, Minhang, Shanghai
+(Near FamilyMart, Seoraester Back, Gmart East Side 30 Meters)
+Nearest station:
+10号線龍柏新村站3出口 - walk 800m
+Line 10: Longbai Xincun Station, Exit 3 (800m walk)
+
+——
+accounttype: restaurant
+Merchanttype: 
+SingleLocation
+
+Auntie Tang Fan 이모네 국밥 @auntietangfan
+hashtags: restaurant, dinner, korean, Minhang, affordable
+district: ['Minhang']
+营业时间：周一至周五 11:00-15:00 16:30-22:00 周六,周日 11:00-15:00 16:00-22:00
+人均：$60
+Need booking? No need, can walk in
+Phone: 021-34633367
+Chinese address:
+阿姨汤饭面馆(虹泉路店)
+虹泉路1000号井亭大厦2楼
+English address:
+2F, Jingting Building, 1000 Hongquan Road, Shanghai
+Nearest station:
+10号線龍柏新村站3出口 - walk 1.0km
+Line 10: Longbai Xincun Station, Exit 3 (1.0km walk)
+————
+
+accounttype: restaurant
+Merchanttype: 
+SingleLocation
+Qing He Qu BBQ 파푸 한집 BBQ @qinghequ
+hashtags: restaurant, dinner, korean, good food, recommend, Minhang
+district: ['Minhang']
+
+营业时间：周二至周五 11:30-14:00 17:00-21:00 周六,周日 11:30-15:00 16:30-21:00
+人均：$180
+Need booking? no need booking, need to line up
+Phone: 021-34322698
+Chinese address:
+青鹤谷(虹莘路总店)
+虹莘路3998号帝宝大厦2楼
+English address:
+2F, Dibao Building, 3998 Hongxin Road, Shanghai
+Nearest station:
+10号線龍柏新村站3出口 - walk 560m
+Line 10: Longbai Xincun Station, Exit 3 (560m walk)
+
+——
+accounttype: restaurant
+Merchanttype: 
+SingleLocation
+
+88 Restaurant @88restaurant
+hashtags: restaurant, dinner, korean, good food, recommend, Minhang
+district: ['Minhang']
+
+营业时间：周一至周五 11:00-14:00 16:00-21:30 周六,周日 11:00-22:00
+人均：$120
+Need booking? can walk in
+Phone: 021-54337255 / 13585946606
+Chinese address:
+88食堂·烤肉酱蟹(韩国街店)
+井亭大厦b座104室
+
+English address:
+Unit 104, Block B, Jingting Building, Hongquan Road, Shanghai
+
+Nearest station:
+10号線龍柏新村站3出口 - walk 800m
+Line 10: Longbai Xincun Station, Exit 3 (800m walk)

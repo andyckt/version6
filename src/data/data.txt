@@ -1,0 +1,1366 @@
+Xin Tian Di @xintiandi
+
+accountType: attraction
+
+BuildingMerchant
+
+merchanttype: CityWalk
+
+hashtags: citywalk, takepicture, building, mall, place, free, Huangpu
+
+营业时间：周一至周日 11:00-23:00 
+
+Chinese address:
+
+新天地 太仓路181弄2号
+
+English address:
+
+No. 2, Lane 181, Taicang Road, Xintiandi
+
+Nearest station:
+
+10号線大会址新天地站
+
+Line 10: First National Congress of the CPC Site · Xintiandi Station
+
+---
+
+**Name: Wukang Road  @wukangroad**
+
+accountType: attraction
+
+StreetMerchant 
+
+merchanttype: CityWalk
+
+hashtags: street, citywalk, takepicture, place, free, recommend, Xuhui
+
+**Chinese address:**
+
+武康路393号甲
+
+English address:
+
+Wukang Road 393A 
+
+**Nearest station:**
+
+10号線交通大學站7號出口 - walk 300m]
+
+Line 10: Shanghai Jiao Tong University Station, Exit 7 (walk 300m)
+
+---
+
+**Wukang Building @wukangbuilding**
+
+accountType: attraction
+
+BuildingMerchant
+
+merchanttype: CityWalk
+
+Opening hours: All day Monday - Sunday
+
+hashtags: citywalk, takepicture, place, superpicture, free, recommend, Xuhui
+
+Chinese address:
+
+武康大樓 淮海中路1850号
+
+English address:
+
+Wukang Building, 1850 Huaihai Middle Road
+
+**Nearest station:**
+
+10号線交通大學站7號出口 - walk 300m
+
+Line 10: Shanghai Jiao Tong University Station, Exit 7 (walk 300m)
+
+---
+
+Apoli Itabakery @apoliitabakery
+
+accountType: restaurant
+
+SingleLocationMerchant
+
+merchanttype: Bakery
+
+Apoli Itabakery @apoliitabakery
+
+hashtags: citywalk, takepicture, place, snack, coffee, free, recommend, affordable, Changning
+
+营业时间：周一至周日 10:00-20:00 
+
+**average price：**$40
+
+**Phone :** 18019262027 / 13788942654
+
+Chinesee address:
+
+Apoli Itabakery 意大利料理面包坊
+
+兴国路380号
+
+English address:
+
+380 Xingguo Road
+
+**Nearest station:**
+
+10号線交通大學站7號出口 - walk 300m
+
+Line 10: Shanghai Jiao Tong University Station, Exit 7 (walk 300m)
+
+---
+
+The Cottage Cafe @thecottagecafe
+
+SingleLocationMerchant
+
+accountType: restaurant
+
+merchanttype: Cafe
+
+hashtags: citywalk, takepicture, place, snack, coffee, free, recommend, affordable, Xuhui
+
+营业时间：周一至周日 10:30-19:00 19:30-24:00 
+
+**average price：**$40
+
+**Phone :** 18201817395 / 15026991919
+
+Chinese address:
+老麦咖啡馆·TheCottageBar(武康大楼店)
+
+武康路439号武康大楼底楼-1
+
+English address:
+
+Wukang Building, 439 Wukang Road, Unit B1-1, Shanghai
+
+**Nearest station:**
+
+10号線交通大學站7號出口 - walk 300m
+
+Line 10: Shanghai Jiao Tong University Station, Exit 7 (walk 300m)
+
+---
+
+Gathering Cafe  @gatheringcafe
+
+merchanttype: cafe
+
+hashtags: citywalk, takepicture, superpicture, place, snack, coffee, free, recommend, affordable, Xuhui
+
+SingleLocationMerchant
+
+accountType: restaurant
+
+营业时间：周一至周日 09:00-19:00 
+
+**average price：**$40
+
+**Click Phone Icon:** 13818874372
+
+Chinese address:
+集雅GATHERING咖啡(武康路店)
+
+武康路137号底层
+
+English address:
+
+G/F, 137 Wukang Road
+
+**Nearest station:**
+
+10号線交通大學站3號出口 - walk 420m
+
+Line 10: Shanghai Jiao Tong University Station, Exit 3 (walk 420m)
+
+---
+
+Subdued @subdued
+
+hashtags: clothing, place, shopping, recommend, Xuhui
+
+accountType: Shopping
+
+SingleLocationMerchant
+
+merchanttype: fashion
+
+营业时间：周五至周日 10:00-21:00 周一至周四 10:00-20:00
+
+**Phone :** 021-33683052
+
+Chinese address
+Subdued(武康路店)
+
+武康路375号
+
+English address:
+
+375 Wukang Road
+
+**Nearest station:**
+
+10号線上海圖書館站3出口 - walk 690m
+
+Line 10: Shanghai Library Station, Exit 3 (walk 690m)
+
+---
+
+**Anfu Road  @anfuroad**
+
+hashtags: street, citywalk, takepicture, place, free, recommend, Xuhui
+
+accountType: attraction
+
+StreetMerchant
+
+merchanttype: CityWalk
+
+Chinese address:
+
+安福路
+
+English address:
+
+Anfu Road
+
+**Copy** and paste to Baidu map
+
+**Nearest station:**
+
+‌1号线/7号线‌至常熟路站 - walk 10mins
+
+Lines 1 & 7: Changshu Road Station (10min walk)
+
+---
+
+**Wiggle Wiggle  @wigglewiggle**
+
+hashtags: citywalk, takepicture, shopping, place, superpicture, free, recommend, Xuhui
+
+accountType: Shopping
+
+SingleLocation
+
+merchanttype: Shopping
+
+营业时间：周一至周四,周日 10:00-21:00 周五,周六 10:00-22:00
+
+**average price ：**
+
+**Click Phone Icon:** 13052002197 / 13052005783
+
+Chinese address:
+
+Wiggle Wiggle 安福路308号
+
+English address:
+
+308 Anfu Road
+
+**Nearest station:**
+
+10号線上海圖書館站1號出口 - walk 1.1km
+
+Line 10: Shanghai Library Station, Exit 1 (1.1km walk)
+
+---
+
+Brandy Melville (Shanghai) @brandymelville
+
+hashtags: clothing, place, shopping, recommend, Xuhui
+
+accountType: Shopping
+
+SingleLocation
+
+merchanttype: Shopping
+
+营业时间：周一至周五 11:00-20:00 周六,周日 09:00-21:00
+
+Chinese address:
+
+Brandy Melville 安福路308号
+
+English address:
+
+308 Anfu Road
+
+**Nearest station:**
+
+10号線上海圖書館站1出口 - walk 1.1km
+
+Line 10: Shanghai Library Station, Exit 1 (1.1km walk)
+
+---
+
+LookNow & Flow @looknowandflow
+
+hashtags: clothing, place, shopping, recommend, Xuhui
+
+accountType: Shopping
+
+SingleLocation
+
+merchanttype: Shopping
+
+营业时间：周一至周日 10:00-21:00 
+
+**Phone :** 16621162787
+
+**Chinese address**:
+
+LookNow & Flow 安福路156号
+
+English address:
+
+156 Anfy Road
+
+**Nearest station:**
+
+7号線常熟路站8出口 - walk 530m]
+
+Line 7: Changshu Road Station, Exit 8 (530m walk)
+
+---
+
+**Sunflour Bakery (Anfu Road Branch) @sunflourbakery**
+
+hashtags: citywalk, place, snack, coffee, recommend, affordable, Xuhui
+
+accountType: restaurant
+
+SingleLocation
+
+merchanttype: Bakery
+
+营业时间：周一至周日 07:00-22:00
+
+**average price：**$40
+
+**Phone :** 021-64737757
+
+Chinese address:
+
+阳光粮品 安福路308号103-104室
+
+English address:
+
+308 Anfu Road, Units 103-104
+
+**Nearest station:**
+
+10号線上海圖書館站1號出口 - walk 1.2km
+
+Line 10: Shanghai Library Station, Exit 1 (1.2km walk)
+
+---
+
+**13DE MARZO Cafe  @13demarzocafe**
+
+hashtags: citywalk, takepicture, superpicture, place, snack, coffee, recommend, affordable, Xuhui
+
+accountType: restaurant
+
+SingleLocation
+
+merchanttype: cafe
+
+营业时间：周一至周日 10:00-21:30
+
+**average price：**$37
+
+**Phone :** 4000131330 / 15801707855
+
+Chinese address:
+
+13DE MARZO CAFÉ(上海安福路店) 安福路322号4号楼1楼
+
+English address:
+
+1F, Building 4, 322 Anfu Road
+
+**Nearest station:**
+
+10号線上海圖書館站1號出口 - walk 1.1km
+
+Line 10: Shanghai Library Station, Exit 1 (1.1km walk)
+
+---
+
+**Shenjing Dessert  @shenjingdessert**
+
+hashtags: citywalk, takepicture, superpicture, place, snack, dessert, recommend, affordable, Xuhui
+
+accountType: restaurant
+
+SingleLocation
+
+merchanttype: dessert
+
+营业时间：周一至周日 11:00-22:00 
+
+**average price：**$35
+
+**Phone:** 19512205883
+
+Chinese address:
+
+申井冰店·日式甜品(安福路店) 
+
+安福路31号
+
+English address:
+
+31 Anfu Road
+
+**Nearest station:**
+
+7号線常熟路站8號出口 - walk 250m
+
+Line 7: Changshu Road Station, Exit 8 (250m walk)
+
+---
+
+**East Nanjing Road @eastnanjingroad**
+
+hashtags: street, citywalk, takepicture, place, free, recommend, Xuhui
+
+accountType: attraction
+
+StreetMerchant
+
+merchanttype: CityWalk
+
+Chinese address:
+
+南京路步行街
+
+English address:
+
+Nanjing Road Pedestrian Street
+
+**Nearest station:**
+
+Line 2/ Line 10 南京东路站 Exit 4 (turn left) - Walk 390m
+
+Lines 2/10: East Nanjing Road Station, Exit 4 (turn left) (390m walk)
+
+---
+
+**W Management  @wmanagement**
+
+hashtags: citywalk, clothing, takepicture, place, shopping, recommend, Huangpu
+
+accountType: shopping
+
+SingleLocation
+
+merchanttype: Fashion
+
+营业时间：周一至周日 10:00-22:00 
+
+**Phone :** 15021255027
+
+Chinese address:
+W·Management(第一百货南京东路店)
+
+南京东路830号上海市第一百货商店B01层
+
+English address:
+
+B01 Floor, Shanghai No.1 Department Store, 830 East Nanjing Road, Shanghai
+
+**Nearest station:**
+
+2号線人民廣場站出口 - walk 350m
+
+Line 2: People's Square Station (350m walk)
+
+---
+
+**Nike001 (Asia Biggest Nike Branch) @nike001**
+
+hashtags: citywalk, clothing, takepicture, place, shopping, recommend, Huangpu
+
+accountType: shopping
+
+SingleLocation
+
+merchanttype: Fashion
+
+营业时间：周一至周日 10:00-22:00 
+
+**average price ：**
+
+**Click Phone Icon:** 021-63332888
+
+Chinese address:
+
+NIKE上海001店 南京东路829号上海世茂广场
+
+English address:
+
+Shanghai Shimao Plaza, 829 East Nanjing Road, Shanghai
+
+**Nearest station:**
+
+1号線人民廣場站19出口 - walk 220m
+
+Line 1: People's Square Station, Exit 19 (220m walk)
+
+---
+
+Lai Lai Xiao Long @lailaixiaolong
+
+hashtags: restaurant, dinner, lunch, takepicture, Chinese, Xiao Long Bao, good food, affordable, recommend, Huangpu
+
+accountType: restaurant
+
+SingleLocation
+
+merchanttype: XiaoLongBao
+
+营业时间：周一至周日 08:00-14:00 15:00-20:00 
+
+**人均：around $60**
+
+**Need booking?** 需要到店排隊
+
+**Phone :** 021-63520230
+
+Chinese address:
+
+莱莱小笼·乔艾
+
+黃浦區天津路506号
+
+English address:
+
+506 Tianjin Road, Huangpu District, Shanghai
+
+**Nearest station:**
+
+1号线人民广场站19出口 - walk 650m
+
+Line 1: People's Square Station, Exit 19 (650m walk)
+
+---
+
+**M&M's  @mandms**
+
+hashtags: citywalk, takepicture, shopping, snack, place, recommend, Huangpu
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+营业时间：周一至周日 10:00-22:00
+
+**Phone :** 021-23162888
+
+**ticketprice**: 0
+
+Chinese address:
+
+m豆巧克力世界(上海世茂广场店) 南京东路829号上海世茂广场G层
+
+English address:
+
+Shanghai Shimao Plaza, G Floor, 829 East Nanjing Road, Shanghai
+
+**Nearest station:**
+
+1号線人民廣場站19號出口 - walk 310m]
+
+Line 1: People's Square Station, Exit 19 (310m walk)
+
+---
+
+**Shen DaCheng  @shendacheng**
+
+hashtags: citywalk, takepicture, place, snack, dessert, recommend, affordable, Huangpu
+
+accountType: restaurant
+
+singleLocation
+
+merchanttype: Dessert
+
+营业时间：周一至周日 07:00-22:00 
+
+**price：**$35
+
+**Phone :** 021-63224926, 021-63225615
+
+Chinese address:
+
+沈大成(南京东路店)  南京东路636号
+
+English address:
+
+636 East Nanjing Road, Shanghai
+
+**Nearest station:**
+
+1号線人民廣場站14號出口 - walk 500m
+
+Line 1: People's Square Station, Exit 14 (500m walk)
+
+---
+
+MINISO LAND @minisoland
+
+hashtags: citywalk, takepicture, superpicture, shopping, place, recommend, Huangpu
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+**ticketprice**: 0
+
+营业时间：周一至周日 10:00-22:00 
+
+Chinese address:
+
+名创优品全球1号店 南京东路479号
+
+English address:
+
+479 East Nanjing Road, Shanghai
+
+**Nearest station:**
+
+2号線南京東路站4號出口向左 - walk 240m]
+
+Line 2: East Nanjing Road Station, Exit 4 (turn left) - 240m walk
+
+---
+
+**Top Toy Shanghai @toptoyshanghai**
+
+hashtags: citywalk, takepicture, superpicture, shopping, place, recommend, Huangpu
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+ticketprice: 0
+
+营业时间：周一至周日 10:00-22:00
+
+**Phone :** 18321765759
+
+**Chinese address**:
+
+TOPTOY(上海南京路店) 南京东路558号
+
+English address:
+
+558 East Nanjing Road, Shanghai
+
+**Nearest station:**
+
+2号線南京東路站4號出口向左 - walk 390m
+
+Line 2: East Nanjing Road Station, Exit 4 (turn left) (390m walk)
+
+---
+
+ **ZX Shanghai @zxshanghai**
+
+hashtags: citywalk, takepicture, anime, shopping, place, Huangpu
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+ticketprice: 0
+
+营业时间：周一至周日 10:00-22:00 
+
+**Phone :** 021-63516562
+
+Chinese address:
+
+百联ZX创趣场(南京东路店) 南京东路340-372号
+
+English address:
+
+340-372 East Nanjing Road, Shanghai
+
+**Nearest station:**
+
+2号線南京東路站1號出口向左 - walk 70m
+
+Line 2: East Nanjing Road Station, Exit 1 (turn left) (70m walk)
+
+---
+
+**Somekh Building @somekhbuilding**
+
+hashtags: citywalk, takepicture, building, place, Huangpu
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+ticketprice: 0
+
+**Phone :** 021-63360090
+
+**营业时间: Monday - Sunday - All day**
+
+**Chinese address:**
+
+北京东路190号
+
+English address:
+
+190 East Beijing Road, Shanghai
+
+**Nearest station:**
+
+10号線南京東路站6出口向左 - walk 360m
+
+Line 10: East Nanjing Road Station, Exit 6 (turn left) - 360m walk
+
+---
+
+The Upper Room @theupperroom
+
+hashtags: takepicture, superpicture, date, bar, alcohol, restaurant, nightview, rooftop, popular, recommend, affordable, Huangpu
+
+accountType: barandclub
+
+BarClubMerchant
+
+merchanttype: Bar
+
+priceperperson: 90
+
+营业时间：周二至周日 17:00-01:30
+
+**needBooking?** No need booking, can walk in
+
+**Phone :** 19370653175
+
+Chinese address
+
+THE UPPER ROOM 
+
+北京东路190号沙美大楼 顶层
+
+English address:
+
+Top Floor, Shamei Building, 190 East Beijing Road, Shanghai
+
+Nearest station:
+
+10号線南京東路6號出口 - 360m
+
+Line 10: East Nanjing Road Station, Exit 6 (360m walk)
+
+---
+
+ **The Bund  @thebund**
+
+hashtags: street, takepicture, place, nightview, free, recommend, Huangpu
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+ticketprice: 0
+
+营业时间: Monday - Sunday - All day
+
+Chinese Address:
+
+外灘
+
+English address:
+
+East Zhongshan No.1 Road, The Bund
+
+**Nearest station:**
+
+2号線南京東路站站2出口 - walk 600m
+
+Line 2: East Nanjing Road Station, Exit 2 (600m walk)
+
+---
+
+**Shanghai Postal Museum @shanghaipostal**
+
+hashtags: citywalk, takepicture, museum, place, Hongkou
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+ticketprice: 0
+
+营业时间：周三,周四,周六,周日 09:00-17:00
+
+**Booking?** No need
+
+**Phone :** 021-63936666
+
+Chinese address:
+
+上海邮政博物馆
+
+北苏州路250号
+
+English address:
+
+Shanghai Postal Museum, 250 North Suzhou Road, Shanghai
+
+**Nearest station:**
+
+10/12号線天潼路站3號出口向左 - walk 250m
+
+Lines 10 & 12: Tiantong Road Station, Exit 3 (turn left) - 250m walk
+
+---
+
+**REi·FLOWER COFFEE BAR  @reiflowercoffee**
+
+hashtags: superpicture, restaurant, takepicture, date, coffee, place, nightview, popular, recommend, affordable, Hongkou
+
+accountType: restaurant
+
+singleLocation
+
+merchanttype: Coffee
+
+营业时间：周一至周日 10:30-01:00
+
+ **人均：$56**
+
+Need booking? Only walk in
+
+Phone icon: 17521187929
+
+Chinese address:
+
+汭REi·FLOWER COFFEE BAR
+
+北苏州路234号
+
+English address:
+
+REi·FLOWER COFFEE BAR, 234 North Suzhou Road, Shanghai
+
+Nearest station:
+
+10/12号线天潼路站3号出口 - 380m
+
+Lines 10 & 12: Tiantong Road Station, Exit 3 (380m walk)
+
+---
+
+Zhapu Road Bridge @zhapubridge
+
+hashtags: citywalk, takepicture, superpicture, place, bridge, recommend, Hongkou
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+ticketprice: 0
+
+营业时间: Monday - Sunday - All day
+
+Chinese address:
+
+乍浦路橋
+
+English address:
+
+Zhapu Road Bridge
+
+**Nearest station:**
+
+10/12号線天潼路站3號出口向左 - walk 630m
+
+Lines 10 & 12: Tiantong Road Station, Exit 3 (turn left) - 630m walk
+
+---
+
+**Name: North Bund @northbund**
+
+hashtags: street, citywalk, takepicture, place, recommend, Hongkou
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+ticketprice: 0
+
+营业时间: Monday - Sunday - All day
+
+Chinese address:
+
+北外滩滨江绿地
+
+东大名路558-678
+
+English address:
+
+North Bund Riverside Green Space, 558-678 East Daming Road, Shanghai
+
+**Nearest station:**
+
+12号線國際客運中心站出口 - walk 680m
+
+Line 12: International Cruise Terminal Station (680m walk)
+
+---
+
+**North Bund Little Egg @littleegg**
+
+hashtags: citywalk, takepicture, superpicture, place, recommend, Hongkou
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+ticketprice: 0
+
+营业时间: Monday - Sunday - All day
+
+Chinese address:
+
+北外滩小巨蛋
+
+东大名路558-678号北外滩滨江绿地
+
+English address:
+
+**Copy** and paste to Baidu map
+
+**Nearest station:**
+
+12号線國際客運中心站3號出口向左 - walk 640m
+
+---
+
+**Manner Coffee  @mannercoffee**
+
+hashtags: superpicture, takepicture, date, coffee, place, nightview, popular, recommend, affordable, Hongkou
+
+accountType: restaurant
+
+singleLocation
+
+merchanttype: Coffee
+
+营业时间：周一至周五 07:30-22:00 周六,周日 09:00-22:00 
+
+ **人均：$20**
+
+Need booking? Only walk in
+
+Phone : 13003185954
+
+Chinese address:
+
+Manner Coffee(国客滨江店)
+
+太平路国际港务大厦南60米
+
+English address:
+
+Manner Coffee, near International Port Services Building, Taiping Road, Shanghai
+
+Nearest station:
+
+12号线國際客運中心站3号出口 - 700m
+
+Line 12: International Cruise Terminal Station, Exit 3 (700m walk)
+
+---
+
+**J's link Coffee @jslinkcoffee**
+
+hashtags: superpicture, restaurant, takepicture, date, coffee, place, nightview, popular, recommend, affordable, Hongkou
+
+accountType: restaurant
+
+singleLocation
+
+merchanttype: Coffee
+
+营业时间：周一至周日 10:00-21:00
+
+**人均：$60**
+
+Need booking? Only walk in
+
+Phone: 19531936988
+
+Chinese address: 
+
+如意摩登滋味小馆（吉生活）(北外滩店)
+
+北苏州河路224号
+
+English address:
+
+J's link Coffee, 224 North Suzhou Creek Road, Shanghai
+
+Nearest station:
+
+10/12号线天潼路站3号出口 - 380m
+
+Lines 10 & 12: Tiantong Road Station, Exit 3 (380m walk)
+
+---
+
+**The People Coffee  @thepeoplecoffee**
+
+hashtags: superpicture, takepicture, date, coffee, place, nightview, popular, recommend, affordable, Hongkou
+
+accountType: restaurant
+
+singleLocation
+
+merchanttype: Coffee
+
+营业时间：周二至周日 09:00-18:30 19:00-24:00 周一 09:00-22:30 
+
+ **人均：$65**
+
+**Need booking?** Can book or walk in. recommend weekday morning if walk in
+
+**Phone :** 021-55669277
+
+Chinese address:
+
+看得到风景的咖啡馆(白玉兰广场店)
+
+东大名路501号白玉兰商务楼空中大堂L层
+
+English address:
+
+Sky Lobby L Floor, Magnolia Business Tower, Shanghai
+
+Nearest station:
+
+12号线國際客運中心站3号出口 - 470m
+
+Line 12: International Cruise Terminal Station, Exit 3 (470m walk)
+
+---
+
+**Oriental Pearl Tower @orientalpearltower**
+
+accountType: attraction
+
+AttractionMerchant
+
+merchanttype: Skyscraper
+
+tickeprice: 199
+
+营业时间：周一至周日 08:30-21:30
+
+**Phone :** 021-58792888 / 021-58791888
+
+Chinese address:
+
+東方之珠 世纪大道1号
+
+English address:
+
+Oriental Pearl Tower, 1 Century Avenue, Shanghai
+
+**Nearest station:**
+
+2号線陆家嘴站1出口向左 - walk 300m
+
+Line 2: Lujiazui Station, Exit 1 (turn left) - 300m walk
+
+---
+
+**Lujiazui Three Towers @threetowers**
+
+hashtags: street, takepicture, superpicture, place, nightview, free, recommend, Pudong
+
+accountType: attraction
+
+AttractionMerchant
+
+merchanttype: Skyscraper
+
+tickeprice: 0
+
+营业时间: Monday - Sunday - All day
+
+**Chinese address:**
+陆家嘴三件套, 上海环球金融中心附近
+
+English address:
+
+Near Shanghai World Financial Center, 100 Century Avenue, Shanghai
+
+**Nearest station:**
+
+2/14号線陆家嘴站8出口 - walk 570m
+
+Lines 2/14: Lujiazui Station, Exit 8 (570m walk)
+
+---
+
+Museum of Art Pudong @museumofartpd
+
+hashtags: citywalk, takepicture, museum, place, recommend, Pudong
+
+accountType: attraction
+
+AttractionMerchant
+
+merchanttype: Museum
+
+tickeprice: 100
+
+营业时间：周一至周日 10:00-21:00 
+
+**Phone :** 4008208771
+
+Chinese address:
+浦东美术馆
+
+滨江大道2777号
+
+English address:
+
+2777 Binjiang Avenue, Shanghai
+
+**Nearest station:**
+
+2号線陆家嘴站1出口向左 - walk 690m
+
+Line 2: Lujiazui Station, Exit 1 (turn left) - 690m walk  
+
+---
+
+Huanle Square @huanlesquare
+
+hashtags: street, takepicture, superpicture, place, nightview, sunset, free, recommend, Pudong
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Attraction
+
+ticketprice: 0
+
+营业时间: Monday - Sunday - All day
+
+Chinese address:
+
+浦东欢乐广场 滨江大道2967号
+
+English address:
+
+2967 Binjiang Avenue, Shanghai  
+
+**Nearest station:**
+
+2/14号線陆家嘴站站10出口 - walk 8mins
+
+Lines 2/14: Lujiazui Station, Exit 10 (8min walk)  
+
+---
+
+**Shanghai Disneyland @shanghaidisney**
+
+hashtags: takepicture, place, kids, fun, themepark, disney, recommend, Pudong
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Disney
+
+ticketprice: 449
+
+营业时间：monday-Sunday 08:30 - 21:30
+
+Chinese address:
+
+上海迪士尼乐园 川沙镇黄赵路310号
+
+English address:
+
+310 Huangzhao Road, Chuansha Town, Shanghai
+
+**Nearest station:**
+
+2号線迪士尼站1出口 - walk 600m
+
+Line 2: Disney Resort Station, Exit 1 (600m walk)
+
+---
+
+Shanghai Wild Animal Park @shwzoo
+
+hashtags: takepicture, place, kids, fun, zoo, animals, recommend, Pudong
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Wild Animal
+
+ticketprice: 165
+
+营业时间： 週一至週日 09 : 00 - 17: 00 (needs to update)
+
+**Phone :** 021-58036000
+
+Chinese address:
+上海野生动物园
+
+南六公路178号
+
+English address:
+
+178 South Sixth Highway, Shanghai
+
+**Nearest station:**
+
+16号線野生动物园站2出口
+
+Line 16: Shanghai Wild Animal Park Station, Exit 2
+
+---
+
+Hai Chang Ocean Park @haichangoceanpark
+
+hashtags: takepicture, place, kids, fun, themepark, oceanpark, recommend, Pudong
+
+accountType: attraction
+
+attractionmerchant
+
+merchanttype: Wild Animal
+
+ticketprice: 339
+
+营业时间：周一至周日 09:30-20:30
+
+Chinese address:
+
+海昌海洋公园 银飞路166号
+
+English address:
+
+166 Yinfei Road, Shanghai
+
+**Nearest station:**
+
+Not available - recommend take taxi instead]
+
+---
+
+**KKU Bakery Coffee @kkucoffee**
+
+hashtags: superpicture, takepicture, date, coffee, place, nightview, popular, recommend, affordable, Huangpu
+
+accountType: restaurant
+
+singleLocation
+
+merchanttype: Coffee
+
+营业时间：周一至周日 09:00-21:00 
+
+**人均：**$40
+
+**Need booking?** Only walk in
+
+**Phone** : 15821335777
+
+Chinese address:
+
+亲亲侬(南苏州路店)
+
+南苏州路198号第一加油站2楼（便利店内楼梯上去）
+
+English address:
+
+2F, No.1 Gas Station, 198 South Suzhou Road (via stairs inside convenience store)
+
+Nearest station:
+
+10/12号线天潼路站3号出口 - 510m
+
+Lines 10/12: Tiantong Road Station, Exit 3 (510m walk)
+
+---
+
+**Bund 8 Coffee @bund8coffee**
+
+hashtags: superpicture, takepicture, date, coffee, place, nightview, popular, recommend, affordable, Hongkou
+
+accountType: restaurant
+
+singleLocation
+
+merchanttype: Coffee
+
+营业时间：周一至周日 11:30-18:00 
+
+ **人均：$57**
+
+Need booking? Only walk in
+
+Phone : 15821335777
+
+Chinese address:
+
+外滩8号Bund 8 Café(金延大厦店)
+
+中山东二路8号
+
+English address:
+
+8 East Zhongshan No.2 Road, Shanghai
+
+Nearest station:
+
+14号线豫園站7号出口 - 550m]
+
+Line 14: Yuyuan Garden Station, Exit 7 (550m walk)

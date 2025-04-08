@@ -1,0 +1,39 @@
+Basement FG (Shanghai) @basementfg
+accountType: shopping
+SingleLocationMerchant
+merchanttype: Fashion
+    
+hashtags: clothing, place, shopping, recommend, Xuhui
+营业时间：周一至周五 11:00-21:30 周六,周日 11:00-22:00  
+
+
+Phone : 021-60197288
+Chinese address:
+BASEMENT FG (上海店) 新乐路82号
+
+English address:
+BASEMENT FG Shanghai Store, 82 Xinle Road, Shanghai
+
+Nearest station:
+12号線陝西南路站10出口 - walk 500m
+Line 12: Shaanxi South Road Station, Exit 10 (500m walk)
+------
+Discus Mart @discusmart
+accountType: attraction
+Attractionmerchant
+merchanttype: Attraction
+
+hashtags: clothing, place, shopping, recommend, Huangpu
+营业时间：周一至周日 10:00-22:00
+
+Phone: 021-63866567
+
+Chinese address:
+Discus Mart(新天地广场店) 淮海中路333号新天地广场B2-01
+
+English address:
+Discus Mart, B2-01, Xintiandi Plaza, 333 Huaihai Middle Road, Shanghai
+
+Nearest station:
+1号線一大會址黃陂南路站2出口 - walk 190m
+Line 1: First National Congress of the CPC Site - Huangpi South Road Station, Exit 2 (190m walk)

@@ -1,0 +1,66 @@
+accounttype: restaurant
+Merchanttype: Restaurant - SingleLocationMerchant
+Crab Noodles Lee
+@crabnoodleslee
+hashtags: restaurant, dinner, lunch, Chinese, Crab Noodles, good food, recommend, Huangpu
+district: ['Huangpu']
+Recommend: true
+Verifies: True
+
+营业时间：周一至周日 10:00-22:00
+人均：$110
+Need booking? Line up at store
+Phone: 13328012446
+Chinese address:
+李百蟹·蟹黄面·江景餐厅(外滩·豫园店)
+外滩22号中山东二路22号3楼
+English address:
+3F, No.22 East Zhongshan No.2 Road, The Bund, Shanghai
+Nearest station:
+14号线豫园站7出口 - walk 500m
+Line 14: Yuyuan Garden Station, Exit 7 (500m walk)
+
+————
+accounttype: restaurant
+Merchanttype: Restaurant -SingleLocationMerchant
+Xie Zhen Xiang
+@xiezhenxiang
+hashtags: restaurant, dinner, lunch, Chinese, Crab Noodles, good food, recommend, Huangpu
+district: ['Huangpu']
+Recommend: true
+Verifies: True
+营业时间：周一至周日 10:00-23:00
+人均：$110
+Need booking? Line up at store
+Phone: 19301193710
+
+Chinese address:
+蟹珍香·百年蟹黄面(外滩店)
+中山东一路391号
+English address:
+391 East Zhongshan No.1 Road, The Bund, Shanghai
+Nearest station:
+14号线豫园站7出口 - walk 270m
+Line 14: Yuyuan Garden Station, Exit 7 (270m walk)
+
+-------
+accounttype: restaurant
+Merchanttype: Restaurant - SingleLocationMerchant
+Nan Xiang Steamed Bun Restaurant
+@nanxiangbun
+hashtags: restaurant, dinner, lunch, takepicture, Chinese, Xiao Long Bao, good food, affordable, recommend, Huangpu
+district: ['Huangpu']
+
+营业时间：周一至周日 07:30-20:30
+人均：$110
+Need booking? 需到店排队
+Phone: 021-63554206
+Chinese address:
+南翔馒头店(豫园店)
+豫园路87号
+English address:
+87 Yuyuan Road, Shanghai
+Nearest station:
+14号线豫园站7出口 - walk 520m
+Line 14: Yuyuan Garden Station, Exit 7 (520m walk)
+———

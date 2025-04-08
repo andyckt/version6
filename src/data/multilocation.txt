@@ -1,0 +1,405 @@
+accounttype: restaurant
+Merchanttype: Restaurant - MultiLocation
+Yu Xing Ji Noodles
+@yuxingjinoodles
+hashtags: restaurant, lunch, chinese, crab noodles, takepicture, good food, affordable, recommend, Huangpu, Xuhui, Jingan, Pudong
+district: ['Huangpu', 'Xuhui', 'Jingan', 'Pudong']
+Recommend: true
+Verifies: True
+人均：$100
+
+Branch (Huangpu)
+Need booking? Only accept walk-in
+Chinese Address: 裕兴记•蟹黄面馆(外滩店) 四川中路410号南京路步行街路口50米
+English address:
+50m from Nanjing Road Pedestrian Street Intersection, 410 Sichuan Middle Road, Shanghai
+Phone: 021-68886981
+营业时间：周一至周日 10:00-23:00
+Nearest station:
+10号線南京東路站出口 - walk 370m
+Line 10: East Nanjing Road Station (370m walk)
+
+Branch (Jingan)
+Need booking? Only accept walk-in
+Chinese address:
+裕兴记•蟹黄面馆(南京西路店) 威海路830号
+English address:
+830 Weihai Road, Shanghai
+Phone: 13764519976
+营业时间：周一至周日 08:00-20:00
+Nearest station:
+12号線南京西路站12出口- walk 420m
+Line 12: West Nanjing Road Station, Exit 12 (420m walk)
+
+Branch (Xuhui)
+Need booking? Only accept walk-in
+Chinese Address:
+裕兴记·蟹黄面(徐家汇店)
+南丹路169-3
+English address:
+169-3 Nandan Road, Shanghai
+Phone: 021-66715788
+营业时间：周一至周日 07:00-21:00
+Nearest station:
+1号線徐家匯站1出口 - walk 360m
+Line 1: Xujiahui Station, Exit 1 (360m walk)
+
+Branch (Pudong)
+Need booking? Only accept walk-in
+Chinese address:
+裕兴记·蟹黄面(世纪汇店) 世纪大道1192号LG2-A22号
+English address:
+Unit LG2-A22, 1192 Century Avenue, Shanghai
+Phone: 15710151531
+营业时间：周一至周日 10:00-22:00
+Nearest station:
+2/4/6/9号線世紀大道站11出口 - walk 330m
+Lines 2/4/6/9: Century Avenue Station, Exit 11 (330m walk)
+
+
+
+-------
+
+accounttype: restaurant
+Merchanttype: - Multiplication
+Chan San Chi Crab
+@chansanchicrab
+hashtags: restaurant, lunch, chinese, crab noodles, takepicture, good food, affordable, recommend, Huangpu, Xuhui, Pudong, Minhang
+district: ['Huangpu', 'Xuhui', 'Pudong', 'Minhang']
+Recommend: true
+Verifies: True
+人均：$50
+
+Branch (Huangpu)
+Need booking? Only accept walk-in
+Chinese address:
+馋三尺蟹粉小笼(人民广场店)
+西藏中路500号思源商厦1楼102-B4、B5室
+English address:
+Units 102-B4 & B5, 1F, Siyuan Commercial Building, 500 West Xizang Road, Shanghai
+Phone: 021-33318789
+营业时间：周一至周日 08:30-20:30
+Nearest station:
+2号線人民廣場站出口 - walk 300m
+Line 2: People's Square Station (300m walk)
+
+Branch (Huangpu)
+Need booking? Only accept walk-in
+Chinese address
+馋三尺蟹粉小笼(恒基名人店) 南京东路300号地下一层B117-2室（Seven Eleven右边）
+English address:
+Unit B117-2, B1, 300 East Nanjing Road, Shanghai (Right side of Seven Eleven)
+Phone: 18602182385
+营业时间：周一至周日 10:00-21:00
+Nearest station:
+10号線南京西路站5出口- walk 70m
+Line 10: West Nanjing Road Station, Exit 5 (70m walk)
+
+Branch (Xuhui)
+Need booking? Only accept walk-in
+Chinese address:
+馋三尺蟹粉小笼(龙华会店)
+龙华路2618号龙华万科中心北区1幢负2层01B2N19号
+English address:
+Unit 01B2N19, B2, Building 1 North, Longhua Vanke Center, 2618 Longhua Road, Shanghai
+Phone: 15921800736
+营业时间：周一至周日 10:00-21:00
+Nearest station:
+12号线龙华站3出口 - walk 70m
+Line 12: Longhua Station, Exit 3 (70m walk)
+
+Branch (Pudong)
+Need booking? Only accept walk-in
+Chinese address 馋三尺蟹粉小笼(世博源店)
+世博大道1368号世博源2区B层12号
+English address:
+Unit 12, B Floor, Zone 2, Expo Source Mall, 1368 Expo Avenue, Shanghai
+Phone: 13061657330
+营业时间：周一至周日 10:00-21:00
+Nearest station:
+8号線中華藝術官站11出口 - walk 760m
+Line 8: China Art Museum Station, Exit 11 (760m walk)
+
+Branch (Minhang)
+Need booking? Only accept walk-in
+Chinese address:
+馋三尺蟹粉小笼(维璟印象城店)
+七莘路1507号维璟印象城B1-030号
+English address:
+Unit B1-030, Weijing Impression City, 1507 Qixin Road, Shanghai
+Phone: 13061766891
+营业时间：周一至周日 10:00-21:00
+Nearest station:
+12号線七莘路站出口 - walk 330m
+Line 12: Qixin Road Station (330m walk)
+———
+
+accounttype: restaurant
+Merchanttype: - MultiLocation
+DaHu Chun @dahuchun
+hashtags: restaurant, lunch, breakfast, chinese, pan-fried buns, takepicture, good food, affordable, recommend, Huangpu, Xuhui, Pudong, Minhang
+district: ['Huangpu', 'Xuhui', 'Pudong', 'Minhang']
+人均：$30
+
+Branch (Huangpu)
+Need booking? Only accept walk-in
+
+Chinese address
+大壶春(四川中路店)
+四川中路136号
+
+English address:
+136 Sichuan Middle Road, Shanghai
+
+Phone: 021-63130155
+营业时间：周一至周日 07:00-19:30
+Nearest station:
+2号線南京東路站出口 - walk 750m
+Line 2: East Nanjing Road Station (750m walk)
+
+
+Branch (Huangpu)
+Need booking? Only accept walk-in
+Chinese address:
+大壶春(云南南路店)
+云南南路89号
+
+English address:
+89 South Yunnan Road, Shanghai
+
+Phone: 021-63115177
+营业时间：周一至周日 07:30-19:30
+Nearest station:
+14号線大世界站5出口- walk 60m
+Line 14: Dashijie Station, Exit 5 (60m walk)
+
+Brand: Huangpu
+Need booking? Only accept walk-in
+Chinese address:
+大壶春(豫园店)
+豫园老街64-3号
+English address: 
+No.64-3 Yuyuan Old Street, Shanghai
+
+Phone: 021-63353560
+营业时间：周一至周日 09:00-22:00
+Nearest station:
+14号线豫园站7出口 - walk 450m
+Line 14: Yuyuan Garden Station, Exit 7 (450m walk)
+
+————————
+accounttype: restaurant
+Merchanttype: 
+MultiLocation
+
+Fafu Korean BBQ 파푸 한집 BBQ @fafukoreanbbq
+hashtags: restaurant, dinner, lunch, korean, bbq, good food, recommend, Jingan
+district: ['Jingan']
+
+人均：$200
+
+Branch (more popular)
+Need booking? 建议电话预约 If no booking, 建议比营业时间提前30mins 到 (晚上5点才开始营业 )
+Chinese address:
+发福韩家·韩国炭火烤肉(余姚店)
+余姚路10号
+English address:
+10 Yuyao Road, Shanghai
+Phone: 15021187854
+营业时间：周一至周日 17:00-01:00
+Nearest station:
+7号線昌平路站4出口 - walk 490m
+Line 7: Changping Road Station, Exit 4 (490m walk)
+
+
+Branch
+Need booking? 建议电话预约 If no booking, 建议比营业时间提前30mins 到 (晚上5点才开始营业 )
+Chinese address:
+发福韩家·韩国炭火烤肉(大沽店)
+大沽路411号
+English address:
+411 Dagu Road, Shanghai
+Phone icon: 13062733876 13817514640
+营业时间：周一至周日 17:00-01:00
+Nearest station:
+13号線南京西路站8出口- walk 570m
+Line 13: West Nanjing Road Station, Exit 8 (570m walk)
+
+——
+accounttype: restaurant
+Merchanttype: 
+MultipleLocation
+
+Early Morning BBQ 아침의 집 BBQ @earlymorningbbq
+hashtags: restaurant, dinner, lunch, luxury, korean, bbq, good food, recommend, Huangpu, Xuhui, Jingan, Pudong
+district: ['Huangpu', 'Xuhui', 'Jingan', 'Pudong']
+
+人均：$180
+Branch (Huangpu)
+Need booking? Recommend 电话预约, can also walk in if there are seats
+Chinese address:
+清晨家烤肉(BFC外滩金融中心店)
+中山东二路600号BFC外滩金融中心南区四楼清晨家
+English address:
+4F South Zone, BFC Bund Financial Center, 600 East Zhongshan No.2 Road, Shanghai
+Phone: 18121214336
+营业时间：周一至周五 11:00-14:00 17:00-21:00 周六,周日 11:00-14:30 17:00-21:00
+Nearest station:
+14号線豫園站7出口 - walk 1.1km
+Line 14: Yuyuan Garden Station, Exit 7 (1.1km walk)
+
+Branch (Pudong)
+Need booking? Recommend 电话预约, can also walk in if there are seats
+Chinese address:
+清晨家·首尔烤肉(陆家嘴中心店)
+陆家嘴中心L+MALL商场RG层RG01单元
+English address:
+RG Floor, L+MALL Shopping Center, 899 South Pudong Road, Shanghai
+Phone: 13482324569
+营业时间：周一至周日 11:00-14:00 17:00-21:00
+Nearest station:
+2号線浦東南路站- walk 260m
+Line 2: East Pudong Road Station (260m walk)
+
+Branch (Xuhui)
+Need booking? Recommend 电话预约, can also walk in if there are seats
+Chinese address:
+清晨家·首尔烤肉(One ITC店)
+华山路1901号OneITC商场负一层下沉花园128号
+English address:
+Unit 128, B1, One ITC Mall, 1901 Huashan Road, Shanghai
+Phone: 15221180809
+营业时间：周一至周日 11:00-14:00 17:00-21:00
+Nearest station:
+9号線徐家匯站16出口 - walk 450m
+Line 9: Xujiahui Station, Exit 16 (450m walk)
+
+Branch (Jingan)
+Need booking? Recommend 电话预约, can also walk in if there are seats
+Chinese address:
+清晨家烤肉(静安MOHO店) 江宁路699号MOHOMall-L3-28,L3-29
+English address:
+Units L3-28 & L3-29, 3F, MOHO Mall, 699 Jiangning Road, Shanghai
+Phone icon: 18317190809
+营业时间：周一至周五 11:00-14:00 17:00-21:00 周六,周日 11:00-14:30 17:00-21:00
+Nearest station:
+7号線昌平路站2出口 - walk 1.1km
+Line 7: Changping Road Station, Exit 2 (1.1km walk)
+
+——————
+
+accounttype: restaurant
+Merchanttype:
+MultipleLocation
+
+Grande A'moo @grandeamoo
+hashtags: restaurant, dinner, birthday, date, takepicture, pizza, Italian, good food, recommend, Putuo, Pudong, Changning
+人均: $140
+
+Branch
+branchDistrict: 'close to downtown'
+Need booking? no need, but need to queue up usually
+Chinese address:
+Grande A'moo(环宇城MAX店)
+铜川路699弄中海环宇城1楼L1023号（2号门旁）
+
+English address: Unit L1023, 1F, Zhonghai Huanyu City MAX, 699 Tongchuan Road, Shanghai
+Phone icon: 021-60193653 / 18621023489
+周一至周日 11:00-22:00
+Nearest station:
+11号線真如站 - walk550m
+Line 11: Zhenru Station (550m walk)
+
+Branch
+branchDistrict: 'close to downtown'
+Need booking? no need, but need to queue up usually
+Chinese address:
+Grande A'moo(世博天地店)
+世博大道1467号世博天地L-111室（商场1号门旁,近周家渡路博成路）
+
+English address:
+Unit L-111, Expo World, 1467 Expo Avenue, Shanghai
+
+Phone: 13003117616
+周一至周日 11:00-21:30
+Nearest station:
+8号线中华艺术馆站 - walk 210m
+Line 8: China Art Museum Station (210m walk)
+
+Branch
+branchDistrict: 'further away'
+Need booking? no need, but need to queue up usually
+Chinese address:
+Grande A'moo(上海荟聚店)
+金钟路788号上海荟聚L01层01A01号
+
+English address:
+Unit 01A01, L01, Shanghai Huiju, 788 Jinzhong Road, Shanghai
+
+Phone: 021-62366656
+Opening hours: 周一至周日 11:00-22:00
+Nearest station:
+2号線淞虹路站 - walk 420m 
+Line 2: Songhong Road Station (420m walk)
+
+———
+
+accounttype: restaurant
+Merchanttype:
+MultiLocation
+Banu Hotpot @banuhotpot
+hashtags: restaurant, lunch, dinner, chinese, hotpot, takepicture, good food, affordable, midnight, recommend, Huangpu, Pudong, Changning, Minhang
+district: ['Huangpu', 'Pudong', 'Minhang']
+
+人均：$160
+
+Branch (Huangpu)
+Need booking? 現場排隊
+Chinese address:
+巴奴毛肚火锅(人广来福士店)
+西藏中路268号上海来福士广场6层
+English address:
+6F, Raffles City Shanghai, 268 West Xizang Road, Shanghai
+Phone: 021-63615177 / 4000232577
+营业时间：周一至周日 全天
+Nearest station:
+1/8号線人民廣場站15出口 - walk 50m
+Lines 1/8: People's Square Station, Exit 15 (50m walk)
+
+
+Branch (Pudong)
+Need booking? 現場排隊
+Chinese address:
+巴奴毛肚火锅(陆家嘴中心店) 浦东南路899号陆家嘴中心L+MALL商场10楼
+English address:
+10F, L+MALL, 899 South Pudong Road, Shanghai
+Phone: 021-58777907
+营业时间：周一至周日 全天
+Nearest station:
+9号線商城路站出口- walk 150m
+Line 9: Shangcheng Road Station (150m walk)
+
+Branch (Minhang)
+Need booking? 現場排隊
+Chinese address: 
+巴奴毛肚火锅(七宝领展广场店)
+漕宝路七莘路交叉口七宝领展广场5楼
+English address:
+5F, Qibao Link Plaza, Intersection of Caobao Road & Qixin Road, Shanghai
+Phone: 021-62216758 / 15093760132
+营业时间：周一至周日 11:00-03:00
+Nearest station:
+9号線七寶站站2出口 - walk 260m
+Line 9: Qibao Station, Exit 2 (260m walk)
+
+Branch (Changning)
+Need booking? 現場排隊
+Chinese address: 巴奴毛肚火锅(上海荟聚店)
+金钟路788号L03层03C16号
+English address:
+Unit 03C16, L03 Floor, 788 Jinzhong Road, Shanghai
+Phone icon: 021-62030525
+营业时间：周一至周日 11:00-03:00
+Nearest station:
+2号線淞虹路站5出口 - walk 390m
+Line 2: Songhong Road Station, Exit 5 (390m walk)

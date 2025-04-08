@@ -24,20 +24,34 @@ interface MerchantFilter {
 // Configuration for prewarming
 const PREWARM_CONFIG = {
   // Top merchant types to prewarm
-  popularTypes: ['restaurant', 'hotel', 'attraction'],
+  popularTypes: ['restaurant', 'hotel', 'attraction', 'shopping'],
   
   // Number of recommended merchants to prewarm
   topRecommendedCount: 10,
   
   // Specific popular merchant usernames to always prewarm
-  popularMerchantUsernames: ['restaurant1', 'hotel1', 'attraction1'],
+  popularMerchantUsernames: [
+    'taikangroad',
+    'familymart',
+    'lawson', 
+    'shanghaitaste',
+    'dumplinghouse',
+    'shanghaimuseum',
+    'peacehotel',
+    'iapmmall',
+    'xintiandi',
+    'wukangroad'
+  ],
   
   // Common filter combinations to prewarm
   commonFilters: [
     { accountType: 'restaurant', recommended: true },
     { accountType: 'hotel', recommended: true },
-    { district: 'Central' },
-    { district: 'Pudong' }
+    { accountType: 'attraction' },
+    { accountType: 'shopping' },
+    { district: 'Huangpu' },
+    { district: 'Pudong' },
+    { district: 'Jing\'an' }
   ] as MerchantFilter[]
 };
 
@@ -235,21 +249,19 @@ async function prewarmFilteredMerchantLists(): Promise<void> {
 }
 
 /**
- * Run cache prewarming on application startup
- * This should be called from the main application entry point
+ * Initialize cache on application startup
+ * This is called from the root layout.tsx
  */
 export async function initializeCacheOnStartup(): Promise<void> {
-  // Check if we should run prewarming (can be controlled by env var)
+  // Skip prewarming if explicitly disabled
   if (process.env.DISABLE_CACHE_PREWARMING === 'true') {
-    console.log('Cache prewarming is disabled');
+    console.log('Cache prewarming is disabled via environment variables');
     return;
   }
   
   try {
-    // Wait a bit to let the application start up properly
-    setTimeout(async () => {
-      await prewarmCache();
-    }, 5000);
+    console.log('Initializing cache on startup...');
+    await prewarmCache();
   } catch (error) {
     console.error('Failed to initialize cache on startup:', error);
   }

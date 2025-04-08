@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { FiHeart, FiBookmark } from 'react-icons/fi';
 import { FaHeart, FaBookmark } from 'react-icons/fa';
 import Image from 'next/image';
-import { travelPosts } from '@/data/posts';
+import { travelPosts, TravelPost } from '@/data/posts';
 import { getUserByUsername } from '@/data/users';
 import BlurImage from './BlurImage';
 
@@ -34,7 +34,7 @@ const isLocalStorageAvailable = () => {
 };
 
 // Fisher-Yates shuffle algorithm with view count weighting
-const shufflePosts = (posts: Array<typeof travelPosts[0]>, viewCounts: Record<number, number>) => {
+const shufflePosts = (posts: TravelPost[], viewCounts: Record<number, number>) => {
   // Create a copy to avoid mutating the original
   const shuffled = [...posts];
   
@@ -63,126 +63,155 @@ export default function ContentGrid() {
   const [bookmarkedPosts, setBookmarkedPosts] = useState<Record<number, boolean>>({});
   const [postBookmarks, setPostBookmarks] = useState<Record<number, number>>({});
   const [postViews, setPostViews] = useState<Record<number, number>>({});
-  const [shuffledPosts, setShuffledPosts] = useState(travelPosts);
+  const [shuffledPosts, setShuffledPosts] = useState<TravelPost[]>([]);
   const [storageAvailable, setStorageAvailable] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingPhase, setLoadingPhase] = useState(1);
   
   // Check if localStorage is available
   useEffect(() => {
     const available = isLocalStorageAvailable();
     setStorageAvailable(available);
-    console.log('localStorage available:', available);
+    setLoadingPhase(2);
   }, []);
   
-  // Initialize like, bookmark, and view counts from localStorage
+  // First phase - quickly load initial posts without heavy processing
   useEffect(() => {
-    // Initialize base likes, bookmarks, and views from posts data
-    const initialLikes: Record<number, number> = {};
-    const initialBookmarks: Record<number, number> = {};
-    const initialViews: Record<number, number> = {};
-    
-    travelPosts.forEach(post => {
-      initialLikes[post.id] = post.likes;
-      initialBookmarks[post.id] = post.bookmarks || 0;
-      initialViews[post.id] = post.views; // Use views defined in post data
-    });
-    
-    // Try to load liked, bookmarked, and viewed posts from localStorage
-    if (storageAvailable) {
-      try {
-        // Load liked posts
-        const savedLikedPosts = localStorage.getItem('likedPosts');
-        if (savedLikedPosts) {
-          const parsedLikedPosts = JSON.parse(savedLikedPosts);
-          setLikedPosts(parsedLikedPosts);
-          
-          // Adjust like counts based on liked status
-          Object.entries(parsedLikedPosts).forEach(([postId, isLiked]) => {
-            if (isLiked) {
-              const numericPostId = Number(postId);
-              initialLikes[numericPostId] = (initialLikes[numericPostId] || 0) + 1;
-            }
-          });
-        }
-        
-        // Load bookmarked posts
-        const savedBookmarkedPosts = localStorage.getItem('bookmarkedPosts');
-        if (savedBookmarkedPosts) {
-          const parsedBookmarkedPosts = JSON.parse(savedBookmarkedPosts);
-          setBookmarkedPosts(parsedBookmarkedPosts);
-          
-          // Adjust bookmark counts based on bookmarked status
-          Object.entries(parsedBookmarkedPosts).forEach(([postId, isBookmarked]) => {
-            if (isBookmarked) {
-              const numericPostId = Number(postId);
-              initialBookmarks[numericPostId] = (initialBookmarks[numericPostId] || 0) + 1;
-            }
-          });
-        }
-        
-        // Load view counts
-        const savedPostViews = localStorage.getItem('postViews');
-        if (savedPostViews) {
-          const parsedPostViews = JSON.parse(savedPostViews);
-          
-          // Use saved views if available, otherwise use values from post data
-          travelPosts.forEach(post => {
-            const postId = post.id;
-            initialViews[postId] = parsedPostViews[postId] !== undefined 
-              ? parsedPostViews[postId] 
-              : post.views;
-          });
-        } else {
-          // First time - save the initial values to localStorage
-          localStorage.setItem('postViews', JSON.stringify(initialViews));
-        }
-      } catch (error) {
-        console.error('Failed to load from localStorage:', error);
-      }
+    if (loadingPhase === 2) {
+      // Quickly load the first 6 posts without any heavy processing
+      setShuffledPosts(travelPosts.slice(0, 6));
+      setIsLoading(false);
+      setLoadingPhase(3);
     }
-    
-    // Set the final counts
-    setPostLikes(initialLikes);
-    setPostBookmarks(initialBookmarks);
-    setPostViews(initialViews);
-    
-    // Shuffle posts based on the loaded view counts
-    setShuffledPosts(shufflePosts(travelPosts, initialViews));
-  }, [storageAvailable]);
+  }, [loadingPhase]);
   
-  // Save view counts to localStorage when changed
+  // Second phase - do the heavy processing after initial render
   useEffect(() => {
-    if (storageAvailable && Object.keys(postViews).length > 0) {
+    if (loadingPhase !== 3) return;
+    
+    // Use requestIdleCallback or setTimeout to defer heavy work
+    const timerId = setTimeout(() => {
+      // Initialize base likes, bookmarks, and views from posts data
+      const initialLikes: Record<number, number> = {};
+      const initialBookmarks: Record<number, number> = {};
+      const initialViews: Record<number, number> = {};
+      
+      travelPosts.forEach(post => {
+        initialLikes[post.id] = post.likes;
+        initialBookmarks[post.id] = post.bookmarks || 0;
+        initialViews[post.id] = post.views;
+      });
+      
+      // Try to load liked, bookmarked, and viewed posts from localStorage
+      if (storageAvailable) {
+        try {
+          // Load liked posts
+          const savedLikedPosts = localStorage.getItem('likedPosts');
+          if (savedLikedPosts) {
+            const parsedLikedPosts = JSON.parse(savedLikedPosts) as Record<number, boolean>;
+            setLikedPosts(parsedLikedPosts);
+            
+            // Adjust like counts based on liked status
+            Object.entries(parsedLikedPosts).forEach(([postId, isLiked]) => {
+              if (isLiked) {
+                const numericPostId = Number(postId);
+                initialLikes[numericPostId] = (initialLikes[numericPostId] || 0) + 1;
+              }
+            });
+          }
+          
+          // Load bookmarked posts
+          const savedBookmarkedPosts = localStorage.getItem('bookmarkedPosts');
+          if (savedBookmarkedPosts) {
+            const parsedBookmarkedPosts = JSON.parse(savedBookmarkedPosts) as Record<number, boolean>;
+            setBookmarkedPosts(parsedBookmarkedPosts);
+            
+            // Adjust bookmark counts based on bookmarked status
+            Object.entries(parsedBookmarkedPosts).forEach(([postId, isBookmarked]) => {
+              if (isBookmarked) {
+                const numericPostId = Number(postId);
+                initialBookmarks[numericPostId] = (initialBookmarks[numericPostId] || 0) + 1;
+              }
+            });
+          }
+          
+          // Load view counts
+          const savedPostViews = localStorage.getItem('postViews');
+          if (savedPostViews) {
+            const parsedPostViews = JSON.parse(savedPostViews) as Record<number, number>;
+            
+            // Use saved views if available, otherwise use values from post data
+            travelPosts.forEach(post => {
+              const postId = post.id;
+              initialViews[postId] = parsedPostViews[postId] !== undefined 
+                ? parsedPostViews[postId] 
+                : post.views;
+            });
+          } else {
+            // First time - save the initial values to localStorage
+            localStorage.setItem('postViews', JSON.stringify(initialViews));
+          }
+        } catch (error) {
+          console.error('Failed to load from localStorage:', error);
+        }
+      }
+      
+      // Set the final counts
+      setPostLikes(initialLikes);
+      setPostBookmarks(initialBookmarks);
+      setPostViews(initialViews);
+      
+      // Shuffle posts based on the loaded view counts
+      setShuffledPosts(shufflePosts(travelPosts, initialViews));
+    }, 300); // Delay the heavy processing
+    
+    return () => clearTimeout(timerId);
+  }, [loadingPhase, storageAvailable]);
+  
+  // Optimize localStorage saves by using a debounce pattern
+  // Only write to localStorage after data hasn't changed for a while
+  useEffect(() => {
+    if (!storageAvailable || Object.keys(postViews).length === 0) return;
+    
+    const timerId = setTimeout(() => {
       try {
-        const dataToSave = JSON.stringify(postViews);
-        localStorage.setItem('postViews', dataToSave);
+        localStorage.setItem('postViews', JSON.stringify(postViews));
       } catch (error) {
         console.error('Failed to save post views to localStorage:', error);
       }
-    }
+    }, 1000); // 1 second debounce
+    
+    return () => clearTimeout(timerId);
   }, [postViews, storageAvailable]);
   
-  // Save liked posts to localStorage when changed
+  // Save liked posts to localStorage with debounce
   useEffect(() => {
-    if (storageAvailable && Object.keys(likedPosts).length > 0) {
+    if (!storageAvailable || Object.keys(likedPosts).length === 0) return;
+    
+    const timerId = setTimeout(() => {
       try {
-        const dataToSave = JSON.stringify(likedPosts);
-        localStorage.setItem('likedPosts', dataToSave);
+        localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
       } catch (error) {
         console.error('Failed to save liked posts to localStorage:', error);
       }
-    }
+    }, 1000); // 1 second debounce
+    
+    return () => clearTimeout(timerId);
   }, [likedPosts, storageAvailable]);
   
-  // Save bookmarked posts to localStorage when changed
+  // Save bookmarked posts to localStorage with debounce
   useEffect(() => {
-    if (storageAvailable && Object.keys(bookmarkedPosts).length > 0) {
+    if (!storageAvailable || Object.keys(bookmarkedPosts).length === 0) return;
+    
+    const timerId = setTimeout(() => {
       try {
-        const dataToSave = JSON.stringify(bookmarkedPosts);
-        localStorage.setItem('bookmarkedPosts', dataToSave);
+        localStorage.setItem('bookmarkedPosts', JSON.stringify(bookmarkedPosts));
       } catch (error) {
         console.error('Failed to save bookmarked posts to localStorage:', error);
       }
-    }
+    }, 1000); // 1 second debounce
+    
+    return () => clearTimeout(timerId);
   }, [bookmarkedPosts, storageAvailable]);
   
   // Handle liking a post
@@ -242,10 +271,13 @@ export default function ContentGrid() {
   const filteredPosts = activeCategory === "" 
     ? shuffledPosts 
     : shuffledPosts.filter(post => 
-        post.hashtags.some(tag => 
+        post.hashtags && post.hashtags.some(tag => 
           tag.toLowerCase().includes(activeCategory.toLowerCase())
         )
       );
+
+  // Only show first 12 posts initially for better performance
+  const visiblePosts = filteredPosts.slice(0, 12);
 
   return (
     <div className="pt-2 pb-4 -mx-4 md:mx-0">
@@ -263,7 +295,9 @@ export default function ContentGrid() {
                   src={category.iconSrc}
                   alt={category.name}
                   className="w-9 h-9 transition-all duration-300 group-hover:scale-[1.5] group-hover:z-10"
-                  loading="lazy"
+                  width={36}
+                  height={36}
+                  loading="eager"
                 />
               </div>
               <span className="text-xs font-semibold tracking-tight text-gray-800 transition-opacity duration-300 group-hover:opacity-0">
@@ -274,101 +308,115 @@ export default function ContentGrid() {
         </div>
       </div>
       
-      {/* Content grid */}
-      <div className="grid grid-cols-2 gap-x-1 gap-y-1 md:gap-x-1 px-1 md:px-0">
-        {filteredPosts.map((post, index) => (
-          <div 
-            key={post.id} 
-            className="group flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-            style={{ 
-              animationDelay: `${index * 100}ms`,
-              opacity: 0,
-              animation: 'fadeIn 0.5s ease forwards'
-            }}
-          >
-            <div className="relative overflow-hidden">
-              <Link href={`/post/${post.id}`} className="block" onClick={() => handleViewPost(post.id)}>
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  <BlurImage 
-                    src={post.media && post.media.length > 0 
-                      ? post.media[0].url 
-                      : (post.image || 'https://picsum.photos/600/600?random=default')} 
-                    alt={post.title}
-                    aspectRatio="aspect-[3/4]"
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                    className={
-                      post.media && post.media.length > 0 && post.media[0].width && post.media[0].height
-                        ? post.media[0].width > post.media[0].height 
-                          ? "object-cover" // landscape images
-                          : "object-cover" // portrait images
-                        : "object-cover" // Default
-                    }
-                  />
-                  {/* Image overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  {/* Bookmark button */}
-                  <button 
-                    className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95"
-                    onClick={(e) => handleBookmarkPost(e, post.id)}
-                  >
-                    {bookmarkedPosts[post.id] ? (
-                      <FaBookmark className="w-4 h-4 text-amber-400" />
-                    ) : (
-                      <FiBookmark className="w-4 h-4 text-gray-600" />
-                    )}
-                  </button>
-                </div>
-              </Link>
-              
+      {/* Loading state */}
+      {isLoading ? (
+        <div className="grid grid-cols-2 gap-x-1 gap-y-1 md:gap-x-1 px-1 md:px-0">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="rounded-lg overflow-hidden bg-white shadow-sm">
+              <div className="aspect-[3/4] bg-gray-200 animate-pulse"></div>
               <div className="p-2.5">
-                <Link href={`/post/${post.id}`}>
-                  <h3 className="font-[550] text-xs line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
-                    {post.title}
-                  </h3>
+                <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                <div className="flex justify-between">
+                  <div className="h-3 w-20 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-3 w-8 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        /* Content grid */
+        <div className="grid grid-cols-2 gap-x-1 gap-y-1 md:gap-x-1 px-1 md:px-0">
+          {visiblePosts.map((post, index) => (
+            <div 
+              key={post.id} 
+              className="group flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              style={{ 
+                animationDelay: `${index * 50}ms`,
+                opacity: 0,
+                animation: 'fadeIn 0.5s ease forwards'
+              }}
+            >
+              <div className="relative overflow-hidden">
+                <Link href={`/post/${post.id}`} className="block" onClick={() => handleViewPost(post.id)}>
+                  <div className="relative aspect-[3/4] overflow-hidden">
+                    <BlurImage 
+                      src={post.media && post.media.length > 0 
+                        ? post.media[0].url 
+                        : (post.image || 'https://picsum.photos/600/600?random=default')} 
+                      alt={post.title}
+                      aspectRatio="aspect-[3/4]"
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                      priority={index < 2} // Only prioritize loading first 2 images
+                      className="object-cover"
+                    />
+                    {/* Image overlay gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    {/* Bookmark button */}
+                    <button 
+                      className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95"
+                      onClick={(e) => handleBookmarkPost(e, post.id)}
+                    >
+                      {bookmarkedPosts[post.id] ? (
+                        <FaBookmark className="w-4 h-4 text-amber-400" />
+                      ) : (
+                        <FiBookmark className="w-4 h-4 text-gray-600" />
+                      )}
+                    </button>
+                  </div>
                 </Link>
                 
-                <div className="flex items-center justify-between mt-1.5">
-                  <Link 
-                    href={`/user/${post.username}`} 
-                    className="flex items-center group/author"
-                  >
-                    <div className="w-4 h-4 rounded-full bg-gray-200 mr-1.5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
-                      <Image
-                        src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.id}`}
-                        alt={post.username}
-                        width={16}
-                        height={16}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <span className="text-[10px] font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">@{post.username}</span>
+                <div className="p-2.5">
+                  <Link href={`/post/${post.id}`}>
+                    <h3 className="font-[550] text-xs line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+                      {post.title}
+                    </h3>
                   </Link>
                   
-                  <div className="flex items-center space-x-3">
-                    <button 
-                      className="flex items-center text-[10px] transition-all duration-300 active:scale-125"
-                      onClick={(e) => handleLikePost(e, post.id)}
+                  <div className="flex items-center justify-between mt-1.5">
+                    <Link 
+                      href={`/user/${post.username}`} 
+                      className="flex items-center group/author"
                     >
-                      {likedPosts[post.id] ? (
-                        <FaHeart className="w-3 h-3 mr-1 text-red-500 transition-transform duration-300" />
-                      ) : (
-                        <FiHeart className="w-3 h-3 mr-1 text-gray-500 transition-transform duration-300" />
-                      )}
-                      <span className={likedPosts[post.id] ? "text-red-500 font-medium" : "text-gray-500"}>
-                        {postLikes[post.id] || post.likes}
-                      </span>
-                    </button>
+                      <div className="w-4 h-4 rounded-full bg-gray-200 mr-1.5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
+                        <Image
+                          src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/40/40?random=${post.id}`}
+                          alt={post.username}
+                          width={16}
+                          height={16}
+                          className="w-full h-full object-cover"
+                          unoptimized={true}
+                        />
+                      </div>
+                      <span className="text-[10px] font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">@{post.username}</span>
+                    </Link>
+                    
+                    <div className="flex items-center space-x-3">
+                      <button 
+                        className="flex items-center text-[10px] transition-all duration-300 active:scale-125"
+                        onClick={(e) => handleLikePost(e, post.id)}
+                      >
+                        {likedPosts[post.id] ? (
+                          <FaHeart className="w-3 h-3 mr-1 text-red-500 transition-transform duration-300" />
+                        ) : (
+                          <FiHeart className="w-3 h-3 mr-1 text-gray-500 transition-transform duration-300" />
+                        )}
+                        <span className={likedPosts[post.id] ? "text-red-500 font-medium" : "text-gray-500"}>
+                          {postLikes[post.id] || post.likes}
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
       
       {/* Empty state */}
-      {filteredPosts.length === 0 && (
+      {!isLoading && filteredPosts.length === 0 && (
         <div className="flex flex-col items-center justify-center py-10 px-4 md:px-0">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
             <FiHeart className="w-6 h-6 text-gray-400" />

@@ -40,7 +40,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10001,
         type: 'image',
-        url: 'https://picsum.photos/800/1200?random=1001',
+        url: '/newpostmedia/media1.jpg',
         aspectRatio: '2:3',
         width: 800,
         height: 1200
@@ -96,7 +96,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10002,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1002',
+        url: '/newpostmedia/media2.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -104,7 +104,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10003,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1003',
+        url: '/newpostmedia/media3.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -160,7 +160,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10004,
         type: 'image',
-        url: 'https://picsum.photos/800/600?random=1004',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600
@@ -168,8 +168,8 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10005,
         type: 'video',
-        url: '/videos/sample-1.mp4',
-        thumbnail: 'https://picsum.photos/800/600?random=1005',
+        url: '/newpostmedia/media4.mp4',
+        thumbnail: '/newpostmedia/media1.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600,
@@ -194,8 +194,8 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10006,
         type: 'video',
-        url: '/videos/sample-2.mp4',
-        thumbnail: 'https://picsum.photos/800/450?random=1006',
+        url: '/newpostmedia/media4.mp4',
+        thumbnail: '/newpostmedia/random2.jpg',
         aspectRatio: '16:9',
         width: 800,
         height: 450,
@@ -220,7 +220,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10007,
         type: 'image',
-        url: 'https://picsum.photos/600/800?random=1007',
+        url: '/newpostmedia/random3.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
@@ -228,7 +228,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10008,
         type: 'image',
-        url: 'https://picsum.photos/600/800?random=1008',
+        url: '/newpostmedia/media1.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
@@ -236,8 +236,8 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10009,
         type: 'video',
-        url: '/videos/sample-3.mp4',
-        thumbnail: 'https://picsum.photos/600/800?random=1009',
+        url: '/newpostmedia/media4.mp4',
+        thumbnail: '/newpostmedia/media2.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800,
@@ -256,7 +256,7 @@ export const travelPosts: TravelPost[] = [
     location: 'Shanghai, China',
     taggedAccounts: [
       {
-        username: 'speaklow'
+        username: 'shanghaitaste'
       },
       {
         username: 'uniontrading'
@@ -270,8 +270,8 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10010,
         type: 'livePhoto',
-        url: 'https://picsum.photos/600/800?random=1010',
-        livePhotoVideoUrl: '/videos/live-photo-1.mp4',
+        url: '/newpostmedia/random3.jpg',
+        livePhotoVideoUrl: '/newpostmedia/media4.mp4',
         aspectRatio: '3:4',
         width: 600,
         height: 800
@@ -295,7 +295,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10011,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1011',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -303,7 +303,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10012,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1012',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -311,7 +311,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10013,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1013',
+        url: '/newpostmedia/random3.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -319,7 +319,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10014,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1014',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -343,8 +343,8 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10015,
         type: 'video',
-        url: '/videos/sample-4.mp4',
-        thumbnail: 'https://picsum.photos/800/450?random=1015',
+        url: '/newpostmedia/media4.mp4',
+        thumbnail: '/newpostmedia/random2.jpg',
         aspectRatio: '16:9',
         width: 800,
         height: 450,
@@ -353,8 +353,8 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10016,
         type: 'livePhoto',
-        url: 'https://picsum.photos/800/450?random=1016',
-        livePhotoVideoUrl: '/videos/live-photo-2.mp4',
+        url: '/newpostmedia/random3.jpg',
+        livePhotoVideoUrl: '/newpostmedia/media4.mp4',
         aspectRatio: '16:9',
         width: 800,
         height: 450
@@ -374,12 +374,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 1,
     title: 'Exploring the hidden gems of Shanghai',
-    image: 'https://picsum.photos/600/600?random=4',
+    image: '/newpostmedia/random1.jpg',
     media: [
       {
         id: 201,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=4',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -387,7 +387,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 202,
         type: 'image',
-        url: 'https://picsum.photos/600/800?random=5',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
@@ -395,7 +395,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 203,
         type: 'image',
-        url: 'https://picsum.photos/800/600?random=6',
+        url: '/newpostmedia/random3.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600
@@ -403,7 +403,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 204,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=7',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -443,12 +443,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 2,
     title: 'Sunset over the Bund waterfront',
-    image: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2',
+    image: '/newpostmedia/random2.jpg',
     media: [
       {
         id: 202,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '16:9',
         width: 800,
         height: 450
@@ -473,12 +473,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 3,
     title: 'Luxury weekend in Sanya: The St. Regis Experience',
-    image: 'https://picsum.photos/600/800?random=10',
+    image: '/newpostmedia/random3.jpg',
     media: [
       {
         id: 207,
         type: 'image',
-        url: 'https://picsum.photos/600/800?random=10',
+        url: '/newpostmedia/random3.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
@@ -486,7 +486,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 208,
         type: 'image',
-        url: 'https://picsum.photos/800/600?random=11',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600
@@ -494,7 +494,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 209,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=12',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -514,12 +514,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 4,
     title: 'Panoramic view of Hong Kong skyline',
-    image: 'https://images.unsplash.com/photo-1555086156-e6c7353d283f',
+    image: '/newpostmedia/random1.jpg',
     media: [
       {
         id: 204,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1555086156-e6c7353d283f',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '16:9',
         width: 900,
         height: 500
@@ -539,12 +539,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 5,
     title: 'The ultimate street food tour of Chengdu',
-    image: 'https://picsum.photos/600/600?random=15',
+    image: '/newpostmedia/random2.jpg',
     media: [
       {
         id: 212,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=15',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -552,7 +552,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 213,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=16',
+        url: '/newpostmedia/random3.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -560,7 +560,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 214,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=17',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -568,7 +568,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 215,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=18',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -588,12 +588,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 6,
     title: 'Hidden beach gems in Jeju Island',
-    image: 'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9',
+    image: '/newpostmedia/random3.jpg',
     media: [
       {
         id: 301,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9',
+        url: '/newpostmedia/random3.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600
@@ -618,12 +618,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 7,
     title: 'The best craft cocktail bars in Tokyo',
-    image: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187',
+    image: '/newpostmedia/random1.jpg',
     media: [
       {
         id: 302,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '3:2',
         width: 900,
         height: 600
@@ -648,12 +648,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 8,
     title: 'Luxury glamping in the mountains of Taiwan',
-    image: 'https://images.unsplash.com/photo-1618140052121-39fc6db33972',
+    image: '/newpostmedia/random2.jpg',
     media: [
       {
         id: 303,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1618140052121-39fc6db33972',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '16:9',
         width: 1600,
         height: 900
@@ -678,12 +678,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 9,
     title: 'Shopping and Nightlife Tour in Shenzhen',
-    image: 'https://images.unsplash.com/photo-1534884710045-1ea33327f0f2',
+    image: '/newpostmedia/random3.jpg',
     media: [
       {
         id: 401,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1534884710045-1ea33327f0f2',
+        url: '/newpostmedia/random3.jpg',
         aspectRatio: '16:9',
         width: 1600,
         height: 900
@@ -691,7 +691,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 402,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1578474846511-04ba529f0b88',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
@@ -699,7 +699,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 403,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1519677584237-752f8853252e',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600
@@ -732,5 +732,112 @@ export const travelPosts: TravelPost[] = [
         username: 'pulseclub'
       }
     ]
+  },
+  {
+    id: 10,
+    title: 'Hiking the peaks of Huangshan (Yellow Mountain)',
+    image: '/newpostmedia/media1.jpg',
+    media: [
+      {
+        id: 404,
+        type: 'image',
+        url: '/newpostmedia/media1.jpg',
+        aspectRatio: '3:2',
+        width: 900,
+        height: 600
+      }
+    ],
+    author: 'andyckt123',
+    userId: 106,
+    username: 'andyckt123',
+    createdAt: '2025-03-18T10:30:00Z',
+    likes: 124,
+    bookmarks: 45,
+    views: 356,
+    hashtags: ['#huangshan', '#attractions', '#hiking', '#sunrise', '#superpicture'],
+    description: 'Woke up at 4am for this sunrise hike on Huangshan (Yellow Mountain). The sea of clouds and granite peaks make it obvious why this mountain inspired so many traditional Chinese paintings.',
+    location: 'Huangshan Mountain, Anhui, China',
+    taggedAccounts: [
+      {
+        username: 'shanghaitaste'
+      },
+      {
+        username: 'dumplinghouse'
+      },
+      {
+        username: 'shanghaimuseum'
+      },
+      {
+        username: 'peacehotel'
+      },
+      {
+        username: 'speaklow'
+      },
+      {
+        username: 'taikangroad'
+      },
+      {
+        username: 'iapmmall'
+      },
+      {
+        username: 'seveneleven'
+      },
+      {
+        username: 'familymart'
+      },
+      {
+        username: 'lawson'
+      }
+    ]
+  },
+  {
+    id: 11,
+    title: 'Luxury river cruise on the Yangtze',
+    image: '/newpostmedia/media2.jpg',
+    media: [
+      {
+        id: 405,
+        type: 'image',
+        url: '/newpostmedia/media2.jpg',
+        aspectRatio: '16:9',
+        width: 1600,
+        height: 900
+      }
+    ],
+    author: 'andyckt123',
+    userId: 106,
+    username: 'andyckt123',
+    createdAt: '2025-03-18T10:30:00Z',
+    likes: 124,
+    bookmarks: 45,
+    views: 356,
+    hashtags: ['#yangtze', '#cruise', '#luxurious', '#travel', '#superpicture'],
+    description: 'Experience the breathtaking views of the Yangtze River on this luxury cruise. The serene landscapes and rich history of China unfold before your eyes.',
+    location: 'Yangtze River, China'
+  },
+  {
+    id: 12,
+    title: 'Taking the bullet train across China',
+    image: '/newpostmedia/media3.jpg',
+    media: [
+      {
+        id: 406,
+        type: 'image',
+        url: '/newpostmedia/media3.jpg',
+        aspectRatio: '16:9',
+        width: 1600,
+        height: 900
+      }
+    ],
+    author: 'andyckt123',
+    userId: 106,
+    username: 'andyckt123',
+    createdAt: '2025-03-18T10:30:00Z',
+    likes: 124,
+    bookmarks: 45,
+    views: 356,
+    hashtags: ['#china', '#bullettrain', '#travel', '#superpicture'],
+    description: 'Travel across China in style and comfort with the bullet train. Experience the seamless journey and breathtaking landscapes.',
+    location: 'China'
   }
 ]; 

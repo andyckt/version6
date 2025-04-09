@@ -7,8 +7,9 @@ import PageTransition from '@/components/PageTransition'
 import WelcomeContent from '@/components/WelcomeContent'
 import FoodSpotsContent from '@/components/FoodSpotsContent'
 import AttractionsContent from '@/components/AttractionsContent'
+import FashionSpotsContent from '@/components/FashionSpotsContent'
 import { motion } from 'framer-motion'
-import { FiBookOpen, FiMapPin, FiStar, FiCoffee } from 'react-icons/fi'
+import { FiBookOpen, FiMapPin, FiStar, FiCoffee, FiShoppingBag } from 'react-icons/fi'
 
 export default function Booklet() {
   const [activeSection, setActiveSection] = useState<string | null>(null)
@@ -28,6 +29,11 @@ export default function Booklet() {
       id: 'attractions',
       label: 'Attractions',
       icon: FiMapPin,
+    },
+    {
+      id: 'fashion-spots',
+      label: 'Fashion & Shopping',
+      icon: FiShoppingBag,
     },
     {
       id: 'recommendations',
@@ -84,6 +90,7 @@ export default function Booklet() {
               {activeSection === 'welcome' && <WelcomeContent />}
               {activeSection === 'food-spots' && <FoodSpotsContent />}
               {activeSection === 'attractions' && <AttractionsContent />}
+              {activeSection === 'fashion-spots' && <FashionSpotsContent />}
             </div>
           )}
         </div>

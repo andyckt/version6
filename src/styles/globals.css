@@ -4,7 +4,7 @@
 
 @layer components {
   .container-app {
-    @apply max-w-container mx-auto px-4;
+    @apply max-w-md mx-auto px-4;
   }
 }
 
@@ -33,6 +33,16 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar while maintaining scroll functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }
 
 /* Animations */

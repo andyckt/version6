@@ -519,6 +519,162 @@ function isBarClubMerchant(merchant) {
   return merchant.profileInterface === ProfileInterface.BarClub;
 }
 
+/**
+ * Checks if a merchant is currently open based on their business hours
+ * @param {Object} merchant - The merchant object to check
+ * @param {Date} date - Optional date object to check against (defaults to current time)
+ * @returns {boolean} Whether the merchant is currently open
+ */
+function isMerchantOpen(merchant, date = new Date()) {
+  // For merchants with no applicable business hours or that are always open
+  if (isHotelMerchant(merchant)) {
+    return true; // Hotels are always open
+  }
+  
+  if (isStreetMerchant(merchant)) {
+    return true; // Streets are always accessible
+  }
+  
+  // Get the opening hours
+  let openingHours = [];
+  if (isSingleLocationMerchant(merchant) || isBuildingMerchant(merchant) || 
+      isAttractionMerchant(merchant) || isBarClubMerchant(merchant)) {
+    if (!merchant.businessInfo?.openingHours) return false;
+    openingHours = merchant.businessInfo.openingHours;
+  } else if (isMultiLocationMerchant(merchant)) {
+    merchant.branches.forEach(branch => {
+      if (branch.businessInfo?.openingHours) {
+        openingHours = [...openingHours, ...branch.businessInfo.openingHours];
+      }
+    });
+  } else {
+    return false;
+  }
+  
+  if (openingHours.length === 0) return false;
+  
+  // Get current day and time in China
+  const utcHours = date.getUTCHours();
+  const chinaHours = (utcHours + 8) % 24;
+  const dayIncrement = utcHours + 8 >= 24 ? 1 : 0;
+  
+  const chinaDay = new Date(Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate() + dayIncrement,
+    chinaHours,
+    date.getUTCMinutes()
+  ));
+  
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const currentDay = days[chinaDay.getUTCDay()];
+  
+  // Check if merchant is open
+  for (const item of openingHours) {
+    // Skip if the day doesn't match
+    if (item.day !== currentDay && 
+        item.day !== 'All days' && 
+        item.day !== 'Monday-Sunday') {
+      
+      // Check weekends/weekdays
+      if (item.day === 'Weekends' && !(currentDay === 'Saturday' || currentDay === 'Sunday')) continue;
+      if (item.day === 'Weekdays' && (currentDay === 'Saturday' || currentDay === 'Sunday')) continue;
+      
+      // Check day ranges (e.g., Monday-Friday)
+      if (item.day.includes('-') && item.day !== 'Monday-Sunday') {
+        const [startDay, endDay] = item.day.split('-');
+        const startIndex = days.indexOf(startDay);
+        const endIndex = days.indexOf(endDay);
+        const currentIndex = chinaDay.getUTCDay();
+        
+        // Handle both standard ranges (Mon-Fri) and wrapping ranges (Fri-Mon)
+        if (startIndex <= endIndex) {
+          if (currentIndex < startIndex || currentIndex > endIndex) continue;
+        } else {
+          if (currentIndex < startIndex && currentIndex > endIndex) continue;
+        }
+      } else {
+        continue; // Skip if day doesn't match
+      }
+    }
+    
+    // We have a matching day, now check hours
+    // If marked as 24 hours, All day, or 全天, it's open
+    if (item.hours === '24 hours' || item.hours === 'All day' || item.hours === '全天') {
+      return true;
+    }
+    
+    // If marked as Closed, it's closed on this day
+    if (item.hours === 'Closed') {
+      continue;
+    }
+    
+    // Check time slots
+    const slots = Array.isArray(item.hours) ? item.hours : [item.hours];
+    for (const slot of slots) {
+      if (slot === '24 hours' || slot === 'All day' || slot === '全天') {
+        return true;
+      }
+      
+      try {
+        const [startTimeStr, endTimeStr] = slot.split('-');
+        
+        // Parse times
+        const parseTime = (timeStr) => {
+          const match = timeStr.match(/(\d+)(?::(\d+))?/);
+          if (!match) return null;
+          
+          let hour = parseInt(match[1]);
+          const minute = parseInt(match[2] || '0');
+          
+          return { hour, minute };
+        };
+        
+        const startTime = parseTime(startTimeStr);
+        const endTime = parseTime(endTimeStr);
+        
+        if (!startTime || !endTime) continue;
+        
+        // Get current hours/minutes
+        const currentHour = chinaDay.getUTCHours();
+        const currentMinute = chinaDay.getUTCMinutes();
+        
+        // Convert to minutes for easier comparison
+        const currentTotalMinutes = currentHour * 60 + currentMinute;
+        const startTotalMinutes = startTime.hour * 60 + startTime.minute;
+        let endTotalMinutes = endTime.hour * 60 + endTime.minute;
+        
+        // Handle overnight hours (e.g., 22:00-02:00)
+        if (endTotalMinutes < startTotalMinutes) {
+          endTotalMinutes += 24 * 60; // Add a day's worth of minutes
+          
+          // If we're past midnight, we need to adjust the current time
+          if (currentTotalMinutes < startTotalMinutes) {
+            // We're in the early morning, comparing against the previous day's end time
+            if (currentTotalMinutes <= endTotalMinutes - 24 * 60) {
+              return true;
+            }
+          } else {
+            // We're in the evening, before midnight
+            if (currentTotalMinutes >= startTotalMinutes && currentTotalMinutes <= endTotalMinutes) {
+              return true;
+            }
+          }
+        } else {
+          // Normal case (e.g., 09:00-17:00)
+          if (currentTotalMinutes >= startTotalMinutes && currentTotalMinutes <= endTotalMinutes) {
+            return true;
+          }
+        }
+      } catch (error) {
+        continue; // Skip if there's a parsing error
+      }
+    }
+  }
+  
+  return false; // Not open if we haven't found an open slot
+}
+
 // Export everything so it can be imported in migration scripts
 module.exports = {
   ProfileInterface,
@@ -529,5 +685,6 @@ module.exports = {
   isStreetMerchant,
   isBuildingMerchant,
   isHotelMerchant,
-  isBarClubMerchant
+  isBarClubMerchant,
+  isMerchantOpen
 }; 

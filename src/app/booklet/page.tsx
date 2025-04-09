@@ -5,8 +5,10 @@ import Header from '@/components/Header'
 import Navigation from '@/components/Navigation'
 import PageTransition from '@/components/PageTransition'
 import WelcomeContent from '@/components/WelcomeContent'
+import FoodSpotsContent from '@/components/FoodSpotsContent'
+import AttractionsContent from '@/components/AttractionsContent'
 import { motion } from 'framer-motion'
-import { FiBookOpen, FiMapPin, FiStar } from 'react-icons/fi'
+import { FiBookOpen, FiMapPin, FiStar, FiCoffee } from 'react-icons/fi'
 
 export default function Booklet() {
   const [activeSection, setActiveSection] = useState<string | null>(null)
@@ -18,10 +20,14 @@ export default function Booklet() {
       icon: FiBookOpen,
     },
     {
+      id: 'food-spots',
+      label: 'Best Spots to Eat',
+      icon: FiCoffee,
+    },
+    {
       id: 'attractions',
       label: 'Attractions',
       icon: FiMapPin,
-      disabled: true,
     },
     {
       id: 'recommendations',
@@ -76,6 +82,8 @@ export default function Booklet() {
                 ← Back to sections
               </motion.button>
               {activeSection === 'welcome' && <WelcomeContent />}
+              {activeSection === 'food-spots' && <FoodSpotsContent />}
+              {activeSection === 'attractions' && <AttractionsContent />}
             </div>
           )}
         </div>

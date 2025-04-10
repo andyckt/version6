@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import { createUser, findUserByEmail, findUserByUsername } from '@/lib/db/models/user';
 
 // Function to generate a user ID
 const generateUserId = () => {
   return Math.floor(100000000 + Math.random() * 900000000);
 };
 
-// Path to our "database" (JSON file)
+// Path to our "database" (JSON file) - kept for backward compatibility
 const DB_PATH = path.join(process.cwd(), 'waiting-list.json');
 
 // Helper to read the current entries
@@ -133,10 +134,29 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Check if username is already taken in MongoDB
+    const existingUsername = await findUserByUsername(username);
+    if (existingUsername) {
+      return NextResponse.json(
+        { error: 'This username is already taken' },
+        { status: 400 }
+      );
+    }
+    
+    // Check if email is already in use in MongoDB
+    const existingEmail = await findUserByEmail(email);
+    if (existingEmail) {
+      return NextResponse.json(
+        { error: 'This email is already on the waiting list' },
+        { status: 400 }
+      );
+    }
+    
+    // Keep the legacy JSON file updated for backward compatibility
     // Get current entries
     const entries = getEntries();
     
-    // Check if email already exists
+    // Double-check against the legacy file system
     if (entries.some((entry: any) => entry.email === email)) {
       return NextResponse.json(
         { error: 'This email is already on the waiting list' },
@@ -144,7 +164,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Check if username is already taken
     if (entries.some((entry: any) => entry.username === username)) {
       return NextResponse.json(
         { error: 'This username is already taken' },
@@ -155,7 +174,7 @@ export async function POST(request: NextRequest) {
     // Generate a user ID for this entry
     const userId = generateUserId();
     
-    // Create a new entry
+    // Create a new entry for legacy storage
     const newEntry = {
       id: userId,
       email,
@@ -163,9 +182,32 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString()
     };
     
-    // Add to our entries and save
+    // Add to our entries and save to JSON file
     entries.push(newEntry);
     saveEntries(entries);
+    
+    // Create a new user in MongoDB
+    const now = new Date();
+    await createUser({
+      username,
+      email,
+      displayName: username, // Default display name to username
+      bio: '', // Empty bio
+      profileImage: '', // Empty profile image
+      coverImage: '', // Empty cover image
+      verified: false,
+      location: '',
+      homeLocation: '',
+      website: '',
+      joinDate: now,
+      role: 'user',
+      stats: {
+        posts: 0,
+        followers: 0,
+        following: 0
+      },
+      emailVerified: false
+    });
     
     // Send confirmation email
     await sendConfirmationEmail(email, username);

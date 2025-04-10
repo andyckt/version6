@@ -1,26 +1,13 @@
-export interface User {
-  id: number;                    // Numeric user ID (each user has an unique numeric ID)
-  username: string;              // Alphanumeric username (each user has an unique username, can have lowercase letters, numbers, and underscore) (15 characters max)
-  displayName: string;           // User's display name, can add emojis like Travel Enthusiast ✈️
-  bio: string;                   // User's short biography/description
-  profileImage: string;          // URL to profile image
-  coverImage: string;            // URL to cover image
-  verified: boolean;             // Verification status
-  location: string;              // Current travelling location
-  homeLocation: string;          // Home location 
-  website: string;               // Personal website URL
-  joinDate: string;              // Date user joined
-  role: 'user' | 'creator' | 'admin'; // User role in the platform
-  // Stats
-  stats: {
-    posts: number;               // Number of posts
-    followers: number;           // Number of followers
-    following: number;           // Number of people user follows
-  };
-}
+// Load environment variables
+require('dotenv').config({ path: '.env.local' });
 
-// Sample users data
-export const users: User[] = [
+const { MongoClient } = require('mongodb');
+
+// Collection name
+const COLLECTION = 'users';
+
+// Static users data (copied directly to avoid import issues)
+const users = [
   {
     id: 101,
     username: "wanderlust_emma",
@@ -137,17 +124,105 @@ export const users: User[] = [
   }
 ];
 
-// Function to get user by username
-export function getUserByUsername(username: string): User | undefined {
-  return users.find(user => user.username === username);
+/**
+ * Migrate users to MongoDB
+ */
+async function migrateUsers() {
+  console.log('🚀 Starting user migration...');
+  
+  // MongoDB client
+  let client = null;
+  
+  try {
+    // Check environment variables
+    if (!process.env.MONGODB_URI) {
+      throw new Error('Missing MONGODB_URI environment variable');
+    }
+    if (!process.env.MONGODB_DB) {
+      throw new Error('Missing MONGODB_DB environment variable');
+    }
+    
+    // Connect to MongoDB
+    client = new MongoClient(process.env.MONGODB_URI);
+    await client.connect();
+    console.log('✅ Connected to MongoDB');
+    
+    const db = client.db(process.env.MONGODB_DB);
+    const usersCollection = db.collection(COLLECTION);
+    
+    // Create indexes
+    await usersCollection.createIndexes([
+      { key: { username: 1 }, unique: true },
+      { key: { email: 1 }, unique: true }
+    ]);
+    console.log('✅ Created indexes');
+    
+    // Convert users
+    const mongoUsers = users.map(user => ({
+      username: user.username,
+      email: `${user.username}@example.com`, // Generating placeholder email
+      displayName: user.displayName,
+      bio: user.bio,
+      profileImage: user.profileImage,
+      coverImage: user.coverImage,
+      verified: user.verified,
+      location: user.location,
+      homeLocation: user.homeLocation,
+      website: user.website,
+      joinDate: new Date(user.joinDate), // Convert string date to Date
+      role: user.role,
+      stats: user.stats,
+      emailVerified: true // Mark existing users as verified
+    }));
+    
+    console.log(`🔍 Found ${mongoUsers.length} users to migrate`);
+    
+    // Insert users one by one
+    let successCount = 0;
+    let errorCount = 0;
+    
+    for (const user of mongoUsers) {
+      try {
+        // Check if user already exists
+        const existingUser = await usersCollection.findOne({ username: user.username });
+        if (existingUser) {
+          console.log(`⏩ User ${user.username} already exists, skipping`);
+          continue;
+        }
+        
+        // Insert the new user
+        const result = await usersCollection.insertOne(user);
+        console.log(`✅ Migrated user: ${user.username} (${result.insertedId})`);
+        successCount++;
+      } catch (error) {
+        console.error(`❌ Failed to migrate user ${user.username}:`, error.message);
+        errorCount++;
+      }
+    }
+    
+    // Display summary
+    console.log('\n📊 Migration Summary:');
+    console.log(`Total users: ${mongoUsers.length}`);
+    console.log(`Successfully migrated: ${successCount}`);
+    console.log(`Failed: ${errorCount}`);
+    console.log(`Skipped: ${mongoUsers.length - successCount - errorCount}`);
+    
+    if (errorCount === 0) {
+      console.log('🎉 Migration completed successfully!');
+    } else {
+      console.log('⚠️ Migration completed with errors.');
+    }
+    
+  } catch (error) {
+    console.error('❌ Migration failed:', error.message);
+  } finally {
+    // Close connection
+    if (client) {
+      await client.close();
+      console.log('👋 Disconnected from MongoDB');
+    }
+  }
 }
 
-// Function to get user by ID
-export function getUserById(id: number): User | undefined {
-  return users.find(user => user.id === id);
-}
-
-// CommonJS export for migration script
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { users, getUserByUsername, getUserById };
-} 
+// Run the migration
+migrateUsers().catch(console.error); 

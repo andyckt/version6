@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   FiUsers, FiFileText, FiActivity, FiServer, 
   FiAlertCircle, FiCheckCircle, FiTrendingUp, FiRefreshCw, 
   FiShoppingCart, FiCpu, FiCalendar, FiEye, FiMessageSquare, FiPlus
 } from 'react-icons/fi';
+import { isAdminLoggedIn } from '@/app/actions';
 
 interface DashboardStats {
   users: {
@@ -60,10 +62,20 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('week');
+  const router = useRouter();
   
   useEffect(() => {
+    // Check if admin is logged in
+    const checkAuth = async () => {
+      const loggedIn = await isAdminLoggedIn();
+      if (!loggedIn) {
+        router.push('/admin/login');
+      }
+    };
+    
+    checkAuth();
     fetchDashboardData();
-  }, [timeRange]);
+  }, [timeRange, router]);
   
   const fetchDashboardData = async () => {
     try {

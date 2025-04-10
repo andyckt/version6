@@ -5,8 +5,10 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { 
   FiUsers, FiSettings, FiBarChart2, FiFile, 
-  FiDatabase, FiAlertCircle, FiMenu, FiX, FiHome
+  FiDatabase, FiAlertCircle, FiMenu, FiX, FiHome,
+  FiLogOut
 } from 'react-icons/fi';
+import { logoutAdmin } from '@/app/actions';
 
 interface NavItem {
   name: string;
@@ -83,6 +85,17 @@ export default function AdminLayout({
               {item.name}
             </Link>
           ))}
+          
+          {/* Logout button - mobile */}
+          <form action={logoutAdmin}>
+            <button
+              type="submit"
+              className="flex w-full items-center px-3 py-2 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 group"
+            >
+              <span className="mr-3"><FiLogOut className="w-5 h-5" /></span>
+              Logout
+            </button>
+          </form>
         </nav>
       </div>
       
@@ -108,6 +121,19 @@ export default function AdminLayout({
               {item.name}
             </Link>
           ))}
+          
+          {/* Logout button - desktop */}
+          <div className="pt-6 mt-6 border-t border-gray-100">
+            <form action={logoutAdmin}>
+              <button
+                type="submit"
+                className="flex w-full items-center px-3 py-2 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 group"
+              >
+                <span className="mr-3"><FiLogOut className="w-5 h-5" /></span>
+                Logout
+              </button>
+            </form>
+          </div>
         </nav>
       </div>
       

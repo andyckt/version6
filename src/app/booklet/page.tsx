@@ -11,8 +11,9 @@ import FashionSpotsContent from '@/components/FashionSpotsContent'
 import ChineseSpaContent from '@/components/ChineseSpaContent'
 import HotelContent from '@/components/HotelContent'
 import GetDrunkContent from '@/components/GetDrunkContent'
+import NightClubsContent from '@/components/NightClubsContent'
 import { motion } from 'framer-motion'
-import { FiBookOpen, FiMapPin, FiStar, FiCoffee, FiShoppingBag, FiMoon, FiHome, FiWind } from 'react-icons/fi'
+import { FiBookOpen, FiMapPin, FiStar, FiCoffee, FiShoppingBag, FiMoon, FiHome, FiWind, FiMusic } from 'react-icons/fi'
 
 export default function Booklet() {
   const [activeSection, setActiveSection] = useState<string | null>(null)
@@ -47,6 +48,11 @@ export default function Booklet() {
       id: 'get-drunk',
       label: 'Get Drunk',
       icon: FiWind,
+    },
+    {
+      id: 'nightclubs',
+      label: 'Nightclubs',
+      icon: FiMusic,
     },
     {
       id: 'chinese-spa',
@@ -112,6 +118,7 @@ export default function Booklet() {
               {activeSection === 'hotels' && <HotelContent />}
               {activeSection === 'chinese-spa' && <ChineseSpaContent />}
               {activeSection === 'get-drunk' && <GetDrunkContent />}
+              {activeSection === 'nightclubs' && <NightClubsContent />}
             </div>
           )}
         </div>

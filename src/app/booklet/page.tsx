@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from '@/components/Header'
 import Navigation from '@/components/Navigation'
 import PageTransition from '@/components/PageTransition'
@@ -12,17 +12,71 @@ import ChineseSpaContent from '@/components/ChineseSpaContent'
 import HotelContent from '@/components/HotelContent'
 import GetDrunkContent from '@/components/GetDrunkContent'
 import NightClubsContent from '@/components/NightClubsContent'
-import { motion } from 'framer-motion'
-import { FiBookOpen, FiMapPin, FiStar, FiCoffee, FiShoppingBag, FiMoon, FiHome, FiWind, FiMusic } from 'react-icons/fi'
+import ShanghaiTipsContent from '@/components/ShanghaiTipsContent'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FiBookOpen, FiMapPin, FiStar, FiCoffee, FiShoppingBag, FiMoon, FiHome, FiWind, FiMusic, FiInfo, FiChevronLeft } from 'react-icons/fi'
 
 export default function Booklet() {
   const [activeSection, setActiveSection] = useState<string | null>(null)
+  const [scrolled, setScrolled] = useState(false)
+
+  // Handle scroll effect for the header
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Animation variants for buttons
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 24
+      }
+    }
+  }
+
+  // Define button backgrounds and styles
+  const buttonStyles = [
+    { bg: "from-blue-500 to-indigo-600", iconBg: "bg-indigo-400", shadow: "shadow-blue-500/25" },
+    { bg: "from-green-500 to-teal-600", iconBg: "bg-teal-400", shadow: "shadow-green-500/25" },
+    { bg: "from-orange-500 to-amber-600", iconBg: "bg-amber-400", shadow: "shadow-orange-500/25" },
+    { bg: "from-purple-500 to-pink-600", iconBg: "bg-pink-400", shadow: "shadow-purple-500/25" },
+    { bg: "from-red-500 to-rose-600", iconBg: "bg-rose-400", shadow: "shadow-red-500/25" },
+    { bg: "from-cyan-500 to-blue-600", iconBg: "bg-blue-400", shadow: "shadow-cyan-500/25" },
+    { bg: "from-violet-500 to-purple-600", iconBg: "bg-purple-400", shadow: "shadow-violet-500/25" },
+    { bg: "from-fuchsia-500 to-purple-600", iconBg: "bg-purple-400", shadow: "shadow-fuchsia-500/25" },
+    { bg: "from-emerald-500 to-teal-600", iconBg: "bg-teal-400", shadow: "shadow-emerald-500/25" },
+  ]
 
   const buttons = [
     {
       id: 'welcome',
-      label: 'Welcome, Read This First!',
+      label: 'Welcome,\nRead This First!',
       icon: FiBookOpen,
+    },
+    {
+      id: 'shanghai-tips',
+      label: 'Shanghai Tips',
+      icon: FiInfo,
     },
     {
       id: 'food-spots',
@@ -33,16 +87,6 @@ export default function Booklet() {
       id: 'attractions',
       label: 'Attractions',
       icon: FiMapPin,
-    },
-    {
-      id: 'fashion-spots',
-      label: 'Fashion & Shopping',
-      icon: FiShoppingBag,
-    },
-    {
-      id: 'hotels',
-      label: 'Where to Stay',
-      icon: FiHome,
     },
     {
       id: 'get-drunk',
@@ -60,67 +104,116 @@ export default function Booklet() {
       icon: FiMoon,
     },
     {
-      id: 'recommendations',
-      label: 'Our Recommendations',
-      icon: FiStar,
-      disabled: true,
+      id: 'hotels',
+      label: 'Hotels',
+      icon: FiHome,
+    },
+    {
+      id: 'fashion-spots',
+      label: 'Fashion & Shopping',
+      icon: FiShoppingBag,
     },
   ]
 
   return (
-    <main className="pb-16 min-h-screen bg-gray-50">
+    <main className="pb-16 min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
-      <header className="sticky top-0 bg-white z-10 border-b border-gray-100">
+      <header className={`sticky top-0 z-20 backdrop-blur-md transition-all duration-300 ${scrolled ? 'bg-white/80 shadow-md' : 'bg-white'}`}>
         <div className="container-app">
-          <div className="flex items-center justify-between py-3">
-            <h1 className="text-lg font-medium">My Booklet</h1>
-            <div className="w-10"></div> {/* Spacer for alignment */}
+          <div className="flex items-center justify-between py-4">
+            <AnimatePresence mode="wait">
+              {activeSection ? (
+                <motion.button
+                  key="back-button"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  onClick={() => setActiveSection(null)}
+                  className="flex items-center space-x-2 text-primary font-medium"
+                >
+                  <FiChevronLeft className="w-5 h-5" />
+                  <span>Back to booklet</span>
+                </motion.button>
+              ) : (
+                <motion.h1 
+                  key="page-title"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600"
+                >
+                  Travel Booklet
+                </motion.h1>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </header>
 
       <PageTransition>
-        <div className="container-app">
-          {!activeSection ? (
-            <div className="py-8 space-y-4">
-              {buttons.map((button) => (
-                <motion.button
-                  key={button.id}
-                  onClick={() => !button.disabled && setActiveSection(button.id)}
-                  className={`w-full p-4 flex items-center bg-white rounded-2xl shadow-sm 
-                    hover:shadow-md transition-all
-                    ${button.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'}`}
-                  whileHover={!button.disabled ? { scale: 1.02 } : {}}
-                  whileTap={!button.disabled ? { scale: 0.98 } : {}}
-                >
-                  <button.icon className="w-6 h-6 text-primary mr-3" />
-                  <span className="text-lg font-medium">{button.label}</span>
-                  {button.disabled && (
-                    <span className="ml-auto text-sm text-gray-500">Coming Soon</span>
-                  )}
-                </motion.button>
-              ))}
-            </div>
-          ) : (
-            <div>
-              <motion.button
-                onClick={() => setActiveSection(null)}
-                className="mt-4 px-4 py-2 text-primary flex items-center hover:underline"
+        <div className="container-app px-4 md:px-8">
+          <AnimatePresence mode="wait">
+            {!activeSection ? (
+              <motion.div 
+                key="button-grid"
+                className="py-4"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit={{ opacity: 0, y: -20, transition: { duration: 0.3 } }}
+              >
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                  {buttons.map((button, index) => {
+                    const style = buttonStyles[index % buttonStyles.length];
+                    
+                    return (
+                      <motion.button
+                        key={button.id}
+                        variants={itemVariants}
+                        onClick={() => setActiveSection(button.id)}
+                        className={`relative overflow-hidden rounded-2xl p-4 text-left text-white bg-gradient-to-br ${style.bg} ${style.shadow} shadow-lg hover:shadow-xl transition-all duration-300 group`}
+                        whileHover={{ y: -5, scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {/* Decorative elements */}
+                        <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-white/10 -mt-8 -mr-8 transition-transform duration-500 group-hover:scale-150" />
+                        <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-black/5 -mb-6 -ml-6" />
+                        
+                        <div className="flex flex-col items-center text-center relative z-10">
+                          <div className={`p-3 rounded-xl ${style.iconBg} bg-opacity-30 mb-3`}>
+                            <button.icon className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-bold mb-1">{button.label.split('\n').map((text, i) => (
+                              <span key={i} className="block">{text}</span>
+                            ))}</h3>
+                          </div>
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="content-container"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
+                exit={{ opacity: 0, transition: { duration: 0.3 } }}
+                className="pt-2"
               >
-                ← Back to sections
-              </motion.button>
-              {activeSection === 'welcome' && <WelcomeContent />}
-              {activeSection === 'food-spots' && <FoodSpotsContent />}
-              {activeSection === 'attractions' && <AttractionsContent />}
-              {activeSection === 'fashion-spots' && <FashionSpotsContent />}
-              {activeSection === 'hotels' && <HotelContent />}
-              {activeSection === 'chinese-spa' && <ChineseSpaContent />}
-              {activeSection === 'get-drunk' && <GetDrunkContent />}
-              {activeSection === 'nightclubs' && <NightClubsContent />}
-            </div>
-          )}
+                {activeSection === 'welcome' && <WelcomeContent />}
+                {activeSection === 'shanghai-tips' && <ShanghaiTipsContent />}
+                {activeSection === 'food-spots' && <FoodSpotsContent />}
+                {activeSection === 'attractions' && <AttractionsContent />}
+                {activeSection === 'fashion-spots' && <FashionSpotsContent />}
+                {activeSection === 'hotels' && <HotelContent />}
+                {activeSection === 'chinese-spa' && <ChineseSpaContent />}
+                {activeSection === 'get-drunk' && <GetDrunkContent />}
+                {activeSection === 'nightclubs' && <NightClubsContent />}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </PageTransition>
       

@@ -97,17 +97,13 @@ async function extractImageMetadata(filePath: string): Promise<Record<string, an
     // Extract relevant EXIF data if available
     if (metadata.exif) {
       try {
-        // Parse EXIF data
         const exifParsed = await sharp(filePath).metadata();
         
-        // We would need to properly extract EXIF data using a dedicated parser
-        // For now, let's just return a simplified object with basic info
-        if (exifParsed) {
-          // Add basic metadata that's directly accessible
-          if (exifParsed.width) exifData['width'] = exifParsed.width;
-          if (exifParsed.height) exifData['height'] = exifParsed.height;
-          if (exifParsed.format) exifData['format'] = exifParsed.format;
-          if (exifParsed.orientation) exifData['orientation'] = exifParsed.orientation;
+        // Add only important EXIF tags
+        for (const tag of IMPORTANT_EXIF_TAGS) {
+          if (exifParsed[tag]) {
+            exifData[tag] = exifParsed[tag];
+          }
         }
       } catch (error) {
         console.warn('Could not extract EXIF data:', error);
@@ -161,8 +157,7 @@ export async function processImage(
   filePath: string,
   fileName: string,
   mimeType: string,
-  useCloudinary: boolean = shouldUseCloudinary(),
-  dominantColor?: string
+  useCloudinary: boolean = shouldUseCloudinary()
 ): Promise<ProcessedImageSet> {
   try {
     // Generate a unique ID for this upload
@@ -179,8 +174,8 @@ export async function processImage(
     // Extract EXIF data to preserve
     const exifData = await extractImageMetadata(filePath);
     
-    // Calculate dominant color for placeholder if not provided
-    const extractedDominantColor = dominantColor || await calculateDominantColor(filePath);
+    // Calculate dominant color for placeholder
+    const dominantColor = await calculateDominantColor(filePath);
 
     // Create processed image set
     const processedSet: Partial<ProcessedImageSet> = {
@@ -298,7 +293,7 @@ export async function processImage(
             
             // Add EXIF metadata preservation for original variant
             ...(variantName === 'original' && Object.keys(exifData).length > 0 
-                ? { exif: true } 
+                ? { exif: 'true' } 
                 : {}),
                 
             // Color profile handling - sRGB is standard for web
@@ -352,7 +347,7 @@ export async function processImage(
         size: data.length,
         format: info.format,
         variantType: variantName,
-        dominantColor: extractedDominantColor
+        dominantColor
       };
       
       // Add to the correct place in the result

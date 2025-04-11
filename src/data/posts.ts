@@ -24,7 +24,6 @@ export interface MediaItem {
   width?: number;
   height?: number;
   duration?: number;
-  dominantColor?: string;  // Dominant color for image placeholder
 }
 
 export interface TaggedAccount {

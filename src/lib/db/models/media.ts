@@ -34,7 +34,6 @@ export interface IMediaItem {
   width?: number;             // Width of the original
   height?: number;            // Height of the original
   aspectRatio?: string;       // Aspect ratio string (e.g., "16:9")
-  dominantColor?: string;     // Dominant color for image placeholders
   
   // Media variants for different sizes
   variants: {
@@ -68,7 +67,6 @@ export async function createMediaItem(imageSet: ProcessedImageSet, userId: strin
     width: imageSet.original.width,
     height: imageSet.original.height,
     aspectRatio: imageSet.original.aspectRatio,
-    dominantColor: imageSet.original.dominantColor,
     variants: {
       original: {
         url: imageSet.original.url,

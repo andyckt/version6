@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { FiHeart, FiBookmark } from 'react-icons/fi';
 import { FaHeart, FaBookmark } from 'react-icons/fa';
@@ -65,13 +65,49 @@ export default function ContentGrid() {
   const [postViews, setPostViews] = useState<Record<number, number>>({});
   const [shuffledPosts, setShuffledPosts] = useState(travelPosts);
   const [storageAvailable, setStorageAvailable] = useState(false);
+  const [visiblePosts, setVisiblePosts] = useState<number[]>([]);
   
+  // Create refs for post elements to observe
+  const postRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
+
   // Check if localStorage is available
   useEffect(() => {
     const available = isLocalStorageAvailable();
     setStorageAvailable(available);
     console.log('localStorage available:', available);
   }, []);
+
+  // Set up intersection observer for lazy loading
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const postId = Number(entry.target.getAttribute('data-post-id'));
+            if (!isNaN(postId) && !visiblePosts.includes(postId)) {
+              setVisiblePosts(prev => [...prev, postId]);
+            }
+          }
+        });
+      },
+      { 
+        rootMargin: '200px', // Start loading images 200px before they enter viewport
+        threshold: 0.1 // Trigger when at least 10% of the item is visible
+      }
+    );
+    
+    // Observe all post elements that have refs
+    postRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+    
+    // Cleanup function
+    return () => {
+      postRefs.current.forEach(ref => {
+        if (ref) observer.unobserve(ref);
+      });
+    };
+  }, [postRefs.current.size, visiblePosts]); // Re-run when refs or visible posts change
   
   // Initialize like, bookmark, and view counts from localStorage
   useEffect(() => {
@@ -247,6 +283,13 @@ export default function ContentGrid() {
         )
       );
 
+  // Callback function to set refs
+  const setPostRef = (element: HTMLDivElement | null, postId: number) => {
+    if (element) {
+      postRefs.current.set(postId, element);
+    }
+  };
+
   return (
     <div className="pt-2 pb-4 -mx-4 md:mx-0">
       {/* Category filters - compact 2-row grid */}
@@ -279,6 +322,8 @@ export default function ContentGrid() {
         {filteredPosts.map((post, index) => (
           <div 
             key={post.id} 
+            ref={(el) => setPostRef(el, post.id)}
+            data-post-id={post.id}
             className="group flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
             style={{ 
               animationDelay: `${index * 100}ms`,
@@ -289,21 +334,25 @@ export default function ContentGrid() {
             <div className="relative overflow-hidden">
               <Link href={`/post/${post.id}`} className="block" onClick={() => handleViewPost(post.id)}>
                 <div className="relative aspect-[3/4] overflow-hidden">
-                  <BlurImage 
-                    src={post.media && post.media.length > 0 
-                      ? post.media[0].url 
-                      : (post.image || 'https://picsum.photos/600/600?random=default')} 
-                    alt={post.title}
-                    aspectRatio="aspect-[3/4]"
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                    className={
-                      post.media && post.media.length > 0 && post.media[0].width && post.media[0].height
-                        ? post.media[0].width > post.media[0].height 
-                          ? "object-cover" // landscape images
-                          : "object-cover" // portrait images
-                        : "object-cover" // Default
-                    }
-                  />
+                  {visiblePosts.includes(post.id) ? (
+                    <BlurImage 
+                      src={post.media && post.media.length > 0 
+                        ? post.media[0].url 
+                        : (post.image || 'https://picsum.photos/600/600?random=default')} 
+                      alt={post.title}
+                      aspectRatio="aspect-[3/4]"
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                      className={
+                        post.media && post.media.length > 0 && post.media[0].width && post.media[0].height
+                          ? post.media[0].width > post.media[0].height 
+                            ? "object-cover" // landscape images
+                            : "object-cover" // portrait images
+                          : "object-cover" // Default
+                      }
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-100 animate-pulse"></div>
+                  )}
                   {/* Image overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   

@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
               width: processedImages.original.width,
               height: processedImages.original.height,
               aspectRatio: processedImages.original.aspectRatio,
+              blurDataURL: processedImages.blurDataURL,
               variants: {
                 original: {
                   url: processedImages.original.url,
@@ -122,6 +123,7 @@ export async function POST(request: NextRequest) {
           width: mediaItem.width,
           height: mediaItem.height,
           aspectRatio: mediaItem.aspectRatio,
+          blurDataURL: mediaItem.blurDataURL,
         });
         
         // Clean up the temp file

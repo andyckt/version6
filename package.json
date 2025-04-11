@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-spring/web": "^9.7.5",
     "@types/nodemailer": "^6.4.17",
+    "browser-image-compression": "^2.0.2",
     "cloudinary": "^2.6.0",
     "dotenv": "^16.4.4",
     "formidable": "^3.5.2",

@@ -40,6 +40,7 @@ export interface ProcessedImageSet {
     medium: ProcessedImage;
     large: ProcessedImage;
   };
+  blurDataURL: string; // Base64 encoded tiny image for placeholders
   metadata: {
     originalFilename: string;
     mimeType: string;
@@ -91,6 +92,15 @@ export async function processImage(
       throw new Error('Could not extract image dimensions');
     }
 
+    // Generate a tiny blur placeholder image (LQIP)
+    const blurImage = await sharp(filePath)
+      .resize(20) // Tiny image
+      .blur(4)    // Apply blur
+      .toBuffer();
+    
+    // Convert to base64 for embedding in HTML/CSS
+    const blurDataURL = `data:image/${metadata.format || 'jpeg'};base64,${blurImage.toString('base64')}`;
+
     // Create processed image set
     const processedSet: Partial<ProcessedImageSet> = {
       metadata: {
@@ -99,6 +109,7 @@ export async function processImage(
         timestamp: new Date().toISOString(),
       },
       variants: {} as any,
+      blurDataURL, // Add the blur data URL
     };
 
     // Process each variant
@@ -172,13 +183,27 @@ export async function processImage(
           const uploadOptions = {
             resource_type: 'image' as 'image',
             public_id: `media/${variantName}/${fileBaseName.substring(0, 40)}-${uniqueId}`,
-            format: extension,
-            quality: config.quality.toString(),
-            // Add Cloudinary-specific optimizations
-            fetch_format: 'auto',
-            dpr: 'auto',
-            responsive: true,
+            format: 'auto', // Let Cloudinary determine the optimal format based on client
+            quality: 'auto', // Intelligent quality setting based on visual complexity
+            fetch_format: 'auto', // Deliver WebP/AVIF to supporting browsers
+            dpr: 'auto', // Adjust for device pixel ratio
+            responsive: true, // Enable responsive delivery
+            // Responsive breakpoints for adaptive image delivery
+            responsive_breakpoints: {
+              create_derived: true,
+              bytes_step: 20000,
+              min_width: 200,
+              max_width: 1000,
+              max_images: 4,
+            },
+            // Enable automatic content-aware cropping
+            gravity: "auto",
+            // Add accessibility improvements
             accessibility: 'darkmode',
+            // Cache optimization
+            flags: 'lossy',
+            // Compression options
+            compression: variantName === 'original' ? 'low' : 'high',
           };
           
           const uploadStream = cloudinary.v2.uploader.upload_stream(

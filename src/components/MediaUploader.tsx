@@ -3,6 +3,7 @@
 import { useState, useRef, ChangeEvent, DragEvent } from 'react';
 import Image from 'next/image';
 import { FiUpload, FiX, FiLoader } from 'react-icons/fi';
+import imageCompression from 'browser-image-compression';
 
 export interface UploadedMedia {
   id: string;
@@ -12,6 +13,7 @@ export interface UploadedMedia {
   height: number;
   aspectRatio: string;
   originalFilename: string;
+  blurDataURL?: string;
 }
 
 interface MediaUploaderProps {
@@ -32,6 +34,7 @@ export default function MediaUploader({
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedMedia[]>([]);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [compressionProgress, setCompressionProgress] = useState<number>(0);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -57,15 +60,49 @@ export default function MediaUploader({
   const uploadFiles = async (fileList: FileList) => {
     setIsUploading(true);
     setUploadError(null);
+    setCompressionProgress(0);
     
     try {
       // Create a FormData object to send to the server
       const formData = new FormData();
       
-      // Loop through each file and append to formData
+      // Loop through each file, compress it, and append to formData
       // Limit to maxFiles
       const filesToUpload = Array.from(fileList).slice(0, maxFiles);
-      filesToUpload.forEach(file => {
+      
+      // Compression options
+      const options = {
+        maxSizeMB: 1,              // Maximum file size in MB
+        maxWidthOrHeight: 1920,    // Maximum width/height in pixels
+        useWebWorker: true,        // Use web worker for better performance
+        onProgress: (progress: number) => {
+          setCompressionProgress(progress);
+        }
+      };
+      
+      // Compress files in parallel
+      const compressPromises = filesToUpload.map(async (file, index) => {
+        // Check if this is an image file
+        if (file.type.startsWith('image/')) {
+          try {
+            // Compress the image
+            const compressedFile = await imageCompression(file, options);
+            return compressedFile;
+          } catch (err) {
+            console.warn('Compression failed for file:', file.name, err);
+            return file; // Fall back to original file if compression fails
+          }
+        } else {
+          // Not an image, use original file
+          return file;
+        }
+      });
+      
+      // Wait for all compressions to complete
+      const compressedFiles = await Promise.all(compressPromises);
+      
+      // Add all compressed files to formData
+      compressedFiles.forEach(file => {
         formData.append('media', file);
       });
       
@@ -117,6 +154,7 @@ export default function MediaUploader({
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
+      setCompressionProgress(0);
       
       // Clear the file input so the same file can be selected again
       if (fileInputRef.current) {
@@ -186,13 +224,27 @@ export default function MediaUploader({
           {isUploading ? (
             <div className="flex flex-col items-center space-y-3">
               <FiLoader className="w-8 h-8 text-blue-500 animate-spin" />
-              <p className="text-sm text-gray-500">Uploading... {uploadProgress}%</p>
-              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-blue-500 transition-all duration-200"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
+              {compressionProgress < 100 ? (
+                <>
+                  <p className="text-sm text-gray-500">Optimizing images... {compressionProgress}%</p>
+                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-green-500 transition-all duration-200"
+                      style={{ width: `${compressionProgress}%` }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-gray-500">Uploading... {uploadProgress}%</p>
+                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-blue-500 transition-all duration-200"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           ) : (
             <>
@@ -202,6 +254,9 @@ export default function MediaUploader({
               </p>
               <p className="text-xs text-gray-500 mt-1">
                 Upload up to {maxFiles} images (JPG, PNG, WebP)
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                Images will be automatically optimized for faster loading
               </p>
             </>
           )}
@@ -228,6 +283,8 @@ export default function MediaUploader({
                     alt={file.originalFilename}
                     fill
                     className="object-cover"
+                    placeholder={file.blurDataURL ? "blur" : "empty"}
+                    blurDataURL={file.blurDataURL}
                   />
                 </div>
                 <button

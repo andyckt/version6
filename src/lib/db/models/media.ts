@@ -34,6 +34,7 @@ export interface IMediaItem {
   width?: number;             // Width of the original
   height?: number;            // Height of the original
   aspectRatio?: string;       // Aspect ratio string (e.g., "16:9")
+  blurDataURL?: string;       // Base64 encoded tiny image for placeholders
   
   // Media variants for different sizes
   variants: {
@@ -67,6 +68,7 @@ export async function createMediaItem(imageSet: ProcessedImageSet, userId: strin
     width: imageSet.original.width,
     height: imageSet.original.height,
     aspectRatio: imageSet.original.aspectRatio,
+    blurDataURL: imageSet.blurDataURL,
     variants: {
       original: {
         url: imageSet.original.url,

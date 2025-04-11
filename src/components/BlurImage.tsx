@@ -60,6 +60,20 @@ export default function BlurImage({
     return src;
   }, [src, isCloudinaryUrl]);
 
+  // Generate a tiny placeholder if none was provided and it's a Cloudinary image
+  const actualBlurDataURL = useMemo(() => {
+    if (blurDataURL !== DEFAULT_BLUR_DATA_URL) {
+      return blurDataURL; // Use provided blur data URL
+    }
+    
+    if (isCloudinaryUrl && src) {
+      // Create a tiny Cloudinary thumbnail for placeholder
+      return src.replace('/upload/', '/upload/w_20,e_blur:1000,q_30/');
+    }
+    
+    return DEFAULT_BLUR_DATA_URL;
+  }, [blurDataURL, src, isCloudinaryUrl]);
+
   useEffect(() => {
     // Set a small timeout to prevent layout shifts during initial load
     const timer = setTimeout(() => {
@@ -108,7 +122,7 @@ export default function BlurImage({
         priority={priority}
         sizes={sizes}
         placeholder={placeholder}
-        blurDataURL={blurDataURL}
+        blurDataURL={actualBlurDataURL}
         quality={quality}
         className={`
           transition-all duration-300 ease-in-out will-change-transform

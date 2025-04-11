@@ -3,7 +3,6 @@ export interface TravelPost {
   title: string;
   image?: string;
   media?: MediaItem[];
-  author: string;           // DEPRECATED: Use @username directly for display instead of this field
   userId: number;           // Reference to user ID
   username: string;         // Username - display with @ prefix (e.g., @username) when showing the author
   createdAt: string;        // Post creation date
@@ -18,14 +17,13 @@ export interface TravelPost {
 
 export interface MediaItem {
   id: number;
-  type: 'image' | 'video' | 'livePhoto';
+  type: 'image' | 'video';
   url: string;
   aspectRatio?: string;
   thumbnail?: string;
   width?: number;
   height?: number;
   duration?: number;
-  livePhotoVideoUrl?: string; // For Live Photos: URL to the video component
 }
 
 export interface TaggedAccount {
@@ -40,13 +38,12 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10001,
         type: 'image',
-        url: 'https://picsum.photos/800/1200?random=1001',
+        url: '/newpostmedia/Fuzzoo应援大赛｜可以....给我投票嘛？_1_珞博Robopoet_来自小红书网页版.jpg',
         aspectRatio: '2:3',
         width: 800,
         height: 1200
       }
     ],
-    author: 'andyckt123',
     userId: 106,
     username: 'andyckt123',
     createdAt: '2025-03-18T10:30:00Z',
@@ -96,7 +93,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10002,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1002',
+        url: '/newpostmedia/Fuzzoo应援大赛｜可以....给我投票嘛？_2_珞博Robopoet_来自小红书网页版.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -104,13 +101,12 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10003,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1003',
+        url: '/newpostmedia/Fuzzoo应援大赛｜可以....给我投票嘛？_3_珞博Robopoet_来自小红书网页版.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
       }
     ],
-    author: 'andyckt123',
     userId: 106,
     username: 'andyckt123',
     createdAt: '2025-03-16T19:45:00Z',
@@ -160,23 +156,20 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10004,
         type: 'image',
-        url: 'https://picsum.photos/800/600?random=1004',
+        url: '/newpostmedia/Deepseek太👍🏻了，25年真的让我硬气啦_1_卡罗拉_来自小红书网页版.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600
       },
       {
         id: 10005,
-        type: 'video',
-        url: '/videos/sample-1.mp4',
-        thumbnail: 'https://picsum.photos/800/600?random=1005',
+        type: 'image',
+        url: '/newpostmedia/Deepseek太👍🏻了，25年真的让我硬气啦_2_卡罗拉_来自小红书网页版.jpg',
         aspectRatio: '4:3',
         width: 800,
-        height: 600,
-        duration: 15
+        height: 600
       }
     ],
-    author: 'andyckt123',
     userId: 106,
     username: 'andyckt123',
     createdAt: '2025-03-14T11:20:00Z',
@@ -193,16 +186,13 @@ export const travelPosts: TravelPost[] = [
     media: [
       {
         id: 10006,
-        type: 'video',
-        url: '/videos/sample-2.mp4',
-        thumbnail: 'https://picsum.photos/800/450?random=1006',
+        type: 'image',
+        url: '/newpostmedia/【揭秘！毛绒玩具背后的7大工艺细节】_1_拯救胡萝卜_来自小红书网页版.jpg',
         aspectRatio: '16:9',
         width: 800,
-        height: 450,
-        duration: 28
+        height: 450
       }
     ],
-    author: 'andyckt123',
     userId: 106,
     username: 'andyckt123',
     createdAt: '2025-03-12T15:10:00Z',
@@ -220,7 +210,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10007,
         type: 'image',
-        url: 'https://picsum.photos/600/800?random=1007',
+        url: '/newpostmedia/【揭秘！毛绒玩具背后的7大工艺细节】_2_拯救胡萝卜_来自小红书网页版.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
@@ -228,23 +218,20 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10008,
         type: 'image',
-        url: 'https://picsum.photos/600/800?random=1008',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
       },
       {
         id: 10009,
-        type: 'video',
-        url: '/videos/sample-3.mp4',
-        thumbnail: 'https://picsum.photos/600/800?random=1009',
+        type: 'image',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '3:4',
         width: 600,
-        height: 800,
-        duration: 12
+        height: 800
       }
     ],
-    author: 'andyckt123',
     userId: 106,
     username: 'andyckt123',
     createdAt: '2025-03-10T22:05:00Z',
@@ -269,15 +256,13 @@ export const travelPosts: TravelPost[] = [
     media: [
       {
         id: 10010,
-        type: 'livePhoto',
-        url: 'https://picsum.photos/600/800?random=1010',
-        livePhotoVideoUrl: '/videos/live-photo-1.mp4',
+        type: 'image',
+        url: '/newpostmedia/random3.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
       }
     ],
-    author: 'andyckt123',
     userId: 106,
     username: 'andyckt123',
     createdAt: '2025-03-08T13:40:00Z',
@@ -295,7 +280,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10011,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1011',
+        url: '/newpostmedia/media1.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -303,7 +288,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10012,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1012',
+        url: '/newpostmedia/media2.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -311,7 +296,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10013,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1013',
+        url: '/newpostmedia/media3.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -319,13 +304,12 @@ export const travelPosts: TravelPost[] = [
       {
         id: 10014,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=1014',
+        url: '/newpostmedia/Fuzzoo应援大赛｜可以....给我投票嘛？_1_珞博Robopoet_来自小红书网页版.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
       }
     ],
-    author: 'andyckt123',
     userId: 106,
     username: 'andyckt123',
     createdAt: '2025-03-05T18:25:00Z',
@@ -342,25 +326,21 @@ export const travelPosts: TravelPost[] = [
     media: [
       {
         id: 10015,
-        type: 'video',
-        url: '/videos/sample-4.mp4',
-        thumbnail: 'https://picsum.photos/800/450?random=1015',
+        type: 'image',
+        url: '/newpostmedia/Deepseek太👍🏻了，25年真的让我硬气啦_1_卡罗拉_来自小红书网页版.jpg',
         aspectRatio: '16:9',
         width: 800,
-        height: 450,
-        duration: 35
+        height: 450
       },
       {
         id: 10016,
-        type: 'livePhoto',
-        url: 'https://picsum.photos/800/450?random=1016',
-        livePhotoVideoUrl: '/videos/live-photo-2.mp4',
+        type: 'image',
+        url: '/newpostmedia/Deepseek太👍🏻了，25年真的让我硬气啦_2_卡罗拉_来自小红书网页版.jpg',
         aspectRatio: '16:9',
         width: 800,
         height: 450
       }
     ],
-    author: 'andyckt123',
     userId: 106,
     username: 'andyckt123',
     createdAt: '2025-03-02T06:15:00Z',
@@ -374,12 +354,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 1,
     title: 'Exploring the hidden gems of Shanghai',
-    image: 'https://picsum.photos/600/600?random=4',
+    image: '/newpostmedia/【揭秘！毛绒玩具背后的7大工艺细节】_1_拯救胡萝卜_来自小红书网页版.jpg',
     media: [
       {
         id: 201,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=4',
+        url: '/newpostmedia/【揭秘！毛绒玩具背后的7大工艺细节】_1_拯救胡萝卜_来自小红书网页版.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -387,7 +367,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 202,
         type: 'image',
-        url: 'https://picsum.photos/600/800?random=5',
+        url: '/newpostmedia/【揭秘！毛绒玩具背后的7大工艺细节】_2_拯救胡萝卜_来自小红书网页版.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
@@ -395,7 +375,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 203,
         type: 'image',
-        url: 'https://picsum.photos/800/600?random=6',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600
@@ -403,13 +383,12 @@ export const travelPosts: TravelPost[] = [
       {
         id: 204,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=7',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
       }
     ],
-    author: 'wanderlust_emma',
     userId: 101,
     username: 'wanderlust_emma',
     createdAt: '2025-03-15T14:30:00Z',
@@ -443,18 +422,17 @@ export const travelPosts: TravelPost[] = [
   {
     id: 2,
     title: 'Sunset over the Bund waterfront',
-    image: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2',
+    image: '/newpostmedia/random3.jpg',
     media: [
       {
         id: 202,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2',
+        url: '/newpostmedia/random3.jpg',
         aspectRatio: '16:9',
         width: 800,
         height: 450
       }
     ],
-    author: 'Jane Smith',
     userId: 2,
     username: 'travelwithme',
     createdAt: '2023-06-15T14:30:00Z',
@@ -473,12 +451,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 3,
     title: 'Luxury weekend in Sanya: The St. Regis Experience',
-    image: 'https://picsum.photos/600/800?random=10',
+    image: '/newpostmedia/media1.jpg',
     media: [
       {
         id: 207,
         type: 'image',
-        url: 'https://picsum.photos/600/800?random=10',
+        url: '/newpostmedia/media1.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
@@ -486,7 +464,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 208,
         type: 'image',
-        url: 'https://picsum.photos/800/600?random=11',
+        url: '/newpostmedia/media2.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600
@@ -494,13 +472,12 @@ export const travelPosts: TravelPost[] = [
       {
         id: 209,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=12',
+        url: '/newpostmedia/media3.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
       }
     ],
-    author: 'luxury_zhao',
     userId: 103,
     username: 'luxury_zhao',
     createdAt: '2025-03-12T16:45:00Z',
@@ -514,18 +491,17 @@ export const travelPosts: TravelPost[] = [
   {
     id: 4,
     title: 'Panoramic view of Hong Kong skyline',
-    image: 'https://images.unsplash.com/photo-1555086156-e6c7353d283f',
+    image: '/newpostmedia/Fuzzoo应援大赛｜可以....给我投票嘛？_2_珞博Robopoet_来自小红书网页版.jpg',
     media: [
       {
         id: 204,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1555086156-e6c7353d283f',
+        url: '/newpostmedia/Fuzzoo应援大赛｜可以....给我投票嘛？_2_珞博Robopoet_来自小红书网页版.jpg',
         aspectRatio: '16:9',
         width: 900,
         height: 500
       }
     ],
-    author: 'Alex Chen',
     userId: 4,
     username: 'urban_explorer',
     createdAt: '2023-05-29T10:15:00Z',
@@ -539,12 +515,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 5,
     title: 'The ultimate street food tour of Chengdu',
-    image: 'https://picsum.photos/600/600?random=15',
+    image: '/newpostmedia/Fuzzoo应援大赛｜可以....给我投票嘛？_3_珞博Robopoet_来自小红书网页版.jpg',
     media: [
       {
         id: 212,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=15',
+        url: '/newpostmedia/Fuzzoo应援大赛｜可以....给我投票嘛？_3_珞博Robopoet_来自小红书网页版.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -552,7 +528,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 213,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=16',
+        url: '/newpostmedia/Deepseek太👍🏻了，25年真的让我硬气啦_1_卡罗拉_来自小红书网页版.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -560,7 +536,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 214,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=17',
+        url: '/newpostmedia/Deepseek太👍🏻了，25年真的让我硬气啦_2_卡罗拉_来自小红书网页版.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
@@ -568,13 +544,12 @@ export const travelPosts: TravelPost[] = [
       {
         id: 215,
         type: 'image',
-        url: 'https://picsum.photos/600/600?random=18',
+        url: '/newpostmedia/【揭秘！毛绒玩具背后的7大工艺细节】_1_拯救胡萝卜_来自小红书网页版.jpg',
         aspectRatio: '1:1',
         width: 600,
         height: 600
       }
     ],
-    author: 'foodie_zhang',
     userId: 105,
     username: 'foodie_zhang',
     createdAt: '2025-03-08T19:35:00Z',
@@ -588,18 +563,17 @@ export const travelPosts: TravelPost[] = [
   {
     id: 6,
     title: 'Hidden beach gems in Jeju Island',
-    image: 'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9',
+    image: '/newpostmedia/【揭秘！毛绒玩具背后的7大工艺细节】_2_拯救胡萝卜_来自小红书网页版.jpg',
     media: [
       {
         id: 301,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9',
+        url: '/newpostmedia/【揭秘！毛绒玩具背后的7大工艺细节】_2_拯救胡萝卜_来自小红书网页版.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600
       }
     ],
-    author: 'Sarah Park',
     userId: 3,
     username: 'sarahwanders',
     createdAt: '2023-04-18T12:30:00Z',
@@ -618,18 +592,17 @@ export const travelPosts: TravelPost[] = [
   {
     id: 7,
     title: 'The best craft cocktail bars in Tokyo',
-    image: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187',
+    image: '/newpostmedia/random1.jpg',
     media: [
       {
         id: 302,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187',
+        url: '/newpostmedia/random1.jpg',
         aspectRatio: '3:2',
         width: 900,
         height: 600
       }
     ],
-    author: 'Alex Chen',
     userId: 4,
     username: 'urban_explorer',
     createdAt: '2023-05-01T19:45:00Z',
@@ -648,18 +621,17 @@ export const travelPosts: TravelPost[] = [
   {
     id: 8,
     title: 'Luxury glamping in the mountains of Taiwan',
-    image: 'https://images.unsplash.com/photo-1618140052121-39fc6db33972',
+    image: '/newpostmedia/random2.jpg',
     media: [
       {
         id: 303,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1618140052121-39fc6db33972',
+        url: '/newpostmedia/random2.jpg',
         aspectRatio: '16:9',
         width: 1600,
         height: 900
       }
     ],
-    author: 'Mei Zhang',
     userId: 1,
     username: 'meizhangtravels',
     createdAt: '2023-06-10T09:20:00Z',
@@ -678,12 +650,12 @@ export const travelPosts: TravelPost[] = [
   {
     id: 9,
     title: 'Shopping and Nightlife Tour in Shenzhen',
-    image: 'https://images.unsplash.com/photo-1534884710045-1ea33327f0f2',
+    image: '/newpostmedia/random3.jpg',
     media: [
       {
         id: 401,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1534884710045-1ea33327f0f2',
+        url: '/newpostmedia/random3.jpg',
         aspectRatio: '16:9',
         width: 1600,
         height: 900
@@ -691,7 +663,7 @@ export const travelPosts: TravelPost[] = [
       {
         id: 402,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1578474846511-04ba529f0b88',
+        url: '/newpostmedia/media1.jpg',
         aspectRatio: '3:4',
         width: 600,
         height: 800
@@ -699,13 +671,12 @@ export const travelPosts: TravelPost[] = [
       {
         id: 403,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1519677584237-752f8853252e',
+        url: '/newpostmedia/media2.jpg',
         aspectRatio: '4:3',
         width: 800,
         height: 600
       }
     ],
-    author: 'Alex Chen',
     userId: 4,
     username: 'urban_explorer',
     createdAt: '2023-06-25T20:15:00Z',

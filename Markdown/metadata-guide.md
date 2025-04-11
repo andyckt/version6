@@ -59,7 +59,7 @@ const travelPostSchema = {
   "headline": post.title,
   "author": {
     "@type": "Person",
-    "name": post.author,
+    "name": post.username,
     "url": `https://yourplatform.com/user/${post.username}`
   },
   "image": post.media.map(m => m.url),
@@ -225,7 +225,7 @@ export const metadata = {
 export const metadata = {
   category: 'Travel',
   keywords: ['travel', 'adventure', 'exploration', ...post.hashtags],
-  author: post.author,
+  author: post.username,
   publisher: 'Your Travel Platform',
   archives: ['/archives/2024', '/archives/2023'],
   assets: ['/assets/images', '/assets/videos'],

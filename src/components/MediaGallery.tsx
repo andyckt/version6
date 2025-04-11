@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { MediaItem } from '@/data/posts';
 import { FiChevronLeft, FiChevronRight, FiImage, FiVideo } from 'react-icons/fi';
 import BlurImage from './BlurImage';
-import LivePhotoPlayer from './LivePhotoPlayer';
 
 interface MediaGalleryProps {
   media: MediaItem[];
@@ -154,26 +153,6 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
                 className="object-cover md:object-contain"
                 onError={() => handleMediaError(currentItem.id)}
                 draggable={false}
-              />
-            )}
-          </div>
-        ) : currentItem.type === 'livePhoto' ? (
-          <div className="relative aspect-[4/5] md:aspect-auto md:h-[450px] bg-black md:bg-white">
-            {mediaErrors[currentItem.id] ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white md:text-gray-500 text-center p-4">
-                <FiImage className="w-12 h-12 mb-2 opacity-50" />
-                <p className="text-sm opacity-75">Live Photo could not be loaded</p>
-                <p className="text-xs opacity-50 mt-2">{currentItem.url.substring(0, 50)}</p>
-              </div>
-            ) : (
-              <LivePhotoPlayer
-                imageUrl={currentItem.url}
-                videoUrl={currentItem.livePhotoVideoUrl || ''}
-                className="w-full h-full"
-                onError={() => {
-                  console.error('LivePhotoPlayer reported an error for item:', currentItem.id);
-                  handleMediaError(currentItem.id);
-                }}
               />
             )}
           </div>

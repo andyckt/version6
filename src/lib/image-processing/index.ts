@@ -12,13 +12,26 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Define image sizes and quality
+// Define image sizes and quality with enhanced settings
 export const IMAGE_VARIANTS = {
   thumbnail: { width: 300, height: null, quality: 75 },  // Small thumbnail for grids
   medium: { width: 800, height: null, quality: 80 },     // Medium-size (typical display)
   large: { width: 1600, height: null, quality: 85 },     // Large (full screen/zoom)
-  original: { width: null, height: null, quality: 90 }   // Original with moderate compression
+  original: { width: null, height: null, quality: 95 }   // Original with light compression
 };
+
+// Important EXIF tags to preserve
+const IMPORTANT_EXIF_TAGS = [
+  'exif:DateTimeOriginal',
+  'exif:Make',
+  'exif:Model',
+  'exif:GPSLatitude',
+  'exif:GPSLongitude',
+  'exif:Orientation',
+  'iptc:Copyright',
+  'iptc:Creator',
+  'iptc:Caption'
+];
 
 export type ImageVariantType = keyof typeof IMAGE_VARIANTS;
 
@@ -29,8 +42,10 @@ export interface ProcessedImage {
   height: number;               // Height in pixels 
   aspectRatio: string;          // Aspect ratio as string (e.g., "16:9")
   size: number;                 // File size in bytes
-  format: string;               // Image format (jpg, png, webp)
+  format: string;               // Image format (jpg, png, webp, avif)
   variantType: ImageVariantType; // Which variant this is
+  blurhash?: string;            // Optional BlurHash for placeholder
+  dominantColor?: string;       // Optional dominant color for placeholders
 }
 
 export interface ProcessedImageSet {
@@ -44,6 +59,7 @@ export interface ProcessedImageSet {
     originalFilename: string;
     mimeType: string;
     timestamp: string;
+    exif?: Record<string, any>;  // Preserved EXIF data
   };
 }
 
@@ -71,13 +87,82 @@ export function shouldUseCloudinary(): boolean {
 }
 
 /**
+ * Extract important EXIF metadata from image
+ */
+async function extractImageMetadata(filePath: string): Promise<Record<string, any>> {
+  try {
+    const metadata = await sharp(filePath).metadata();
+    const exifData: Record<string, any> = {};
+    
+    // Extract relevant EXIF data if available
+    if (metadata.exif) {
+      try {
+        // Parse EXIF data
+        const exifParsed = await sharp(filePath).metadata();
+        
+        // We would need to properly extract EXIF data using a dedicated parser
+        // For now, let's just return a simplified object with basic info
+        if (exifParsed) {
+          // Add basic metadata that's directly accessible
+          if (exifParsed.width) exifData['width'] = exifParsed.width;
+          if (exifParsed.height) exifData['height'] = exifParsed.height;
+          if (exifParsed.format) exifData['format'] = exifParsed.format;
+          if (exifParsed.orientation) exifData['orientation'] = exifParsed.orientation;
+        }
+      } catch (error) {
+        console.warn('Could not extract EXIF data:', error);
+      }
+    }
+    
+    return exifData;
+  } catch (error) {
+    console.warn('Error extracting metadata:', error);
+    return {};
+  }
+}
+
+/**
+ * Calculate dominant color from image
+ */
+async function calculateDominantColor(filePath: string): Promise<string | undefined> {
+  try {
+    // Resize to tiny thumbnail for quick processing
+    const { data, info } = await sharp(filePath)
+      .resize(10, 10, { fit: 'inside' })
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    
+    // Calculate the average color (simple approach)
+    let r = 0, g = 0, b = 0;
+    const pixelCount = info.width * info.height;
+    const channels = info.channels;
+    
+    for (let i = 0; i < data.length; i += channels) {
+      r += data[i];
+      g += data[i + 1];
+      b += data[i + 2];
+    }
+    
+    r = Math.round(r / pixelCount);
+    g = Math.round(g / pixelCount);
+    b = Math.round(b / pixelCount);
+    
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  } catch (error) {
+    console.warn('Error calculating dominant color:', error);
+    return undefined;
+  }
+}
+
+/**
  * Process image from a local file path
  */
 export async function processImage(
   filePath: string,
   fileName: string,
   mimeType: string,
-  useCloudinary: boolean = shouldUseCloudinary()
+  useCloudinary: boolean = shouldUseCloudinary(),
+  dominantColor?: string
 ): Promise<ProcessedImageSet> {
   try {
     // Generate a unique ID for this upload
@@ -91,12 +176,19 @@ export async function processImage(
       throw new Error('Could not extract image dimensions');
     }
 
+    // Extract EXIF data to preserve
+    const exifData = await extractImageMetadata(filePath);
+    
+    // Calculate dominant color for placeholder if not provided
+    const extractedDominantColor = dominantColor || await calculateDominantColor(filePath);
+
     // Create processed image set
     const processedSet: Partial<ProcessedImageSet> = {
       metadata: {
         originalFilename: fileName,
         mimeType,
         timestamp: new Date().toISOString(),
+        exif: exifData
       },
       variants: {} as any,
     };
@@ -116,43 +208,67 @@ export async function processImage(
           withoutEnlargement: true
         });
       }
-
-      // Determine if this is a photo or graphic/illustration
-      // (Photos compress better with WebP, while graphics may benefit from PNG for certain cases)
+      
+      // Determine format strategy based on input type and variant
+      let outputFormat: 'jpeg' | 'png' | 'webp' | 'avif';
+      let outputOptions: any = {};
+      
+      // Check if image has transparency
+      const hasAlpha = metadata.hasAlpha || metadata.channels === 4;
+      
+      // Check if the image is a photo or a graphic
+      // Photos typically benefit from lossy compression, graphics with transparency need lossless
       const isPhoto = mimeType.includes('jpeg') || mimeType.includes('jpg');
       
-      // Choose output format and options
-      let outputBuffer;
-      if (isPhoto || mimeType.includes('webp')) {
-        // Photos or existing WebP - use WebP with appropriate quality
-        outputBuffer = await sharpInstance
-          .webp({ 
+      if (isPhoto) {
+        // Photos look best with WebP (or AVIF for best quality/size ratio)
+        if (variantName === 'original') {
+          // For originals, prioritize quality
+          outputFormat = 'webp';
+          outputOptions = { 
             quality: config.quality,
-            effort: 4, // 0-6, higher means more compression but slower processing (4 is a good balance)
-            smartSubsample: true, // Better quality for lower file size
-            nearLossless: variantName === 'original' // Use near-lossless for original quality
-          })
-          .toBuffer({ resolveWithObject: true });
-      } else if (mimeType.includes('png') && !isPhoto) {
-        // PNG graphics/illustrations with transparency - keep as PNG with compression
-        outputBuffer = await sharpInstance
-          .png({ 
+            effort: 5, // Higher effort for originals (0-6)
+            smartSubsample: true,
+            nearLossless: false // Standard lossy for better compression
+          };
+        } else {
+          // For non-originals, prioritize size/speed
+          outputFormat = 'webp';
+          outputOptions = {
             quality: config.quality,
-            compressionLevel: 9, // 0-9, higher means more compression
-            palette: true // Use palette to reduce colors for smaller file size
-          })
-          .toBuffer({ resolveWithObject: true });
+            effort: variantName === 'thumbnail' ? 2 : 4, // Lower effort for smaller variants
+            smartSubsample: true,
+            reductionEffort: 2 // 0-6, higher means more reduction but slower
+          };
+        }
+      } else if (hasAlpha) {
+        // Graphics with transparency - use WebP lossless or PNG
+        outputFormat = 'webp';
+        outputOptions = {
+          lossless: true, // Lossless compression for transparency
+          quality: 100,   // Not used with lossless but set anyway
+          effort: 4       // Compression effort (0-6)
+        };
       } else if (mimeType.includes('gif')) {
-        // Handle GIFs - first frame only as static WebP
-        outputBuffer = await sharpInstance
-          .webp({ quality: config.quality })
-          .toBuffer({ resolveWithObject: true });
+        // Handle GIFs - convert to static WebP
+        outputFormat = 'webp';
+        outputOptions = { 
+          quality: config.quality,
+          effort: 3
+        };
       } else {
-        // Default - use WebP
-        outputBuffer = await sharpInstance
-          .webp({ quality: config.quality })
-          .toBuffer({ resolveWithObject: true });
+        // General default - WebP with standard settings
+        outputFormat = 'webp';
+        outputOptions = { 
+          quality: config.quality,
+          effort: 4
+        };
       }
+      
+      // Apply format-specific options
+      const outputBuffer = await sharpInstance
+        [outputFormat](outputOptions)
+        .toBuffer({ resolveWithObject: true });
 
       // New dimensions after resize
       const { data, info } = outputBuffer;
@@ -166,19 +282,34 @@ export async function processImage(
       let cloudinaryId: string | undefined;
       
       if (useCloudinary) {
-        // Upload to Cloudinary with transformation parameters
-        // This allows Cloudinary to apply further optimizations and CDN benefits
+        // Enhanced Cloudinary upload with better options
         const uploadResult = await new Promise<cloudinary.UploadApiResponse>((resolve, reject) => {
           const uploadOptions = {
             resource_type: 'image' as 'image',
             public_id: `media/${variantName}/${fileBaseName.substring(0, 40)}-${uniqueId}`,
-            format: extension,
+            format: extension as string,
             quality: config.quality.toString(),
-            // Add Cloudinary-specific optimizations
-            fetch_format: 'auto',
-            dpr: 'auto',
-            responsive: true,
-            accessibility: 'darkmode',
+            
+            // Enhanced Cloudinary-specific optimizations
+            fetch_format: 'auto',             // Auto-select format based on browser
+            dpr: 'auto',                      // Responsive to device pixel ratio
+            responsive: true,                 // Enable responsive features
+            accessibility: 'darkmode',        // Support dark mode
+            
+            // Add EXIF metadata preservation for original variant
+            ...(variantName === 'original' && Object.keys(exifData).length > 0 
+                ? { exif: true } 
+                : {}),
+                
+            // Color profile handling - sRGB is standard for web
+            color_profile: 'srgb',
+            
+            // Add metadata for performance features
+            eager_async: true,                // Async transformations
+            eager_notification_url: process.env.CLOUDINARY_WEBHOOK_URL, // Optional webhook for completion
+            
+            // Add tags for better organization in Cloudinary dashboard
+            tags: ['app-media', variantName, new Date().toISOString().split('T')[0]]
           };
           
           const uploadStream = cloudinary.v2.uploader.upload_stream(
@@ -221,6 +352,7 @@ export async function processImage(
         size: data.length,
         format: info.format,
         variantType: variantName,
+        dominantColor: extractedDominantColor
       };
       
       // Add to the correct place in the result

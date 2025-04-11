@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
 import { MediaItem } from '@/data/posts';
 import { FiChevronLeft, FiChevronRight, FiImage, FiVideo } from 'react-icons/fi';
 import BlurImage from './BlurImage';
@@ -120,12 +119,42 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
     console.error(`Error loading media item with ID: ${itemId}`);
   };
   
+  // Add preloading of adjacent images for smoother navigation
+  useEffect(() => {
+    if (totalItems <= 1) return;
+    
+    // Determine which indices to preload (next and previous)
+    const nextIndex = currentIndex === totalItems - 1 ? 0 : currentIndex + 1;
+    const prevIndex = currentIndex === 0 ? totalItems - 1 : currentIndex - 1;
+    
+    // We don't need to do anything here - the browser will automatically
+    // preload when it encounters the <link> tags we set in our component return
+    
+    // This effect just ensures we recalculate when currentIndex changes
+  }, [currentIndex, totalItems]);
+  
   if (!media || media.length === 0) {
     return null;
   }
   
   return (
     <div className={`relative w-full ${className}`}>
+      {/* Preload adjacent images for smoother navigation */}
+      {totalItems > 1 && (
+        <>
+          <link 
+            rel="preload" 
+            href={media[(currentIndex + 1) % totalItems].url} 
+            as="image" 
+          />
+          <link 
+            rel="preload" 
+            href={media[(currentIndex - 1 + totalItems) % totalItems].url}
+            as="image" 
+          />
+        </>
+      )}
+      
       {/* Main media display */}
       <div 
         ref={containerRef}
@@ -144,15 +173,18 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
                 <p className="text-xs opacity-50 mt-2">{currentItem.url.substring(0, 50)}</p>
               </div>
             ) : (
-              <Image
+              <BlurImage
                 src={currentItem.url}
                 alt="Post media"
-                fill
                 priority={currentIndex === 0}
                 sizes="(max-width: 768px) 100vw, 600px"
                 className="object-cover md:object-contain"
                 onError={() => handleMediaError(currentItem.id)}
-                draggable={false}
+                aspectRatio="aspect-[4/5] md:aspect-auto"
+                dominantColor={currentItem.dominantColor}
+                quality={90}
+                lazyBoundary="500px"
+                rootMargin="100px"
               />
             )}
           </div>
@@ -212,20 +244,42 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
         )}
       </div>
       
-      {/* Thumbnails/dots for navigation */}
+      {/* Thumbnails/dots for navigation - Enhanced with actual thumbnails */}
       {totalItems > 1 && (
-        <div className="flex justify-center mt-2 gap-1.5">
+        <div className="flex justify-center mt-2 gap-1.5 items-center">
           {media.map((item, index) => (
-            <button
-              key={item.id}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                index === currentIndex 
-                  ? 'bg-primary w-4' 
-                  : 'bg-gray-300 hover:bg-gray-400'
-              }`}
-              aria-label={`Go to item ${index + 1}`}
-            />
+            item.type === 'image' ? (
+              <button
+                key={item.id}
+                onClick={() => setCurrentIndex(index)}
+                className={`
+                  relative h-10 overflow-hidden transition-all duration-200
+                  ${index === currentIndex ? 'w-12 border-2 border-primary' : 'w-8 border border-gray-200'}
+                  rounded-md
+                `}
+                aria-label={`Go to item ${index + 1}`}
+              >
+                <BlurImage
+                  src={item.thumbnail || item.url}
+                  alt={`Thumbnail ${index + 1}`}
+                  aspectRatio="aspect-square"
+                  className="object-cover"
+                  sizes="40px"
+                  dominantColor={item.dominantColor}
+                />
+              </button>
+            ) : (
+              <button
+                key={item.id}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                  index === currentIndex 
+                    ? 'bg-primary w-4' 
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`}
+                aria-label={`Go to item ${index + 1}`}
+              />
+            )
           ))}
         </div>
       )}

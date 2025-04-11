@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const userId = request.headers.get('x-user-id') || '106'; // Default to a test user ID
     
     // Use the upload middleware to handle the file upload
-    const { files, error } = await withUpload('media', 5)(request);
+    const { files, fields, error } = await withUpload('media', 5)(request);
     
     if (error) {
       return NextResponse.json(
@@ -34,15 +34,22 @@ export async function POST(request: NextRequest) {
     // Process each uploaded file
     const results = [];
     
-    for (const file of files) {
+    for (let i = 0; i < files.length; i++) {
       try {
+        const file = files[i];
         console.log('Processing file:', file.originalname);
+        
+        // Check if we have a dominant color for this file from client-side processing
+        const dominantColorKey = `color_${i}`;
+        const dominantColor = fields[dominantColorKey] as string | undefined;
         
         // Process the image (resize, optimize, etc.)
         const processedImages = await processImage(
           file.path,
           file.originalname,
-          file.mimetype
+          file.mimetype,
+          undefined,  // Use default Cloudinary setting
+          dominantColor // Pass the dominant color if available
         );
         
         console.log('Image processed successfully. Variants created:', Object.keys(processedImages.variants).join(', '));
@@ -59,23 +66,22 @@ export async function POST(request: NextRequest) {
           );
           console.log('Successfully saved to MongoDB with ID:', mediaItem._id);
         } catch (dbError) {
-          // Handle database errors gracefully
-          console.error('MongoDB Error:', dbError);
+          // In development, continue without DB
+          console.error('Database error:', dbError);
           
-          // If we're in development, continue with a mock response instead of failing
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Using mock database response for development');
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Using in-memory records since we are in development mode');
             mediaItem = {
-              _id: 'mock-id-' + Date.now(),
+              _id: `temp-${Date.now()}-${i}`,
               userId,
               type: MediaType.IMAGE,
-              originalFilename: processedImages.metadata.originalFilename,
-              mimeType: processedImages.metadata.mimeType,
               created: new Date(),
-              status: 'active',
+              originalFilename: file.originalname,
+              mimeType: file.mimetype,
               width: processedImages.original.width,
               height: processedImages.original.height,
               aspectRatio: processedImages.original.aspectRatio,
+              dominantColor: processedImages.original.dominantColor,
               variants: {
                 original: {
                   url: processedImages.original.url,
@@ -115,45 +121,38 @@ export async function POST(request: NextRequest) {
         
         // Add to results
         results.push({
-          id: mediaItem._id,
-          originalFilename: mediaItem.originalFilename,
-          url: mediaItem.variants.medium?.url,
-          thumbnailUrl: mediaItem.variants.thumbnail?.url,
-          width: mediaItem.width,
-          height: mediaItem.height,
-          aspectRatio: mediaItem.aspectRatio,
+          id: mediaItem._id ? mediaItem._id.toString() : `temp-${Date.now()}`,
+          url: mediaItem.variants?.medium?.url || '',
+          thumbnailUrl: mediaItem.variants?.thumbnail?.url || '',
+          width: mediaItem.width || 0,
+          height: mediaItem.height || 0,
+          aspectRatio: mediaItem.aspectRatio || '1:1',
+          originalFilename: mediaItem.originalFilename || '',
+          dominantColor: mediaItem.dominantColor,
         });
         
-        // Clean up the temp file
-        fs.unlinkSync(file.path);
-      } catch (fileError) {
-        console.error('Error processing file:', file.originalname, fileError);
-        
-        // Continue with the next file
-        results.push({
-          originalFilename: file.originalname,
-          error: 'Failed to process file',
-        });
-        
-        // Clean up the temp file if it exists
+        // Clean up temp file
         if (fs.existsSync(file.path)) {
           fs.unlinkSync(file.path);
         }
+      } catch (error) {
+        console.error('Error processing file:', error);
+        
+        // Continue with other files
+        continue;
       }
     }
     
-    // Return the processed images
-    return NextResponse.json({ 
+    // Return success with files info
+    return NextResponse.json({
       success: true,
-      message: `Successfully uploaded ${results.length} files`,
-      files: results
+      files: results,
     });
-    
   } catch (error) {
-    console.error('Upload API error:', error);
+    console.error('Upload error:', error);
     
     return NextResponse.json(
-      { error: 'Failed to process uploads' },
+      { error: 'File upload failed', details: (error as Error).message },
       { status: 500 }
     );
   }

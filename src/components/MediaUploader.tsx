@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, ChangeEvent, DragEvent } from 'react';
+import { useState, useRef, ChangeEvent, DragEvent, useEffect } from 'react';
 import Image from 'next/image';
-import { FiUpload, FiX, FiLoader } from 'react-icons/fi';
+import { FiUpload, FiX, FiLoader, FiImage, FiZoomIn } from 'react-icons/fi';
+import imageCompression from 'browser-image-compression';
 
 export interface UploadedMedia {
   id: string;
@@ -29,16 +30,89 @@ export default function MediaUploader({
 }: MediaUploaderProps) {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isCompressing, setIsCompressing] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedMedia[]>([]);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [compressionStats, setCompressionStats] = useState<Record<string, { original: number, compressed: number }>>({});
+  const [useHighQuality, setUseHighQuality] = useState<boolean>(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Compress image with quality preservation
+  const compressImage = async (file: File): Promise<File> => {
+    setIsCompressing(true);
+    
+    try {
+      // Determine if this is a detailed/important image that needs higher quality
+      // For now, assume all images are important in a travel context
+      const options = {
+        maxSizeMB: useHighQuality ? 3 : 1.5,             
+        maxWidthOrHeight: useHighQuality ? 2560 : 2048,   
+        initialQuality: useHighQuality ? 0.9 : 0.85,     
+        useWebWorker: true,
+        preserveExif: true,                              
+        exifOrientationFix: true,
+        fileType: file.type.includes('png') ? 'image/png' : 'image/jpeg',
+        alwaysKeepResolution: true,
+      };
+      
+      // Store original size for stats
+      const fileName = file.name;
+      const originalSize = file.size;
+      
+      // Perform compression
+      const compressedFile = await imageCompression(file, options);
+      
+      // Update compression stats
+      setCompressionStats(prev => ({
+        ...prev,
+        [fileName]: {
+          original: originalSize,
+          compressed: compressedFile.size
+        }
+      }));
+      
+      // If compression resulted in a larger file, return original
+      if (compressedFile.size > originalSize) {
+        console.log('Compression resulted in larger file, using original');
+        return file;
+      }
+      
+      return compressedFile;
+    } catch (error) {
+      console.error('Image compression error:', error);
+      return file; // Return original file if compression fails
+    } finally {
+      setIsCompressing(false);
+    }
+  };
+  
+  // Process multiple files with compression
+  const processFiles = async (fileList: FileList): Promise<File[]> => {
+    const filesToProcess = Array.from(fileList).slice(0, maxFiles);
+    const processedFiles: File[] = [];
+    
+    // Process each file
+    for (const file of filesToProcess) {
+      if (file.type.startsWith('image/')) {
+        // Compress images
+        const processedFile = await compressImage(file);
+        processedFiles.push(processedFile);
+      } else {
+        // Non-image files pass through unchanged
+        processedFiles.push(file);
+      }
+    }
+    
+    return processedFiles;
+  };
 
   // Handler for when files are selected via the file input
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      await uploadFiles(e.target.files);
+      const processedFiles = await processFiles(e.target.files);
+      await uploadFiles(processedFiles);
     }
   };
 
@@ -49,12 +123,13 @@ export default function MediaUploader({
     setDragActive(false);
     
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      await uploadFiles(e.dataTransfer.files);
+      const processedFiles = await processFiles(e.dataTransfer.files);
+      await uploadFiles(processedFiles);
     }
   };
 
   // Common function to handle file uploads
-  const uploadFiles = async (fileList: FileList) => {
+  const uploadFiles = async (files: File[]) => {
     setIsUploading(true);
     setUploadError(null);
     
@@ -62,10 +137,8 @@ export default function MediaUploader({
       // Create a FormData object to send to the server
       const formData = new FormData();
       
-      // Loop through each file and append to formData
-      // Limit to maxFiles
-      const filesToUpload = Array.from(fileList).slice(0, maxFiles);
-      filesToUpload.forEach(file => {
+      // Append each file to formData
+      files.forEach(file => {
         formData.append('media', file);
       });
       
@@ -156,6 +229,87 @@ export default function MediaUploader({
       onMediaUpload(newFiles);
     }
   };
+  
+  // Calculate total compression savings
+  const calculateTotalSavings = () => {
+    if (Object.keys(compressionStats).length === 0) return null;
+    
+    const totalOriginal = Object.values(compressionStats).reduce((sum, item) => sum + item.original, 0);
+    const totalCompressed = Object.values(compressionStats).reduce((sum, item) => sum + item.compressed, 0);
+    const savedBytes = totalOriginal - totalCompressed;
+    const savingsPercent = Math.round((savedBytes / totalOriginal) * 100);
+    
+    // Log the statistics (for debugging)
+    console.log('Compression stats:', {
+      totalOriginal,
+      totalCompressed,
+      savedBytes,
+      savingsPercent,
+      items: Object.keys(compressionStats).length
+    });
+    
+    // Format for human-readable display
+    const formatSize = (bytes: number) => {
+      if (bytes < 1024 * 1024) {
+        return `${(bytes / 1024).toFixed(1)} KB`;
+      } else {
+        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+      }
+    };
+    
+    return {
+      original: formatSize(totalOriginal),
+      compressed: formatSize(totalCompressed),
+      saved: formatSize(savedBytes),
+      percent: savingsPercent
+    };
+  };
+  
+  const savings = calculateTotalSavings();
+  
+  // Log the compressionStats and savings (for debugging)
+  useEffect(() => {
+    if (Object.keys(compressionStats).length > 0) {
+      console.log('Current compression stats:', compressionStats);
+      console.log('Calculated savings:', savings);
+    }
+  }, [compressionStats, savings]);
+
+  // Toggle high-quality mode
+  const toggleHighQuality = () => {
+    const newQualityMode = !useHighQuality;
+    setUseHighQuality(newQualityMode);
+    
+    // Log the quality choice for analytics
+    try {
+      // Get existing analytics or initialize empty object
+      const analyticsData = localStorage.getItem('mediaAnalytics') 
+        ? JSON.parse(localStorage.getItem('mediaAnalytics') || '{}')
+        : { highResViews: 0, totalViews: 0, uploadQualityChoices: { standard: 0, high: 0 } };
+      
+      // Initialize uploadQualityChoices if not present
+      if (!analyticsData.uploadQualityChoices) {
+        analyticsData.uploadQualityChoices = { standard: 0, high: 0 };
+      }
+      
+      // Increment appropriate counter
+      if (newQualityMode) {
+        analyticsData.uploadQualityChoices.high = (analyticsData.uploadQualityChoices.high || 0) + 1;
+      } else {
+        analyticsData.uploadQualityChoices.standard = (analyticsData.uploadQualityChoices.standard || 0) + 1;
+      }
+      
+      // Store analytics data
+      localStorage.setItem('mediaAnalytics', JSON.stringify(analyticsData));
+      
+      // If in production, you could send this to your analytics endpoint
+      if (process.env.NODE_ENV === 'production') {
+        // Example: sendAnalyticsEvent('quality_choice', { choice: newQualityMode ? 'high' : 'standard' });
+      }
+    } catch (error) {
+      console.error('Failed to log analytics:', error);
+    }
+  };
 
   return (
     <div className={`w-full ${className}`}>
@@ -167,23 +321,46 @@ export default function MediaUploader({
         accept={acceptedTypes}
         onChange={handleFileChange}
         className="hidden"
-        disabled={isUploading}
+        disabled={isUploading || isCompressing}
       />
+      
+      {/* Quality toggle */}
+      <div className="flex items-center justify-end mb-2">
+        <label className="flex items-center text-sm text-gray-700">
+          <input
+            type="checkbox"
+            checked={useHighQuality}
+            onChange={toggleHighQuality}
+            className="mr-2 h-4 w-4"
+            disabled={isUploading || isCompressing}
+          />
+          High quality upload
+        </label>
+        <div className="ml-2 text-xs text-gray-500 inline-flex items-center">
+          <FiZoomIn className="mr-1" />
+          {useHighQuality ? 'Less compression, higher quality' : 'Standard quality'}
+        </div>
+      </div>
 
       {/* Drop zone */}
       <div
         className={`
           border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
           ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50'}
-          ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
+          ${(isUploading || isCompressing) ? 'opacity-50 cursor-not-allowed' : ''}
         `}
-        onClick={!isUploading ? openFileDialog : undefined}
+        onClick={!(isUploading || isCompressing) ? openFileDialog : undefined}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         <div className="flex flex-col items-center justify-center">
-          {isUploading ? (
+          {isCompressing ? (
+            <div className="flex flex-col items-center space-y-3">
+              <FiLoader className="w-8 h-8 text-blue-500 animate-spin" />
+              <p className="text-sm text-gray-500">Optimizing images...</p>
+            </div>
+          ) : isUploading ? (
             <div className="flex flex-col items-center space-y-3">
               <FiLoader className="w-8 h-8 text-blue-500 animate-spin" />
               <p className="text-sm text-gray-500">Uploading... {uploadProgress}%</p>
@@ -203,10 +380,33 @@ export default function MediaUploader({
               <p className="text-xs text-gray-500 mt-1">
                 Upload up to {maxFiles} images (JPG, PNG, WebP)
               </p>
+              <p className="text-xs text-gray-500 mt-1">
+                {useHighQuality 
+                  ? 'Using high quality mode (up to 3MB per image)' 
+                  : 'Images will be optimized for web (up to 1.5MB per image)'}
+              </p>
             </>
           )}
         </div>
       </div>
+
+      {/* Compression statistics - Make more prominent and ensure it's always visible after compression */}
+      {Object.keys(compressionStats).length > 0 && savings && (
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
+          <h3 className="text-sm font-medium text-blue-800 mb-1">Image Optimization Results</h3>
+          <div className="text-sm text-blue-700">
+            <p>
+              <span className="font-medium">Files optimized:</span> {Object.keys(compressionStats).length}
+            </p>
+            <p>
+              <span className="font-medium">Size reduction:</span> {savings.original} → {savings.compressed}
+            </p>
+            <p>
+              <span className="font-medium">Space saved:</span> {savings.saved} ({savings.percent}%)
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Error message */}
       {uploadError && (

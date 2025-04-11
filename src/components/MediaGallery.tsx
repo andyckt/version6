@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { MediaItem } from '@/data/posts';
-import { FiChevronLeft, FiChevronRight, FiImage, FiVideo } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiImage, FiVideo, FiZoomIn, FiMaximize2 } from 'react-icons/fi';
 import BlurImage from './BlurImage';
 
 interface MediaGalleryProps {
@@ -16,11 +16,65 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
   const [mediaErrors, setMediaErrors] = useState<Record<number, boolean>>({});
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [showHighRes, setShowHighRes] = useState(false);
+  const [isHighResLoaded, setIsHighResLoaded] = useState(false);
+  const [isHighResOpen, setIsHighResOpen] = useState(false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const highResRef = useRef<HTMLDivElement>(null);
   
   const currentItem = media[currentIndex];
   const totalItems = media.length;
+  
+  // Track high-resolution view usage for analytics
+  const logHighResView = () => {
+    try {
+      // Get existing analytics or initialize empty object
+      const analyticsData = localStorage.getItem('mediaAnalytics') 
+        ? JSON.parse(localStorage.getItem('mediaAnalytics') || '{}')
+        : { highResViews: 0, totalViews: 0, uploadQualityChoices: { standard: 0, high: 0 } };
+      
+      // Increment high-res views counter
+      analyticsData.highResViews = (analyticsData.highResViews || 0) + 1;
+      analyticsData.totalViews = (analyticsData.totalViews || 0) + 1;
+      
+      // Store analytics data
+      localStorage.setItem('mediaAnalytics', JSON.stringify(analyticsData));
+      
+      // If in production, you could send this to your analytics endpoint
+      if (process.env.NODE_ENV === 'production') {
+        // Example: sendAnalyticsEvent('media_highres_view', { mediaId: currentItem.id });
+      }
+    } catch (error) {
+      console.error('Failed to log analytics:', error);
+    }
+  };
+  
+  // Toggle high-resolution view
+  const toggleHighResolution = () => {
+    if (!isHighResOpen) {
+      setShowHighRes(true);
+      setIsHighResOpen(true);
+      logHighResView();
+    } else {
+      setIsHighResOpen(false);
+      // Keep high-res image loaded in case user toggles back
+    }
+  };
+  
+  // Close high-res view if clicking outside the image
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isHighResOpen && highResRef.current && !highResRef.current.contains(event.target as Node)) {
+        setIsHighResOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isHighResOpen]);
   
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -33,10 +87,14 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
   // Handle navigation
   const goToPrevious = () => {
     setCurrentIndex((prev) => (prev === 0 ? totalItems - 1 : prev - 1));
+    setShowHighRes(false);
+    setIsHighResOpen(false);
   };
   
   const goToNext = () => {
     setCurrentIndex((prev) => (prev === totalItems - 1 ? 0 : prev + 1));
+    setShowHighRes(false);
+    setIsHighResOpen(false);
   };
   
   // Handle swipe gestures
@@ -74,12 +132,14 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
         goToPrevious();
       } else if (e.key === 'ArrowRight') {
         goToNext();
+      } else if (e.key === 'Escape' && isHighResOpen) {
+        setIsHighResOpen(false);
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex]);
+  }, [currentIndex, isHighResOpen]);
   
   // Pause all videos when changing slide
   useEffect(() => {
@@ -120,6 +180,15 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
     console.error(`Error loading media item with ID: ${itemId}`);
   };
   
+  // Construct high-resolution URL by replacing 'medium' with 'large' in the URL
+  const getHighResUrl = (url: string) => {
+    // For Cloudinary URLs, change from medium to large variant
+    if (url.includes('/medium/')) {
+      return url.replace('/medium/', '/large/');
+    }
+    return url; // Fallback to original URL if pattern doesn't match
+  };
+  
   if (!media || media.length === 0) {
     return null;
   }
@@ -155,6 +224,18 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
                 draggable={false}
               />
             )}
+            
+            {/* High resolution view button */}
+            <button
+              onClick={toggleHighResolution}
+              className="absolute bottom-3 right-3 bg-black/70 text-white rounded-full p-2 
+                opacity-0 group-hover:opacity-100 transition-opacity duration-200 
+                hover:bg-black/90 z-10"
+              aria-label="View high resolution"
+              title="View high resolution"
+            >
+              <FiZoomIn className="w-5 h-5" />
+            </button>
           </div>
         ) : (
           <div className="relative aspect-video bg-black md:bg-white">
@@ -227,6 +308,53 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
               aria-label={`Go to item ${index + 1}`}
             />
           ))}
+        </div>
+      )}
+      
+      {/* High-resolution modal */}
+      {showHighRes && currentItem.type === 'image' && (
+        <div 
+          className={`fixed inset-0 bg-black/90 z-50 flex items-center justify-center
+            ${isHighResOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+            transition-opacity duration-300`}
+          onClick={() => setIsHighResOpen(false)}
+        >
+          <div 
+            ref={highResRef}
+            className="relative max-w-[90vw] max-h-[90vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Loading indicator */}
+            {!isHighResLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+              </div>
+            )}
+            
+            {/* High-res image */}
+            <img
+              src={getHighResUrl(currentItem.url)}
+              alt="High resolution media"
+              className={`max-w-full max-h-[90vh] object-contain ${isHighResLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+              onLoad={() => setIsHighResLoaded(true)}
+              onError={() => handleMediaError(currentItem.id)}
+            />
+            
+            {/* Close button */}
+            <button
+              onClick={() => setIsHighResOpen(false)}
+              className="absolute top-4 right-4 bg-black/70 text-white rounded-full p-2
+                hover:bg-black/90 transition-colors"
+              aria-label="Close high resolution view"
+            >
+              <FiMaximize2 className="w-5 h-5" />
+            </button>
+            
+            {/* Resolution indicator */}
+            <div className="absolute bottom-4 left-4 bg-black/70 text-white text-xs px-3 py-1.5 rounded-full">
+              High Resolution
+            </div>
+          </div>
         </div>
       )}
     </div>

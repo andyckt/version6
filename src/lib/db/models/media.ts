@@ -1,7 +1,11 @@
 import { ObjectId } from 'mongodb';
 import { connectToDatabase } from '../mongodb';
-import { ProcessedImageSet, ProcessedImage, ImageVariantType } from '@/lib/image-processing';
+import { ProcessedImageSet, ProcessedImage, ImageVariantType, shouldUseCloudinary } from '@/lib/image-processing';
 import { deleteImage } from '@/lib/image-processing';
+import path from 'path';
+import fs from 'fs';
+import { promisify } from 'util';
+import cloudinary from 'cloudinary';
 
 // Collection name
 const COLLECTION = 'media';
@@ -56,6 +60,9 @@ export interface IMediaItem {
 export async function createMediaItem(imageSet: ProcessedImageSet, userId: string | ObjectId, type = MediaType.IMAGE): Promise<IMediaItem> {
   const { db } = await connectToDatabase();
   
+  // Get the highest quality variant (large)
+  const highQualityVariant = imageSet.variants.large;
+  
   // Convert the ProcessedImageSet to database structure
   const mediaItem: Omit<IMediaItem, '_id'> = {
     userId: typeof userId === 'string' ? new ObjectId(userId) : userId,
@@ -64,17 +71,10 @@ export async function createMediaItem(imageSet: ProcessedImageSet, userId: strin
     mimeType: imageSet.metadata.mimeType,
     created: new Date(),
     status: MediaStatus.ACTIVE,
-    width: imageSet.original.width,
-    height: imageSet.original.height,
-    aspectRatio: imageSet.original.aspectRatio,
+    width: highQualityVariant.width,   // Use large variant dimensions as main dimensions
+    height: highQualityVariant.height,
+    aspectRatio: highQualityVariant.aspectRatio,
     variants: {
-      original: {
-        url: imageSet.original.url,
-        width: imageSet.original.width,
-        height: imageSet.original.height,
-        size: imageSet.original.size,
-        cloudinaryId: imageSet.original.cloudinaryId,
-      },
       grid: {
         url: imageSet.variants.grid.url,
         width: imageSet.variants.grid.width,
@@ -197,16 +197,12 @@ export async function deleteMediaItem(id: string | ObjectId): Promise<boolean> {
     // Only try to delete from storage if it's an image
     if (mediaItem.type === MediaType.IMAGE) {
       // Convert IMediaItem structure to ProcessedImageSet for the delete function
-      const imageSet: ProcessedImageSet = {
-        original: {
-          url: mediaItem.variants.original?.url || '',
-          cloudinaryId: mediaItem.variants.original?.cloudinaryId,
-          width: mediaItem.variants.original?.width || 0,
-          height: mediaItem.variants.original?.height || 0,
-          aspectRatio: mediaItem.aspectRatio || '1:1',
-          size: mediaItem.variants.original?.size || 0,
-          format: 'webp',
-          variantType: 'original',
+      // with backward compatibility for existing records that might have original variant
+      const imageSet: Partial<ProcessedImageSet> = {
+        metadata: {
+          originalFilename: mediaItem.originalFilename,
+          mimeType: mediaItem.mimeType,
+          timestamp: new Date().toISOString(),
         },
         variants: {
           grid: {
@@ -260,39 +256,98 @@ export async function deleteMediaItem(id: string | ObjectId): Promise<boolean> {
             size: mediaItem.variants.large?.size || 0,
             format: 'webp',
             variantType: 'large',
-          },
-        },
-        metadata: {
-          originalFilename: mediaItem.originalFilename,
-          mimeType: mediaItem.mimeType,
-          timestamp: mediaItem.created.toISOString(),
-        },
+          }
+        }
       };
       
-      // Delete the actual files
-      await deleteImage(imageSet);
+      // Also handle original variant if it exists in mediaItem (for backward compatibility)
+      // Add it to the list of images to delete
+      const additionalImages: ProcessedImage[] = [];
+      
+      // TypeScript will complain about `original` not being in the type
+      // Use type assertion to safely handle it for backward compatibility
+      const originalVariant = (mediaItem.variants as any).original;
+      if (originalVariant) {
+        additionalImages.push({
+          url: originalVariant.url || '',
+          cloudinaryId: originalVariant.cloudinaryId,
+          width: originalVariant.width || 0,
+          height: originalVariant.height || 0,
+          aspectRatio: calculateAspectRatio(
+            originalVariant.width || 1,
+            originalVariant.height || 1
+          ),
+          size: originalVariant.size || 0,
+          format: 'webp',
+          variantType: 'large', // Treat as large for deletion
+        });
+      }
+      
+      // Delete the image files (modified to handle both partial ProcessedImageSet and additional images)
+      await deleteImageWithAdditional(imageSet as ProcessedImageSet, additionalImages);
+      
+      return true;
     }
     
     return true;
   } catch (error) {
-    console.error('Failed to delete media files:', error);
-    
-    // Update the status to reflect the partial deletion failure
-    await db.collection<IMediaItem>(COLLECTION).updateOne(
-      { _id: objectId },
-      {
-        $set: {
-          status: MediaStatus.FAILED,
-          metadata: {
-            ...mediaItem.metadata,
-            deletionError: (error as Error).message,
-            deletionAttemptTime: new Date().toISOString(),
-          },
-        },
-      }
-    );
-    
+    console.error('Error deleting media item:', error);
     return false;
+  }
+}
+
+/**
+ * Extension of deleteImage that can also handle additional images
+ * Modified to handle transformations (where multiple variants share the same cloudinaryId)
+ */
+async function deleteImageWithAdditional(
+  imageSet: ProcessedImageSet,
+  additionalImages: ProcessedImage[] = [],
+  useCloudinary: boolean = shouldUseCloudinary()
+): Promise<void> {
+  try {
+    // All variants and additional images
+    const allImages = [
+      ...Object.values(imageSet.variants),
+      ...additionalImages
+    ];
+    
+    if (useCloudinary) {
+      // With eager transformations, all variants share the same cloudinaryId
+      // So we need to deduplicate before deleting
+      const uniqueCloudinaryIds = new Set<string>();
+      
+      // Collect all unique cloudinaryIds
+      allImages.forEach(image => {
+        if (image.cloudinaryId) {
+          uniqueCloudinaryIds.add(image.cloudinaryId);
+        }
+      });
+      
+      // Delete each unique cloudinaryId
+      Array.from(uniqueCloudinaryIds).forEach(async (cloudinaryId) => {
+        try {
+          await cloudinary.v2.uploader.destroy(cloudinaryId);
+          console.log(`Deleted Cloudinary resource: ${cloudinaryId}`);
+        } catch (err) {
+          console.error(`Failed to delete Cloudinary resource: ${cloudinaryId}`, err);
+        }
+      });
+    } else {
+      // For local storage, we need to delete each file individually
+      for (const image of allImages) {
+        if (image.url.startsWith('/uploads/')) {
+          // Delete local file
+          const filePath = path.join(process.cwd(), 'public', image.url);
+          if (fs.existsSync(filePath)) {
+            await promisify(fs.unlink)(filePath);
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error deleting images:', error);
+    throw new Error(`Failed to delete images: ${(error as Error).message}`);
   }
 }
 
@@ -320,6 +375,43 @@ export async function initMediaCollection(): Promise<void> {
   ]);
 }
 
+/**
+ * Get the highest quality variant URL for a media item
+ * With backward compatibility for records that may have original variant
+ */
+export function getHighestQualityVariant(mediaItem: IMediaItem): { 
+  url: string; 
+  width: number; 
+  height: number;
+} {
+  // First try original (for backward compatibility), then large, then medium
+  // Use type assertion to handle original variant for backward compatibility
+  const originalVariant = (mediaItem.variants as any).original;
+  if (originalVariant && originalVariant.url) {
+    return {
+      url: originalVariant.url,
+      width: originalVariant.width || 0,
+      height: originalVariant.height || 0
+    };
+  }
+  
+  // Fall back to large (this will be the standard going forward)
+  if (mediaItem.variants.large && mediaItem.variants.large.url) {
+    return {
+      url: mediaItem.variants.large.url,
+      width: mediaItem.variants.large.width || 0,
+      height: mediaItem.variants.large.height || 0
+    };
+  }
+  
+  // Final fallback to medium
+  return {
+    url: mediaItem.variants.medium?.url || '',
+    width: mediaItem.variants.medium?.width || 0,
+    height: mediaItem.variants.medium?.height || 0
+  };
+}
+
 // Export for use in other modules
 export default {
   createMediaItem,
@@ -327,4 +419,5 @@ export default {
   getMediaByUserId,
   deleteMediaItem,
   initMediaCollection,
+  getHighestQualityVariant,
 }; 

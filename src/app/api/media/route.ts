@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/db/mongodb';
+import { IMediaItem, MediaStatus } from '@/lib/db/models/media';
 import { getMediaByUserId } from '@/lib/db/models/media';
 
 /**
@@ -22,25 +24,7 @@ export async function GET(request: NextRequest) {
     const mediaItems = await getMediaByUserId(userId);
     
     // Format the response
-    const formattedMedia = mediaItems.map(item => ({
-      id: item._id?.toString(),
-      userId: item.userId.toString(),
-      type: item.type,
-      originalFilename: item.originalFilename,
-      mimeType: item.mimeType,
-      created: item.created,
-      width: item.width || 0,
-      height: item.height || 0,
-      aspectRatio: item.aspectRatio,
-      // Get URLs from variants
-      url: item.variants.original?.url || '',
-      thumbnailUrl: item.variants.thumbnail?.url || '',
-      gridUrl: item.variants.grid?.url || '',
-      mediumUrl: item.variants.medium?.url || '',
-      largeUrl: item.variants.large?.url || '',
-      // Total file size (original variant)
-      fileSize: item.variants.original?.size || 0
-    }));
+    const formattedMedia = mediaItems.map(item => transformMediaItem(item));
     
     return NextResponse.json({
       success: true,
@@ -57,6 +41,30 @@ export async function GET(request: NextRequest) {
       error: (error as Error).message
     }, { status: 500 });
   }
+}
+
+// Function to transform a MediaItem for the API response
+function transformMediaItem(item: IMediaItem) {
+  return {
+    id: item._id?.toString(),
+    userId: item.userId.toString(),
+    type: item.type,
+    filename: item.originalFilename,
+    mimeType: item.mimeType,
+    width: item.width,
+    height: item.height,
+    aspectRatio: item.aspectRatio,
+    status: item.status,
+    created: item.created,
+    // Get URLs from variants - use large variant as the highest quality
+    url: item.variants.large?.url || '',
+    thumbnailUrl: item.variants.thumbnail?.url || '',
+    gridUrl: item.variants.grid?.url || '',
+    mediumUrl: item.variants.medium?.url || '',
+    largeUrl: item.variants.large?.url || '',
+    // Total file size (large variant)
+    fileSize: item.variants.large?.size || 0
+  };
 }
 
 /**

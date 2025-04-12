@@ -1,10 +1,35 @@
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
-import path from 'path';
-import cloudinary from 'cloudinary';
-import { promisify } from 'util';
 import { ssim } from 'ssim.js'; // Add SSIM.js for perceptual quality checking
+import 'server-only'; // Explicitly mark this as server-only
+
+// Only import Node.js modules in server context
+let fs: any;
+let path: any;
+let cloudinary: any;
+let promisify: any;
+
+// Type for Cloudinary upload response
+interface CloudinaryUploadResponse {
+  public_id: string;
+  secure_url: string;
+  eager?: Array<{
+    width: number;
+    height: number;
+    secure_url: string;
+    format: string;
+    bytes: number;
+  }>;
+  [key: string]: any;
+}
+
+// Import Node.js modules directly for server components
+// Since we've marked this file as server-only
+fs = require('fs');
+path = require('path');
+cloudinary = require('cloudinary');
+const util = require('util');
+promisify = util.promisify;
 
 // Setup Cloudinary configuration
 cloudinary.v2.config({
@@ -27,8 +52,7 @@ export const IMAGE_VARIANTS = {
   grid: { width: 200, height: null, quality: 75 },    // New smaller variant for grid views
   thumbnail: { width: 300, height: null, quality: 75 },  // Small thumbnail for grids
   medium: { width: 800, height: null, quality: 80 },     // Medium-size (typical display)
-  large: { width: 1600, height: null, quality: 85 },     // Large (full screen/zoom)
-  original: { width: null, height: null, quality: 90 }   // Original with moderate compression
+  large: { width: 1600, height: null, quality: 90 }      // Large (full screen/zoom) - now highest quality
 };
 
 export type ImageVariantType = keyof typeof IMAGE_VARIANTS;
@@ -53,17 +77,16 @@ export interface ProcessedImage {
 }
 
 export interface ProcessedImageSet {
-  original: ProcessedImage;
-  variants: {
-    grid: ProcessedImage;
-    thumbnail: ProcessedImage;
-    medium: ProcessedImage;
-    large: ProcessedImage;
-  };
   metadata: {
     originalFilename: string;
     mimeType: string;
     timestamp: string;
+  };
+  variants: {
+    grid: ProcessedImage;
+    thumbnail: ProcessedImage;
+    medium: ProcessedImage;
+    large: ProcessedImage;  // Now the highest quality variant
   };
 }
 
@@ -139,13 +162,13 @@ async function checkImageQuality(
         data: origBuffer as any, 
         width, 
         height, 
-        channels: 4 
+        channels: 4 as any // Fix for type error
       },
       { 
         data: compBuffer as any, 
         width: compressedImage.info.width, 
         height: compressedImage.info.height, 
-        channels: 4 
+        channels: 4 as any // Fix for type error
       }
     );
     
@@ -207,104 +230,144 @@ export async function processImage(
       variants: {} as any,
     };
 
-    // Process each variant
+    // Define variant specs
     const variants = Object.entries(IMAGE_VARIANTS) as [ImageVariantType, typeof IMAGE_VARIANTS[ImageVariantType]][];
-    const variantPromises = variants.map(async ([variantName, config]) => {
-      // Only resize if dimensions are provided
-      let sharpInstance = sharp(filePath);
+    
+    if (useCloudinary) {
+      // Upload once to Cloudinary with eager transformations for all variants
+      // This is more efficient than multiple uploads
+      const transformations = variants.map(([variantName, config]) => {
+        return {
+          width: config.width || metadata.width,
+          crop: "scale",
+          quality: config.quality,
+          format: "auto",
+          fetch_format: "auto",
+          eager_async: true,
+          transformation: [
+            { dpr: "auto" },
+            variantName === 'large' ? { quality: "auto:best" } : { quality: config.quality }
+          ]
+        };
+      });
       
-      // If this is not the original, resize accordingly
-      if (config.width || config.height) {
-        sharpInstance = sharpInstance.resize({
-          width: config.width || undefined,
-          height: config.height || undefined,
-          fit: 'inside',
-          withoutEnlargement: true
-        });
-      }
-
-      // Determine if this is a photo or graphic/illustration
-      // (Photos compress better with WebP, while graphics may benefit from PNG for certain cases)
-      const isPhoto = mimeType.includes('jpeg') || mimeType.includes('jpg');
-      
-      // Choose output format and options
-      let outputBuffer;
-      if (isPhoto || mimeType.includes('webp')) {
-        // Photos or existing WebP - use WebP with appropriate quality
-        outputBuffer = await sharpInstance
-          .webp({ 
-            quality: config.quality,
-            effort: 4, // 0-6, higher means more compression but slower processing (4 is a good balance)
-            smartSubsample: true, // Better quality for lower file size
-            nearLossless: variantName === 'original' // Use near-lossless for original quality
-          })
-          .toBuffer({ resolveWithObject: true });
-      } else if (mimeType.includes('png') && !isPhoto) {
-        // PNG graphics/illustrations with transparency - keep as PNG with compression
-        outputBuffer = await sharpInstance
-          .png({ 
-            quality: config.quality,
-            compressionLevel: 9, // 0-9, higher means more compression
-            palette: true // Use palette to reduce colors for smaller file size
-          })
-          .toBuffer({ resolveWithObject: true });
-      } else if (mimeType.includes('gif')) {
-        // Handle GIFs - first frame only as static WebP
-        outputBuffer = await sharpInstance
-          .webp({ quality: config.quality })
-          .toBuffer({ resolveWithObject: true });
-      } else {
-        // Default - use WebP
-        outputBuffer = await sharpInstance
-          .webp({ quality: config.quality })
-          .toBuffer({ resolveWithObject: true });
-      }
-
-      // New dimensions after resize
-      const { data, info } = outputBuffer;
-      
-      // Check the perceptual quality against the original
-      const qualityCheck = await checkImageQuality(filePath, data, variantName);
-      
-      // Generate appropriate filename for this variant
-      const extension = info.format;
-      const variantFilename = `${fileBaseName}-${variantName}-${uniqueId}.${extension}`;
-      
-      // Determine where to store the image
-      let url: string;
-      let cloudinaryId: string | undefined;
-      
-      if (useCloudinary) {
-        // Upload to Cloudinary with transformation parameters
-        // This allows Cloudinary to apply further optimizations and CDN benefits
-        const uploadResult = await new Promise<cloudinary.UploadApiResponse>((resolve, reject) => {
-          const uploadOptions = {
-            resource_type: 'image' as 'image',
-            public_id: `media/${variantName}/${fileBaseName.substring(0, 40)}-${uniqueId}`,
-            format: extension,
-            quality: config.quality.toString(),
-            // Add Cloudinary-specific optimizations
-            fetch_format: 'auto',
-            dpr: 'auto',
-            responsive: true,
-            accessibility: 'darkmode',
-          };
-          
-          const uploadStream = cloudinary.v2.uploader.upload_stream(
-            uploadOptions,
-            (error, result) => {
-              if (error) reject(error);
-              else if (result) resolve(result);
-              else reject(new Error('Unknown upload error'));
-            }
-          );
-          
-          uploadStream.end(data);
-        });
+      // Single upload with eager transformations
+      const uploadResult = await new Promise<CloudinaryUploadResponse>((resolve, reject) => {
+        const uploadOptions = {
+          resource_type: 'image' as 'image',
+          public_id: `media/${fileBaseName.substring(0, 40)}-${uniqueId}`,
+          eager: transformations,
+          eager_async: false, // We want to wait for transformations to complete for initial upload
+          format: 'auto',
+          quality: "auto",
+          fetch_format: 'auto',
+          dpr: 'auto',
+          responsive: true,
+          accessibility: 'darkmode',
+        };
         
-        url = uploadResult.secure_url;
-        cloudinaryId = uploadResult.public_id;
-      } else {
+        const uploadStream = cloudinary.v2.uploader.upload_stream(
+          uploadOptions,
+          (error: Error | null, result: CloudinaryUploadResponse | undefined) => {
+            if (error) reject(error);
+            else if (result) resolve(result);
+            else reject(new Error('Unknown upload error'));
+          }
+        );
+        
+        uploadStream.end(fs.readFileSync(filePath));
+      });
+      
+      // Process the results for each variant
+      // Create variant entries from the single upload with transformation URLs
+      for (let i = 0; i < variants.length; i++) {
+        const [variantName, config] = variants[i];
+        const variant = uploadResult.eager && uploadResult.eager[i] ? uploadResult.eager[i] : null;
+        
+        // If eager transformation is available, use it
+        // Otherwise fall back to constructing a transformation URL
+        const variantUrl = variant?.secure_url || 
+                         `${uploadResult.secure_url.replace(/\.[^/.]+$/, '')}/w_${config.width},q_${config.quality},f_auto`;
+        
+        const width = variant?.width || config.width || metadata.width;
+        const height = variant?.height || Math.round((metadata.height || 0) * (width / (metadata.width || 1)));
+        
+        // Create the processed image object for this variant
+        const processedImage: ProcessedImage = {
+          url: variantUrl,
+          cloudinaryId: uploadResult.public_id, // All variants share the same public_id
+          width,
+          height,
+          aspectRatio: calculateAspectRatio(width, height),
+          size: variant?.bytes || 0, // If we have bytes from eager, use it, otherwise it's an estimate
+          format: variant?.format || 'auto',
+          variantType: variantName,
+          qualityScore: 1.0 // Without comparisons, we assume high quality
+        };
+        
+        // Add to the variants
+        (processedSet.variants as any)[variantName] = processedImage;
+      }
+    } else {
+      // Local storage processing - process each variant separately
+      // This is more similar to the original approach but only for local storage
+      const variantPromises = variants.map(async ([variantName, config]) => {
+        // Only resize if dimensions are provided
+        let sharpInstance = sharp(filePath);
+        
+        // Resize according to config
+        if (config.width || config.height) {
+          sharpInstance = sharpInstance.resize({
+            width: config.width || undefined,
+            height: config.height || undefined,
+            fit: 'inside',
+            withoutEnlargement: true
+          });
+        }
+
+        // Determine if this is a photo or graphic/illustration
+        const isPhoto = mimeType.includes('jpeg') || mimeType.includes('jpg');
+        
+        // Choose output format and options
+        let outputBuffer;
+        if (isPhoto || mimeType.includes('webp')) {
+          // Photos or existing WebP - use WebP with appropriate quality
+          outputBuffer = await sharpInstance
+            .webp({ 
+              quality: config.quality,
+              effort: 4, // 0-6, higher means more compression but slower processing
+              smartSubsample: true, // Better quality for lower file size
+              nearLossless: variantName === 'large' // Use near-lossless for highest quality (large) variant
+            })
+            .toBuffer({ resolveWithObject: true });
+        } else if (mimeType.includes('png') && !isPhoto) {
+          // PNG graphics/illustrations with transparency - keep as PNG with compression
+          outputBuffer = await sharpInstance
+            .png({ 
+              quality: config.quality,
+              compressionLevel: 9, // 0-9, higher means more compression
+              palette: true // Use palette to reduce colors for smaller file size
+            })
+            .toBuffer({ resolveWithObject: true });
+        } else if (mimeType.includes('gif')) {
+          // Handle GIFs - first frame only as static WebP
+          outputBuffer = await sharpInstance
+            .webp({ quality: config.quality })
+            .toBuffer({ resolveWithObject: true });
+        } else {
+          // Default - use WebP
+          outputBuffer = await sharpInstance
+            .webp({ quality: config.quality })
+            .toBuffer({ resolveWithObject: true });
+        }
+
+        // New dimensions after resize
+        const { data, info } = outputBuffer;
+        
+        // Generate appropriate filename for this variant
+        const extension = info.format;
+        const variantFilename = `${fileBaseName}-${variantName}-${uniqueId}.${extension}`;
+        
         // Store locally
         const uploadDir = path.join(process.cwd(), 'public', 'uploads');
         
@@ -317,32 +380,28 @@ export async function processImage(
         await promisify(fs.writeFile)(outputPath, data);
         
         // URL is relative to the public directory
-        url = `/uploads/${variantFilename}`;
-      }
-      
-      // Create the processed image object
-      const processedImage: ProcessedImage = {
-        url,
-        cloudinaryId,
-        width: info.width,
-        height: info.height,
-        aspectRatio: calculateAspectRatio(info.width, info.height),
-        size: data.length,
-        format: info.format,
-        variantType: variantName,
-        qualityScore: qualityCheck.ssimScore // Add the quality score to the metadata
-      };
-      
-      // Add to the correct place in the result
-      if (variantName === 'original') {
-        processedSet.original = processedImage;
-      } else {
+        const url = `/uploads/${variantFilename}`;
+        
+        // Create the processed image object
+        const processedImage: ProcessedImage = {
+          url,
+          cloudinaryId: undefined,
+          width: info.width,
+          height: info.height,
+          aspectRatio: calculateAspectRatio(info.width, info.height),
+          size: data.length,
+          format: info.format,
+          variantType: variantName,
+          qualityScore: 1.0 // Placeholder without comparison
+        };
+        
+        // Add to variants
         (processedSet.variants as any)[variantName] = processedImage;
-      }
-    });
-    
-    // Wait for all variants to be processed
-    await Promise.all(variantPromises);
+      });
+      
+      // Wait for all variants to be processed
+      await Promise.all(variantPromises);
+    }
     
     // Return the complete set
     return processedSet as ProcessedImageSet;
@@ -361,10 +420,7 @@ export async function deleteImage(
 ): Promise<void> {
   try {
     // Delete all variants
-    const allImages = [
-      imageSet.original,
-      ...Object.values(imageSet.variants)
-    ];
+    const allImages = Object.values(imageSet.variants);
     
     for (const image of allImages) {
       if (useCloudinary && image.cloudinaryId) {

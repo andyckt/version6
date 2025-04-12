@@ -7,7 +7,7 @@ const ORIGINAL_RETENTION_DAYS = 60; // Keep original images for 60 days
 
 /**
  * Delete original variants of images that are older than the retention period
- * Keep the large variant as the highest quality version
+ * This function is for backward compatibility with existing records that have original variants
  */
 export async function cleanupOriginalMediaVariants(): Promise<{
   processed: number;
@@ -22,6 +22,7 @@ export async function cleanupOriginalMediaVariants(): Promise<{
   cutoffDate.setDate(cutoffDate.getDate() - ORIGINAL_RETENTION_DAYS);
   
   // Find media items older than the cutoff that still have original variants
+  // Use $exists to check for the presence of the original variant field
   const mediaItems = await db.collection<IMediaItem>('media')
     .find({
       created: { $lt: cutoffDate },
@@ -39,7 +40,9 @@ export async function cleanupOriginalMediaVariants(): Promise<{
   for (const item of mediaItems) {
     try {
       // Only keep the CloudinaryId of the original for deletion
-      const originalCloudinaryId = item.variants.original?.cloudinaryId;
+      // Need to use type assertion since TypeScript doesn't know about the original variant
+      const originalVariant = (item.variants as any).original;
+      const originalCloudinaryId = originalVariant?.cloudinaryId;
       
       // Delete the original variant from storage (Cloudinary)
       if (originalCloudinaryId) {

@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useMemo } from 'react'
+import { formatSrcSet } from '@/lib/image-utils';
 
 interface BlurImageProps {
   src: string;
@@ -106,7 +107,9 @@ export default function BlurImage({
         alt={alt}
         fill
         priority={priority}
-        sizes={sizes}
+        sizes={isCloudinaryUrl 
+          ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw' 
+          : sizes}
         placeholder={placeholder}
         blurDataURL={blurDataURL}
         quality={quality}
@@ -119,9 +122,6 @@ export default function BlurImage({
         onLoad={() => setIsLoading(false)}
         onError={handleError}
         loading={priority ? 'eager' : 'lazy'}
-        // Enable next-gen formats like WebP and AVIF
-        // and serve appropriate one based on browser support
-        // This is handled automatically by Next.js Image component when configured in next.config.js
       />
     </div>
   );

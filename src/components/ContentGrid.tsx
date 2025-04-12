@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { travelPosts } from '@/data/posts';
 import { getUserByUsername } from '@/data/users';
 import BlurImage from './BlurImage';
+import { getContextualImageUrl, formatSrcSet } from '@/lib/image-utils';
 
 // Define categories with GIF icons
 const categories = [
@@ -281,18 +282,8 @@ export default function ContentGrid() {
           const getImageUrl = (media: any) => {
             if (!media) return post.image || 'https://picsum.photos/600/600?random=default';
             
-            // If media has variants, use the grid variant for better performance
-            if (media.variants && media.variants.grid) {
-              return media.variants.grid.url;
-            }
-            
-            // For legacy data, check if URL can be transformed to use grid variant
-            const url = media.url;
-            if (url && url.includes('/medium/')) {
-              return url.replace('/medium/', '/grid/');
-            }
-            
-            return url;
+            // Use the contextual image URL utility which handles both old and new format
+            return getContextualImageUrl(media, 'grid');
           };
           
           return (

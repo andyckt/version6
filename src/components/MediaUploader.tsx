@@ -139,7 +139,7 @@ export default function MediaUploader({
       
       // Append each file to formData
       files.forEach(file => {
-        formData.append('media', file);
+        formData.append('file', file);
       });
       
       // Upload the files with progress monitoring
@@ -157,11 +157,25 @@ export default function MediaUploader({
         xhr.onreadystatechange = () => {
           if (xhr.readyState === 4) {
             if (xhr.status >= 200 && xhr.status < 300) {
-              const response = JSON.parse(xhr.responseText);
-              if (response.success) {
-                resolve(response.files);
-              } else {
-                reject(new Error(response.error || 'Upload failed'));
+              try {
+                const response = JSON.parse(xhr.responseText);
+                if (response.success) {
+                  // Convert to UploadedMedia format
+                  const uploadedMedia: UploadedMedia[] = [{
+                    id: response.file.id || 'temp-id-' + Date.now(),
+                    url: response.file.mediumUrl,
+                    thumbnailUrl: response.file.thumbnailUrl,
+                    width: response.file.width || 800,
+                    height: response.file.height || 600,
+                    aspectRatio: response.file.aspectRatio || '4:3',
+                    originalFilename: response.file.originalname
+                  }];
+                  resolve(uploadedMedia);
+                } else {
+                  reject(new Error(response.error || 'Upload failed'));
+                }
+              } catch (error) {
+                reject(new Error('Invalid server response'));
               }
             } else {
               reject(new Error(`Upload failed with status ${xhr.status}`));
@@ -171,7 +185,7 @@ export default function MediaUploader({
       });
       
       // Send the request
-      xhr.open('POST', '/api/media/upload');
+      xhr.open('POST', '/api/upload');
       xhr.send(formData);
       
       // Wait for the promise to resolve

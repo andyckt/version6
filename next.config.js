@@ -55,10 +55,13 @@ const nextConfig = {
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  // Configure API routes to handle large file uploads
-  api: {
-    bodyParser: false, // Disables body parsing, we'll handle it ourselves with formidable
-    responseLimit: '8mb', // Increase the response size limit to handle larger files
+  // Remove API section as it's not supported in Next.js 14 route handlers
+  // Instead, configure for server-only modules
+  experimental: {
+    serverComponentsExternalPackages: ['sharp', 'cloudinary', 'formidable'],
+    outputFileTracingIncludes: {
+      '/api/**/*': ['node_modules/**/*']
+    },
   },
   // Add custom headers for static assets
   async headers() {
@@ -124,8 +127,19 @@ const nextConfig = {
       ],
     });
     
+    // Add polyfills for Node.js core modules
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+      stream: false,
+      constants: false,
+      os: false,
+      child_process: false,
+    };
+    
     return config;
   },
 }
 
-module.exports = nextConfig 
+module.exports = nextConfig

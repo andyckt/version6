@@ -46,8 +46,7 @@ export async function POST(request: NextRequest) {
     let totalQualityScores = {
       thumbnail: 0,
       medium: 0,
-      large: 0,
-      original: 0
+      large: 0
     };
     let belowThresholdCount = 0;
     let totalProcessed = 0;
@@ -67,22 +66,17 @@ export async function POST(request: NextRequest) {
         totalProcessed++;
         
         // Check for quality scores and add to totals
-        if (processedImages.original.qualityScore) {
-          totalQualityScores.original += processedImages.original.qualityScore;
+        // Now using large variant as the highest quality variant
+        if (processedImages.variants.large.qualityScore) {
+          const largeScore = processedImages.variants.large.qualityScore;
+          totalQualityScores.large += largeScore;
           
           // Check if any scores are below threshold (using 0.85 as a general threshold)
           const GENERAL_THRESHOLD = 0.85;
-          if (processedImages.original.qualityScore < GENERAL_THRESHOLD) {
+          if (largeScore < GENERAL_THRESHOLD) {
             belowThresholdCount++;
           }
         }
-        
-        // Check variant quality scores
-        Object.entries(processedImages.variants).forEach(([variantName, variant]) => {
-          if (variant.qualityScore && ['thumbnail', 'medium', 'large'].includes(variantName)) {
-            totalQualityScores[variantName as keyof typeof totalQualityScores] += variant.qualityScore;
-          }
-        });
         
         console.log('Image processed successfully. Variants created:', Object.keys(processedImages.variants).join(', '));
         
@@ -111,16 +105,16 @@ export async function POST(request: NextRequest) {
               mimeType: processedImages.metadata.mimeType,
               created: new Date(),
               status: 'active',
-              width: processedImages.original.width,
-              height: processedImages.original.height,
-              aspectRatio: processedImages.original.aspectRatio,
+              width: processedImages.variants.large.width,
+              height: processedImages.variants.large.height,
+              aspectRatio: processedImages.variants.large.aspectRatio,
               variants: {
-                original: {
-                  url: processedImages.original.url,
-                  width: processedImages.original.width,
-                  height: processedImages.original.height,
-                  size: processedImages.original.size,
-                  cloudinaryId: processedImages.original.cloudinaryId,
+                grid: {
+                  url: processedImages.variants.grid.url,
+                  width: processedImages.variants.grid.width,
+                  height: processedImages.variants.grid.height,
+                  size: processedImages.variants.grid.size,
+                  cloudinaryId: processedImages.variants.grid.cloudinaryId,
                 },
                 thumbnail: {
                   url: processedImages.variants.thumbnail.url,
@@ -159,16 +153,16 @@ export async function POST(request: NextRequest) {
               mimeType: processedImages.metadata.mimeType,
               created: new Date(),
               status: 'active',
-              width: processedImages.original.width,
-              height: processedImages.original.height,
-              aspectRatio: processedImages.original.aspectRatio,
+              width: processedImages.variants.large.width,
+              height: processedImages.variants.large.height,
+              aspectRatio: processedImages.variants.large.aspectRatio,
               variants: {
-                original: {
-                  url: processedImages.original.url,
-                  width: processedImages.original.width,
-                  height: processedImages.original.height,
-                  size: processedImages.original.size,
-                  cloudinaryId: processedImages.original.cloudinaryId,
+                grid: {
+                  url: processedImages.variants.grid.url,
+                  width: processedImages.variants.grid.width,
+                  height: processedImages.variants.grid.height,
+                  size: processedImages.variants.grid.size,
+                  cloudinaryId: processedImages.variants.grid.cloudinaryId,
                 },
                 thumbnail: {
                   url: processedImages.variants.thumbnail.url,

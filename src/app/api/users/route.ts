@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUsers } from '@/lib/db/models/user';
 import { initUserCollection } from '@/lib/db/models/user';
+import { connectToDatabase } from '@/lib/mongodb';
 
 // Initialize the user collection when the API is first loaded
 initUserCollection().catch(console.error);
@@ -11,44 +12,21 @@ initUserCollection().catch(console.error);
  */
 export async function GET(request: NextRequest) {
   try {
-    // Get query parameters
-    const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const { db } = await connectToDatabase();
     
-    // Validate query parameters
-    if (isNaN(page) || page < 1) {
-      return NextResponse.json({ error: 'Invalid page parameter' }, { status: 400 });
-    }
+    // Get all users from the users collection
+    // Limit the data to what we need to display users
+    const users = await db.collection('users')
+      .find({})
+      .project({
+        username: 1,
+        displayName: 1,
+        profileImage: 1
+      })
+      .sort({ displayName: 1 })
+      .toArray();
     
-    if (isNaN(limit) || limit < 1 || limit > 100) {
-      return NextResponse.json({ error: 'Invalid limit parameter' }, { status: 400 });
-    }
-    
-    // Fetch users from database
-    const { users, total } = await getUsers(page, limit);
-    
-    // Calculate pagination metadata
-    const totalPages = Math.ceil(total / limit);
-    const hasNextPage = page < totalPages;
-    const hasPrevPage = page > 1;
-    
-    // Return response
-    return NextResponse.json({
-      users: users.map(user => ({
-        ...user,
-        _id: user._id?.toString(), // Convert ObjectId to string
-        password: undefined // Remove password from response
-      })),
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages,
-        hasNextPage,
-        hasPrevPage
-      }
-    });
+    return NextResponse.json({ users });
   } catch (error) {
     console.error('Error fetching users:', error);
     return NextResponse.json(

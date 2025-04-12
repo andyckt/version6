@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { runMediaCleanupTasks } from '@/lib/db/cleanup';
+import { connectToDatabase } from '@/lib/mongodb';
+import { ObjectId } from 'mongodb';
 
 /**
  * API endpoint to trigger media cleanup tasks
@@ -11,36 +12,112 @@ import { runMediaCleanupTasks } from '@/lib/db/cleanup';
  * Note: In production, this should be secured with proper authentication
  * and typically triggered by a CRON job or admin action
  */
+
+// Define interface for variant to fix TypeScript error
+interface MediaVariant {
+  url: string;
+  width?: number;
+  height?: number;
+  size?: number;
+  cloudinaryId: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // In a real application, validate authentication/authorization here
-    // Only admins or the system itself should be able to trigger this
-    const authHeader = request.headers.get('authorization');
+    const body = await request.json();
+    const { mediaIds } = body;
     
-    // Simple API key check for demo purposes
-    // In production, use a proper authentication system
-    if (!validateApiKey(authHeader)) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    if (!mediaIds || !Array.isArray(mediaIds) || mediaIds.length === 0) {
+      return NextResponse.json({
+        success: false,
+        error: 'No media IDs provided'
+      }, { status: 400 });
     }
     
-    // Run the cleanup tasks
-    const result = await runMediaCleanupTasks();
+    // Connect to MongoDB
+    const { db } = await connectToDatabase();
+    
+    // Convert string IDs to ObjectIds
+    const objectIds = mediaIds.map(id => {
+      try {
+        return new ObjectId(id);
+      } catch (error) {
+        // Invalid ID format - we'll just return the original
+        console.warn(`Invalid ObjectId format: ${id}`);
+        return id;
+      }
+    });
+    
+    // Find media records to get Cloudinary IDs before deletion
+    const mediaRecords = await db.collection('media')
+      .find({ _id: { $in: objectIds } })
+      .toArray();
+    
+    // Extract Cloudinary IDs for deletion
+    const cloudinaryIds = mediaRecords.flatMap(record => {
+      const variants = record.variants || {};
+      return Object.values(variants)
+        .filter((variant): variant is MediaVariant => 
+          variant !== null && 
+          typeof variant === 'object' && 
+          'cloudinaryId' in variant
+        )
+        .map(variant => variant.cloudinaryId);
+    });
+    
+    // Delete media records from MongoDB
+    const result = await db.collection('media')
+      .deleteMany({ _id: { $in: objectIds } });
+    
+    // Delete from Cloudinary in the background
+    if (cloudinaryIds.length > 0) {
+      deleteFromCloudinary(cloudinaryIds).catch(error => {
+        console.error('Error deleting from Cloudinary:', error);
+      });
+    }
     
     return NextResponse.json({
       success: true,
-      message: 'Media cleanup tasks completed',
-      result
+      deleted: result.deletedCount,
+      message: 'Media cleanup initiated'
     });
   } catch (error) {
-    console.error('Media cleanup error:', error);
-    
-    return NextResponse.json(
-      { error: 'Failed to run media cleanup tasks' },
-      { status: 500 }
-    );
+    console.error('Error cleaning up media:', error);
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to clean up media'
+    }, { status: 500 });
+  }
+}
+
+// Function to delete resources from Cloudinary
+async function deleteFromCloudinary(cloudinaryIds: string[]) {
+  if (process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET && process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME) {
+    try {
+      // Import Cloudinary dynamically to avoid bundling it on the client
+      const { v2: cloudinary } = await import('cloudinary');
+      
+      // Configure Cloudinary with credentials
+      cloudinary.config({
+        cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+      });
+      
+      // Delete resources in batches of 100 (Cloudinary API limit)
+      for (let i = 0; i < cloudinaryIds.length; i += 100) {
+        const batch = cloudinaryIds.slice(i, i + 100);
+        await cloudinary.api.delete_resources(batch);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Cloudinary deletion error:', error);
+      return false;
+    }
+  } else {
+    console.warn('Cloudinary credentials not configured');
+    return false;
   }
 }
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPost, getPublishedPosts, IPost, PostStatus } from '@/lib/db/models/post';
 import { ObjectId } from 'mongodb';
+import { connectToDatabase } from '@/lib/mongodb';
 
 /**
  * Create a new post
@@ -8,94 +9,97 @@ import { ObjectId } from 'mongodb';
  */
 export async function POST(request: NextRequest) {
   try {
-    // In production, get the user ID from the authenticated session
-    // For now, we'll get it from the request headers for testing
-    const userId = request.headers.get('x-user-id');
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 401 }
-      );
-    }
-
     // Parse the request body
     const body = await request.json();
     
+    // Get the user ID from the request body
+    if (!body.userId) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'User ID is required' 
+      }, { status: 400 });
+    }
+    
     // Validate required fields
-    if (!body.title) {
-      return NextResponse.json(
-        { error: 'Title is required' },
-        { status: 400 }
-      );
+    if (!body.title || !body.title.trim()) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Title is required' 
+      }, { status: 400 });
     }
     
-    // Check for media - support both mediaIds array and legacy media array
-    const hasMedia = 
-      (body.mediaIds && Array.isArray(body.mediaIds) && body.mediaIds.length > 0) ||
-      (body.media && Array.isArray(body.media) && body.media.length > 0);
+    if (!body.media || !Array.isArray(body.media) || body.media.length === 0) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'At least one media item is required' 
+      }, { status: 400 });
+    }
+    
+    // Connect to database
+    const { db } = await connectToDatabase();
+    
+    // Look up the user to get their username
+    const user = await db.collection('users').findOne({ _id: new ObjectId(body.userId) });
+    
+    if (!user) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'User not found' 
+      }, { status: 404 });
+    }
+    
+    // For the example, we'll skip media verification
+    // In a real app, you would verify that the media exists and belongs to the user
+    
+    // Create the post document
+    const post = {
+      title: body.title.trim(),
+      description: body.description ? body.description.trim() : '',
+      userId: new ObjectId(body.userId),
+      username: user.username,
+      createdAt: new Date(),
       
-    if (!hasMedia) {
-      return NextResponse.json(
-        { error: 'At least one media item is required' },
-        { status: 400 }
-      );
-    }
-    
-    // Prepare the media array - handle both formats
-    let mediaArray;
-    if (body.mediaIds && Array.isArray(body.mediaIds)) {
-      // New format - array of media IDs
-      mediaArray = body.mediaIds.map((mediaId: string, index: number) => ({
-        mediaId,
-        sortOrder: index
-      }));
-    } else if (body.media && Array.isArray(body.media)) {
-      // Legacy format - could be array of objects or IDs
-      mediaArray = body.media.map((media: any, index: number) => {
-        // Check if the media item is an object with id property or just an ID string
-        const mediaId = typeof media === 'object' ? media.id || media.mediaId : media;
-        return {
-          mediaId,
-          sortOrder: typeof media === 'object' && media.sortOrder !== undefined ? media.sortOrder : index
-        };
-      });
-    } else {
-      mediaArray = [];
-    }
-    
-    // Prepare the post data
-    const postData: Omit<IPost, 'created' | 'likes' | 'views' | 'bookmarks'> = {
-      userId,
-      title: body.title,
-      description: body.description || '',
-      location: body.location || '',
-      hashtags: body.hashtags || [],
-      media: mediaArray,
-      taggedAccounts: body.taggedAccounts || [],
-      status: body.status === 'draft' ? PostStatus.DRAFT : PostStatus.PUBLISHED
+      // Initialize engagement metrics
+      likes: 0,
+      bookmarks: 0,
+      views: 0,
+      
+      // Content categorization
+      hashtags: Array.isArray(body.hashtags) ? body.hashtags : [],
+      location: body.location ? body.location.trim() : '',
+      
+      // Tagged accounts
+      taggedAccounts: Array.isArray(body.taggedAccounts) 
+        ? body.taggedAccounts.map((account: { username: string }) => ({ username: account.username }))
+        : [],
+      
+      // Media references
+      media: body.media.map((item: { mediaId: string, position: number, isPrimary: boolean }) => ({
+        mediaId: new ObjectId(item.mediaId),
+        position: item.position || 0,
+        isPrimary: item.isPrimary || false
+      }))
     };
     
-    // Create the post
-    const post = await createPost(postData);
+    // Insert the post into the database
+    const result = await db.collection('posts').insertOne(post);
     
+    if (!result.acknowledged) {
+      throw new Error('Failed to insert post');
+    }
+    
+    // Return the created post with its ID
     return NextResponse.json({ 
-      success: true,
-      message: 'Post created successfully',
-      _id: post?._id?.toString(),
-      post: {
-        id: post?._id?.toString() || '',
-        title: post?.title || '',
-        status: post?.status || PostStatus.DRAFT
-      }
+      success: true, 
+      _id: result.insertedId,
+      post
     });
-    
   } catch (error) {
-    console.error('Post creation error:', error);
-    
-    return NextResponse.json(
-      { error: 'Failed to create post' },
-      { status: 500 }
-    );
+    console.error('Error creating post:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to create post' 
+    }, { status: 500 });
   }
 }
 
@@ -115,7 +119,7 @@ export async function GET(request: NextRequest) {
     
     // Transform MongoDB objects for the API response
     const postsFormatted = posts.map(post => ({
-      id: post._id.toString(),
+      id: post._id?.toString() || '',
       title: post.title,
       description: post.description,
       location: post.location,

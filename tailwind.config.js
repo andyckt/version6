@@ -16,6 +16,7 @@ module.exports = {
       animation: {
         'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'fade-in': 'fadeIn 0.5s ease forwards',
+        'fade-out': 'fadeOut 0.5s ease forwards',
         'scale-in': 'scaleIn 0.3s ease forwards',
         'slide-in': 'slideIn 0.3s ease forwards',
         'shimmer': 'shimmer 1.5s infinite',
@@ -30,6 +31,10 @@ module.exports = {
         fadeIn: {
           '0%': { opacity: 0, transform: 'translateY(10px)' },
           '100%': { opacity: 1, transform: 'translateY(0)' },
+        },
+        fadeOut: {
+          '0%': { opacity: 1, transform: 'translateY(0)' },
+          '100%': { opacity: 0, transform: 'translateY(-10px)' },
         },
         scaleIn: {
           '0%': { opacity: 0, transform: 'scale(0.95)' },

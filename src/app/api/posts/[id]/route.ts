@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPostWithDetails, updatePost, deletePost, incrementPostStat, PostStatus } from '@/lib/db/models/post';
+import { getPostById, updatePost, deletePost, incrementPostStat, PostStatus, IPost } from '@/lib/db/models/post';
 import { ObjectId } from 'mongodb';
 
 /**
- * Get a post by ID
+ * Get a specific post by ID
  * GET /api/posts/[id]
  */
 export async function GET(
@@ -11,18 +11,10 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const postId = params.id;
+    const id = params.id;
     
-    // Validate post ID
-    if (!postId || !ObjectId.isValid(postId)) {
-      return NextResponse.json(
-        { error: 'Invalid post ID' },
-        { status: 400 }
-      );
-    }
-    
-    // Get the post with full details (including media and user info)
-    const post = await getPostWithDetails(postId);
+    // Get the post
+    const post = await getPostById(id);
     
     if (!post) {
       return NextResponse.json(
@@ -31,43 +23,28 @@ export async function GET(
       );
     }
     
-    // Increment view count
-    await incrementPostStat(postId, 'views');
+    // Transform MongoDB object for the API response
+    const postFormatted = {
+      id: post._id?.toString(),
+      title: post.title,
+      description: post.description,
+      location: post.location,
+      hashtags: post.hashtags,
+      created: post.created,
+      status: post.status,
+      media: post.media.map(m => ({
+        id: typeof m.mediaId === 'string' ? m.mediaId : m.mediaId.toString(),
+        sortOrder: m.sortOrder
+      })),
+      taggedAccounts: post.taggedAccounts,
+      likes: post.likes,
+      views: post.views,
+      bookmarks: post.bookmarks
+    };
     
     return NextResponse.json({ 
       success: true,
-      post: {
-        id: post._id.toString(),
-        title: post.title,
-        description: post.description,
-        location: post.location,
-        hashtags: post.hashtags,
-        created: post.created,
-        updated: post.updated,
-        likes: post.likes,
-        views: post.views + 1, // Add the current view
-        bookmarks: post.bookmarks,
-        user: post.user ? {
-          id: post.user._id.toString(),
-          username: post.user.username,
-          displayName: post.user.displayName,
-          profileImage: post.user.profileImage,
-          verified: post.user.verified
-        } : null,
-        media: post.mediaDetails.map((media: any) => ({
-          id: media._id.toString(),
-          type: media.type,
-          width: media.width,
-          height: media.height,
-          aspectRatio: media.aspectRatio,
-          url: media.variants.medium?.url,
-          thumbnailUrl: media.variants.thumbnail?.url,
-          largeUrl: media.variants.large?.url,
-          originalUrl: media.variants.original?.url,
-          sortOrder: media.sortOrder,
-        })),
-        taggedAccounts: post.taggedAccounts
-      }
+      post: postFormatted
     });
     
   } catch (error) {
@@ -89,17 +66,11 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const postId = params.id;
+    // Get the post ID from the URL
+    const id = params.id;
     
-    // Validate post ID
-    if (!postId || !ObjectId.isValid(postId)) {
-      return NextResponse.json(
-        { error: 'Invalid post ID' },
-        { status: 400 }
-      );
-    }
-    
-    // In production, verify the user is authorized to update this post
+    // In production, get the user ID from the authenticated session
+    // For now, we'll get it from the request headers for testing
     const userId = request.headers.get('x-user-id');
     if (!userId) {
       return NextResponse.json(
@@ -108,47 +79,80 @@ export async function PATCH(
       );
     }
     
+    // Get the existing post to verify ownership
+    const existingPost = await getPostById(id);
+    if (!existingPost) {
+      return NextResponse.json(
+        { error: 'Post not found' },
+        { status: 404 }
+      );
+    }
+    
+    // Check if the user is the owner of the post
+    const postUserId = existingPost.userId.toString();
+    if (postUserId !== userId) {
+      return NextResponse.json(
+        { error: 'You do not have permission to edit this post' },
+        { status: 403 }
+      );
+    }
+    
     // Parse the request body
     const body = await request.json();
     
-    // Prepare the update data
-    const updateData = {
-      ...(body.title && { title: body.title }),
-      ...(body.description !== undefined && { description: body.description }),
-      ...(body.location !== undefined && { location: body.location }),
-      ...(body.hashtags && { hashtags: body.hashtags }),
-      ...(body.taggedAccounts && { taggedAccounts: body.taggedAccounts }),
-      ...(body.status && { status: body.status }),
-      ...(body.media && { 
-        media: body.media.map((mediaItem: any, index: number) => ({
-          mediaId: mediaItem.id || mediaItem.mediaId,
-          sortOrder: mediaItem.sortOrder || index
-        }))
-      })
-    };
+    // Prepare the media array if it exists
+    let mediaArray;
+    if (body.mediaIds && Array.isArray(body.mediaIds)) {
+      // New format - array of media IDs
+      mediaArray = body.mediaIds.map((mediaId: string, index: number) => ({
+        mediaId,
+        sortOrder: index
+      }));
+    } else if (body.media && Array.isArray(body.media)) {
+      // Legacy format
+      mediaArray = body.media.map((media: any, index: number) => {
+        // Check if the media item is an object with id property or just an ID string
+        const mediaId = typeof media === 'object' ? media.id || media.mediaId : media;
+        return {
+          mediaId,
+          sortOrder: typeof media === 'object' && media.sortOrder !== undefined ? media.sortOrder : index
+        };
+      });
+    }
+    
+    // Prepare the post data for update
+    const updateData: Partial<IPost> = {};
+    
+    // Only add fields that were provided
+    if (body.title !== undefined) updateData.title = body.title;
+    if (body.description !== undefined) updateData.description = body.description;
+    if (body.location !== undefined) updateData.location = body.location;
+    if (body.hashtags !== undefined) updateData.hashtags = body.hashtags;
+    if (mediaArray !== undefined) updateData.media = mediaArray;
+    if (body.taggedAccounts !== undefined) updateData.taggedAccounts = body.taggedAccounts;
+    if (body.status !== undefined) {
+      updateData.status = body.status === 'draft' ? PostStatus.DRAFT : PostStatus.PUBLISHED;
+    }
     
     // Update the post
-    const updatedPost = await updatePost(postId, updateData);
+    const updatedPost = await updatePost(id, updateData);
     
     if (!updatedPost) {
       return NextResponse.json(
-        { error: 'Post not found or update failed' },
-        { status: 404 }
+        { error: 'Failed to update post' },
+        { status: 500 }
       );
     }
     
     return NextResponse.json({ 
       success: true,
       message: 'Post updated successfully',
-      post: {
-        id: updatedPost._id?.toString(),
-        title: updatedPost.title,
-        status: updatedPost.status
-      }
+      id: updatedPost._id?.toString(),
+      status: updatedPost.status
     });
     
   } catch (error) {
-    console.error('Update post error:', error);
+    console.error('Post update error:', error);
     
     return NextResponse.json(
       { error: 'Failed to update post' },

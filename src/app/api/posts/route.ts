@@ -22,11 +22,45 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate required fields
-    if (!body.title || !body.media || !Array.isArray(body.media) || body.media.length === 0) {
+    if (!body.title) {
       return NextResponse.json(
-        { error: 'Title and at least one media item are required' },
+        { error: 'Title is required' },
         { status: 400 }
       );
+    }
+    
+    // Check for media - support both mediaIds array and legacy media array
+    const hasMedia = 
+      (body.mediaIds && Array.isArray(body.mediaIds) && body.mediaIds.length > 0) ||
+      (body.media && Array.isArray(body.media) && body.media.length > 0);
+      
+    if (!hasMedia) {
+      return NextResponse.json(
+        { error: 'At least one media item is required' },
+        { status: 400 }
+      );
+    }
+    
+    // Prepare the media array - handle both formats
+    let mediaArray;
+    if (body.mediaIds && Array.isArray(body.mediaIds)) {
+      // New format - array of media IDs
+      mediaArray = body.mediaIds.map((mediaId: string, index: number) => ({
+        mediaId,
+        sortOrder: index
+      }));
+    } else if (body.media && Array.isArray(body.media)) {
+      // Legacy format - could be array of objects or IDs
+      mediaArray = body.media.map((media: any, index: number) => {
+        // Check if the media item is an object with id property or just an ID string
+        const mediaId = typeof media === 'object' ? media.id || media.mediaId : media;
+        return {
+          mediaId,
+          sortOrder: typeof media === 'object' && media.sortOrder !== undefined ? media.sortOrder : index
+        };
+      });
+    } else {
+      mediaArray = [];
     }
     
     // Prepare the post data
@@ -36,10 +70,7 @@ export async function POST(request: NextRequest) {
       description: body.description || '',
       location: body.location || '',
       hashtags: body.hashtags || [],
-      media: body.media.map((mediaId: string, index: number) => ({
-        mediaId,
-        sortOrder: index
-      })),
+      media: mediaArray,
       taggedAccounts: body.taggedAccounts || [],
       status: body.status === 'draft' ? PostStatus.DRAFT : PostStatus.PUBLISHED
     };
@@ -50,10 +81,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       success: true,
       message: 'Post created successfully',
+      _id: post?._id?.toString(),
       post: {
-        id: post._id.toString(),
-        title: post.title,
-        status: post.status
+        id: post?._id?.toString() || '',
+        title: post?.title || '',
+        status: post?.status || PostStatus.DRAFT
       }
     });
     

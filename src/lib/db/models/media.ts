@@ -75,6 +75,13 @@ export async function createMediaItem(imageSet: ProcessedImageSet, userId: strin
         size: imageSet.original.size,
         cloudinaryId: imageSet.original.cloudinaryId,
       },
+      grid: {
+        url: imageSet.variants.grid.url,
+        width: imageSet.variants.grid.width,
+        height: imageSet.variants.grid.height,
+        size: imageSet.variants.grid.size,
+        cloudinaryId: imageSet.variants.grid.cloudinaryId,
+      },
       thumbnail: {
         url: imageSet.variants.thumbnail.url,
         width: imageSet.variants.thumbnail.width,
@@ -202,6 +209,19 @@ export async function deleteMediaItem(id: string | ObjectId): Promise<boolean> {
           variantType: 'original',
         },
         variants: {
+          grid: {
+            url: mediaItem.variants.grid?.url || '',
+            cloudinaryId: mediaItem.variants.grid?.cloudinaryId,
+            width: mediaItem.variants.grid?.width || 0,
+            height: mediaItem.variants.grid?.height || 0,
+            aspectRatio: calculateAspectRatio(
+              mediaItem.variants.grid?.width || 1,
+              mediaItem.variants.grid?.height || 1
+            ),
+            size: mediaItem.variants.grid?.size || 0,
+            format: 'webp',
+            variantType: 'grid',
+          },
           thumbnail: {
             url: mediaItem.variants.thumbnail?.url || '',
             cloudinaryId: mediaItem.variants.thumbnail?.cloudinaryId,

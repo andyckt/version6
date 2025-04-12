@@ -6,8 +6,27 @@ import { MediaItem } from '@/data/posts';
 import { FiChevronLeft, FiChevronRight, FiImage, FiVideo, FiZoomIn, FiMaximize2 } from 'react-icons/fi';
 import BlurImage from './BlurImage';
 
+// Extend the MediaItem interface to include variants
+interface MediaVariant {
+  url: string;
+  width?: number;
+  height?: number;
+  size?: number;
+  cloudinaryId?: string;
+}
+
+interface ExtendedMediaItem extends MediaItem {
+  variants?: {
+    grid?: MediaVariant;
+    thumbnail?: MediaVariant;
+    medium?: MediaVariant;
+    large?: MediaVariant;
+    original?: MediaVariant;
+  };
+}
+
 interface MediaGalleryProps {
-  media: MediaItem[];
+  media: ExtendedMediaItem[];
   className?: string;
 }
 
@@ -19,12 +38,76 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
   const [showHighRes, setShowHighRes] = useState(false);
   const [isHighResLoaded, setIsHighResLoaded] = useState(false);
   const [isHighResOpen, setIsHighResOpen] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const highResRef = useRef<HTMLDivElement>(null);
   
   const currentItem = media[currentIndex];
   const totalItems = media.length;
+  
+  // Detect if on mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    // Check on initial load
+    checkMobile();
+    
+    // Re-check on window resize
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+  
+  // Helper function to get the appropriate variant URL based on context
+  const getVariantUrl = (item: ExtendedMediaItem, variant: 'grid' | 'thumbnail' | 'medium' | 'large' = 'medium') => {
+    if (!item) return '';
+    
+    // For modern media objects with variants structure
+    if (item.variants && item.variants[variant] && item.variants[variant]?.url) {
+      return item.variants[variant]!.url;
+    }
+    
+    // For legacy URLs that include variant pattern
+    if (typeof item.url === 'string') {
+      // Check for variant pattern in URL
+      const variantPattern = /\/(grid|thumbnail|medium|large)\//;
+      if (variantPattern.test(item.url)) {
+        return item.url.replace(variantPattern, `/${variant}/`);
+      }
+      
+      // For older URLs with /upload/ pattern (like Cloudinary)
+      if (item.url.includes('/upload/')) {
+        // Insert variant before the upload path
+        return item.url.replace('/upload/', `/upload/${variant}/`);
+      }
+    }
+    
+    // Fallback to original URL
+    return item.url;
+  };
+  
+  // Progressive loading - Start with thumbnail, then load medium quality
+  useEffect(() => {
+    if (currentItem && currentItem.type === 'image') {
+      // Reset loading state when changing images
+      setInitialLoading(true);
+      
+      // Preload the medium quality version
+      const img = new globalThis.Image();
+      img.src = getVariantUrl(currentItem, 'medium');
+      img.onload = () => {
+        setInitialLoading(false);
+      };
+    } else {
+      setInitialLoading(false);
+    }
+  }, [currentIndex, currentItem]);
   
   // Track high-resolution view usage for analytics
   const logHighResView = () => {
@@ -83,6 +166,28 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
   useEffect(() => {
     videoRefs.current = videoRefs.current.slice(0, media.filter(m => m.type === 'video').length);
   }, [media]);
+  
+  // Preload adjacent images for smoother navigation
+  useEffect(() => {
+    // Determine which indices to preload (current ± 1, wrapped around the array)
+    const prevIndex = currentIndex === 0 ? totalItems - 1 : currentIndex - 1;
+    const nextIndex = currentIndex === totalItems - 1 ? 0 : currentIndex + 1;
+    
+    // Only preload images, not videos
+    [prevIndex, nextIndex].forEach(index => {
+      const item = media[index];
+      if (item && item.type === 'image') {
+        const img = new globalThis.Image();
+        img.src = getVariantUrl(item, 'thumbnail'); // Start with thumbnail to be quick
+        
+        // After thumbnail is loaded, preload medium version
+        img.onload = () => {
+          const mediumImg = new globalThis.Image();
+          mediumImg.src = getVariantUrl(item, 'medium');
+        };
+      }
+    });
+  }, [currentIndex, media, totalItems]);
   
   // Handle navigation
   const goToPrevious = () => {
@@ -180,15 +285,6 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
     console.error(`Error loading media item with ID: ${itemId}`);
   };
   
-  // Construct high-resolution URL by replacing 'medium' with 'large' in the URL
-  const getHighResUrl = (url: string) => {
-    // For Cloudinary URLs, change from medium to large variant
-    if (url.includes('/medium/')) {
-      return url.replace('/medium/', '/large/');
-    }
-    return url; // Fallback to original URL if pattern doesn't match
-  };
-  
   if (!media || media.length === 0) {
     return null;
   }
@@ -213,16 +309,23 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
                 <p className="text-xs opacity-50 mt-2">{currentItem.url.substring(0, 50)}</p>
               </div>
             ) : (
-              <Image
-                src={currentItem.url}
-                alt="Post media"
-                fill
-                priority={currentIndex === 0}
-                sizes="(max-width: 768px) 100vw, 600px"
-                className="object-cover md:object-contain"
-                onError={() => handleMediaError(currentItem.id)}
-                draggable={false}
-              />
+              <>
+                {/* Progressive loading - show thumbnail first, then medium */}
+                <Image
+                  src={initialLoading 
+                    ? getVariantUrl(currentItem, 'thumbnail') 
+                    : getVariantUrl(currentItem, 'medium')}
+                  alt="Post media"
+                  fill
+                  priority={currentIndex === 0}
+                  sizes="(max-width: 768px) 100vw, 800px"
+                  className={`object-cover md:object-contain transition-opacity duration-300 ${
+                    initialLoading ? 'opacity-90 scale-[1.02] blur-[2px]' : 'opacity-100 scale-100 blur-0'
+                  }`}
+                  onError={() => handleMediaError(currentItem.id)}
+                  draggable={false}
+                />
+              </>
             )}
             
             {/* High resolution view button */}
@@ -251,7 +354,7 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
                   const videoIndex = media.filter(m => m.type === 'video').findIndex(m => m.id === currentItem.id);
                   if (videoIndex !== -1) videoRefs.current[videoIndex] = el;
                 }}
-                src={currentItem.url}
+                src={getVariantUrl(currentItem, isMobile ? 'medium' : 'large')}
                 poster={currentItem.thumbnail}
                 controls
                 playsInline
@@ -333,7 +436,7 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
             
             {/* High-res image */}
             <img
-              src={getHighResUrl(currentItem.url)}
+              src={getVariantUrl(currentItem, 'large')}
               alt="High resolution media"
               className={`max-w-full max-h-[90vh] object-contain ${isHighResLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
               onLoad={() => setIsHighResLoaded(true)}

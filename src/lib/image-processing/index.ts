@@ -15,14 +15,16 @@ cloudinary.v2.config({
 
 // Quality thresholds for perceptual quality checks
 const QUALITY_THRESHOLDS = {
-  thumbnail: 0.85, // Lower threshold for thumbnails
-  medium: 0.90,    // Medium quality threshold
-  large: 0.92,     // Higher threshold for large images
-  original: 0.95   // Highest threshold for originals
+  grid: 0.85,       // Same threshold as thumbnail
+  thumbnail: 0.85,  // Lower threshold for thumbnails
+  medium: 0.90,     // Medium quality threshold
+  large: 0.92,      // Higher threshold for large images
+  original: 0.95    // Highest threshold for originals
 };
 
 // Define image sizes and quality
 export const IMAGE_VARIANTS = {
+  grid: { width: 200, height: null, quality: 75 },    // New smaller variant for grid views
   thumbnail: { width: 300, height: null, quality: 75 },  // Small thumbnail for grids
   medium: { width: 800, height: null, quality: 80 },     // Medium-size (typical display)
   large: { width: 1600, height: null, quality: 85 },     // Large (full screen/zoom)
@@ -53,6 +55,7 @@ export interface ProcessedImage {
 export interface ProcessedImageSet {
   original: ProcessedImage;
   variants: {
+    grid: ProcessedImage;
     thumbnail: ProcessedImage;
     medium: ProcessedImage;
     large: ProcessedImage;
@@ -130,10 +133,20 @@ async function checkImageQuality(
       height = compressedImage.info.height;
     }
     
-    // Calculate SSIM
+    // Calculate SSIM - manually cast buffer types for compatibility with ssim.js expectations
     const ssimResult = ssim(
-      { data: origBuffer, width, height, channels: 4 },
-      { data: compBuffer, width: compressedImage.info.width, height: compressedImage.info.height, channels: 4 }
+      { 
+        data: origBuffer as any, 
+        width, 
+        height, 
+        channels: 4 
+      },
+      { 
+        data: compBuffer as any, 
+        width: compressedImage.info.width, 
+        height: compressedImage.info.height, 
+        channels: 4 
+      }
     );
     
     // Check if it passes the threshold

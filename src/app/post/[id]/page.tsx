@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useState, Fragment, useEffect } from 'react'
 import { FiArrowLeft, FiHeart, FiMessageSquare, FiBookmark, FiShare2, FiMoreHorizontal } from 'react-icons/fi'
 import { FaHeart, FaBookmark } from 'react-icons/fa'
-import { travelPosts, TaggedAccount } from '@/data/posts'
+import { travelPosts, TaggedAccount, MediaItem } from '@/data/posts'
 import { getUserByUsername } from '@/data/users'
 import Navigation from '@/components/Navigation'
 import PageTransition from '@/components/PageTransition'
@@ -14,6 +14,26 @@ import MediaGallery from '@/components/MediaGallery'
 import ShareDialog from '@/components/ShareDialog'
 import { MerchantDataProvider } from '@/components/providers/MerchantDataProvider'
 import TaggedAccountCard from '@/components/TaggedAccountCard'
+
+// Define MediaVariant interface for extended media items
+interface MediaVariant {
+  url: string;
+  width?: number;
+  height?: number;
+  size?: number;
+  cloudinaryId?: string;
+}
+
+// Extend MediaItem to include variants property
+interface ExtendedMediaItem extends MediaItem {
+  variants?: {
+    grid?: MediaVariant;
+    thumbnail?: MediaVariant;
+    medium?: MediaVariant;
+    large?: MediaVariant;
+    original?: MediaVariant;
+  };
+}
 
 // Define comment types for type safety
 interface CommentReply {
@@ -778,7 +798,21 @@ export default function PostDetail({ params }: { params: { id: string } }) {
             {post.media && post.media.length > 0 ? (
               <>
                 <MediaGallery 
-                  media={post.media}
+                  media={post.media.map((item: MediaItem) => {
+                    // Create extended media item with proper variant URLs if they don't exist
+                    const extendedItem: ExtendedMediaItem = { ...item };
+                    
+                    if (!extendedItem.variants) {
+                      // For legacy media items without variants, try to construct variant URLs
+                      extendedItem.variants = {
+                        grid: { url: item.url?.replace(/\/medium\/|\/upload\//, '/grid/') || item.url },
+                        thumbnail: { url: item.url?.replace(/\/medium\/|\/upload\//, '/thumbnail/') || item.url },
+                        medium: { url: item.url },
+                        large: { url: item.url?.replace(/\/medium\/|\/upload\//, '/large/') || item.url },
+                      };
+                    }
+                    return extendedItem;
+                  })}
                   className="md:rounded-lg"
                 />
               </>
@@ -789,7 +823,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                   alt={post.title}
                   fill
                   priority={true}
-                  sizes="(max-width: 768px) 100vw, 448px"
+                  sizes="(max-width: 768px) 100vw, 800px"
                   className="object-cover md:object-contain"
                 />
               </div>

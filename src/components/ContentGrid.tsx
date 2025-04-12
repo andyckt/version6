@@ -276,95 +276,115 @@ export default function ContentGrid() {
       
       {/* Content grid */}
       <div className="grid grid-cols-2 gap-x-1 gap-y-1 md:gap-x-1 px-1 md:px-0">
-        {filteredPosts.map((post, index) => (
-          <div 
-            key={post.id} 
-            className="group flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-            style={{ 
-              animationDelay: `${index * 100}ms`,
-              opacity: 0,
-              animation: 'fadeIn 0.5s ease forwards'
-            }}
-          >
-            <div className="relative overflow-hidden">
-              <Link href={`/post/${post.id}`} className="block" onClick={() => handleViewPost(post.id)}>
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  <BlurImage 
-                    src={post.media && post.media.length > 0 
-                      ? post.media[0].url 
-                      : (post.image || 'https://picsum.photos/600/600?random=default')} 
-                    alt={post.title}
-                    aspectRatio="aspect-[3/4]"
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                    className={
-                      post.media && post.media.length > 0 && post.media[0].width && post.media[0].height
-                        ? post.media[0].width > post.media[0].height 
-                          ? "object-cover" // landscape images
-                          : "object-cover" // portrait images
-                        : "object-cover" // Default
-                    }
-                  />
-                  {/* Image overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  {/* Bookmark button */}
-                  <button 
-                    className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95"
-                    onClick={(e) => handleBookmarkPost(e, post.id)}
-                  >
-                    {bookmarkedPosts[post.id] ? (
-                      <FaBookmark className="w-4 h-4 text-amber-400" />
-                    ) : (
-                      <FiBookmark className="w-4 h-4 text-gray-600" />
-                    )}
-                  </button>
-                </div>
-              </Link>
-              
-              <div className="p-2.5">
-                <Link href={`/post/${post.id}`}>
-                  <h3 className="font-[550] text-xs line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
-                    {post.title}
-                  </h3>
+        {filteredPosts.map((post, index) => {
+          // Helper function to get the most appropriate image URL based on available variants
+          const getImageUrl = (media: any) => {
+            if (!media) return post.image || 'https://picsum.photos/600/600?random=default';
+            
+            // If media has variants, use the grid variant for better performance
+            if (media.variants && media.variants.grid) {
+              return media.variants.grid.url;
+            }
+            
+            // For legacy data, check if URL can be transformed to use grid variant
+            const url = media.url;
+            if (url && url.includes('/medium/')) {
+              return url.replace('/medium/', '/grid/');
+            }
+            
+            return url;
+          };
+          
+          return (
+            <div 
+              key={post.id} 
+              className="group flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              style={{ 
+                animationDelay: `${index * 100}ms`,
+                opacity: 0,
+                animation: 'fadeIn 0.5s ease forwards'
+              }}
+            >
+              <div className="relative overflow-hidden">
+                <Link href={`/post/${post.id}`} className="block" onClick={() => handleViewPost(post.id)}>
+                  <div className="relative aspect-[3/4] overflow-hidden">
+                    <BlurImage 
+                      src={post.media && post.media.length > 0 
+                        ? getImageUrl(post.media[0])
+                        : (post.image || 'https://picsum.photos/600/600?random=default')} 
+                      alt={post.title}
+                      aspectRatio="aspect-[3/4]"
+                      sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 25vw"
+                      className={
+                        post.media && post.media.length > 0 && post.media[0].width && post.media[0].height
+                          ? post.media[0].width > post.media[0].height 
+                            ? "object-cover" // landscape images
+                            : "object-cover" // portrait images
+                          : "object-cover" // Default
+                      }
+                    />
+                    {/* Image overlay gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    {/* Bookmark button */}
+                    <button 
+                      className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95"
+                      onClick={(e) => handleBookmarkPost(e, post.id)}
+                    >
+                      {bookmarkedPosts[post.id] ? (
+                        <FaBookmark className="w-4 h-4 text-amber-400" />
+                      ) : (
+                        <FiBookmark className="w-4 h-4 text-gray-600" />
+                      )}
+                    </button>
+                  </div>
                 </Link>
                 
-                <div className="flex items-center justify-between mt-1.5">
-                  <Link 
-                    href={`/user/${post.username}`} 
-                    className="flex items-center group/author"
-                  >
-                    <div className="w-4 h-4 rounded-full bg-gray-200 mr-1.5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
-                      <Image
-                        src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.id}`}
-                        alt={post.username}
-                        width={16}
-                        height={16}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <span className="text-[10px] font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">@{post.username}</span>
+                <div className="p-2.5">
+                  <Link href={`/post/${post.id}`}>
+                    <h3 className="font-[550] text-xs line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+                      {post.title}
+                    </h3>
                   </Link>
                   
-                  <div className="flex items-center space-x-3">
-                    <button 
-                      className="flex items-center text-[10px] transition-all duration-300 active:scale-125"
-                      onClick={(e) => handleLikePost(e, post.id)}
+                  <div className="flex items-center justify-between mt-1.5">
+                    <Link 
+                      href={`/user/${post.username}`} 
+                      className="flex items-center group/author"
                     >
-                      {likedPosts[post.id] ? (
-                        <FaHeart className="w-3 h-3 mr-1 text-red-500 transition-transform duration-300" />
-                      ) : (
-                        <FiHeart className="w-3 h-3 mr-1 text-gray-500 transition-transform duration-300" />
-                      )}
-                      <span className={likedPosts[post.id] ? "text-red-500 font-medium" : "text-gray-500"}>
-                        {postLikes[post.id] || post.likes}
-                      </span>
-                    </button>
+                      <div className="w-4 h-4 rounded-full bg-gray-200 mr-1.5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
+                        <Image
+                          src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.id}`}
+                          alt={post.username}
+                          width={16}
+                          height={16}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <span className="text-[10px] font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">@{post.username}</span>
+                    </Link>
+                    
+                    <div className="flex items-center space-x-3">
+                      <button 
+                        className="flex items-center text-[10px] transition-all duration-300 active:scale-125"
+                        onClick={(e) => handleLikePost(e, post.id)}
+                      >
+                        {likedPosts[post.id] ? (
+                          <FaHeart className="w-3 h-3 mr-1 text-red-500 transition-transform duration-300" />
+                        ) : (
+                          <FiHeart className="w-3 h-3 mr-1 text-gray-500 transition-transform duration-300" />
+                        )}
+                        <span className={likedPosts[post.id] ? "text-red-500 font-medium" : "text-gray-500"}>
+                          {postLikes[post.id] || post.likes}
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       
       {/* Empty state */}

@@ -1,5 +1,6 @@
 /**
  * Image utility functions for working with Cloudinary transformations
+ * These functions are client-safe and don't require server-only functionality
  */
 
 import { ImageVariantType, IMAGE_VARIANTS } from './image-processing';
@@ -13,6 +14,11 @@ import { ImageVariantType, IMAGE_VARIANTS } from './image-processing';
 export function getVariantUrl(baseUrl: string, variantType: ImageVariantType): string {
   // If the URL already contains transformation parameters, return as is
   if (baseUrl.includes('/w_') || baseUrl.includes('/upload/v') && baseUrl.includes('/f_auto')) {
+    return baseUrl;
+  }
+  
+  // If not a Cloudinary URL, return as is
+  if (!baseUrl.includes('cloudinary.com')) {
     return baseUrl;
   }
   

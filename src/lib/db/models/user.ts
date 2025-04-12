@@ -166,6 +166,20 @@ export async function initUserCollection(): Promise<void> {
   ]);
 }
 
+/**
+ * Get all users using skip and limit for pagination
+ */
+export async function getAllUsers(limit = 100, skip = 0): Promise<IUser[]> {
+  const { db } = await connectToDatabase();
+  
+  return db.collection<IUser>(COLLECTION)
+    .find()
+    .sort({ username: 1 })
+    .skip(skip)
+    .limit(limit)
+    .toArray();
+}
+
 // CommonJS export for migration script
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { 
@@ -176,6 +190,7 @@ if (typeof module !== 'undefined' && module.exports) {
     updateUser, 
     deleteUser, 
     getUsers, 
-    initUserCollection 
+    initUserCollection, 
+    getAllUsers 
   };
 } 

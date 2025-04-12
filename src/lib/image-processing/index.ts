@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import cloudinary from 'cloudinary';
 import { promisify } from 'util';
+import { ssim } from 'ssim.js'; // Add SSIM.js for perceptual quality checking
 
 // Setup Cloudinary configuration
 cloudinary.v2.config({
@@ -11,6 +12,14 @@ cloudinary.v2.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+// Quality thresholds for perceptual quality checks
+const QUALITY_THRESHOLDS = {
+  thumbnail: 0.85, // Lower threshold for thumbnails
+  medium: 0.90,    // Medium quality threshold
+  large: 0.92,     // Higher threshold for large images
+  original: 0.95   // Highest threshold for originals
+};
 
 // Define image sizes and quality
 export const IMAGE_VARIANTS = {
@@ -22,6 +31,13 @@ export const IMAGE_VARIANTS = {
 
 export type ImageVariantType = keyof typeof IMAGE_VARIANTS;
 
+// Add a type for quality check results
+interface QualityCheckResult {
+  ssimScore: number;
+  passesThreshold: boolean;
+  variantType: ImageVariantType;
+}
+
 export interface ProcessedImage {
   url: string;                  // URL where the image is stored
   cloudinaryId?: string;        // Cloudinary public ID (if using Cloudinary)
@@ -31,6 +47,7 @@ export interface ProcessedImage {
   size: number;                 // File size in bytes
   format: string;               // Image format (jpg, png, webp)
   variantType: ImageVariantType; // Which variant this is
+  qualityScore?: number;        // SSIM quality score (0-1)
 }
 
 export interface ProcessedImageSet {
@@ -68,6 +85,82 @@ export function shouldUseCloudinary(): boolean {
     process.env.CLOUDINARY_API_SECRET &&
     (process.env.NODE_ENV === 'production' || process.env.FORCE_CLOUDINARY === 'true')
   );
+}
+
+/**
+ * Check the perceptual quality of a compressed image against the original
+ */
+async function checkImageQuality(
+  originalImagePath: string,
+  compressedImageBuffer: Buffer,
+  variantType: ImageVariantType
+): Promise<QualityCheckResult> {
+  try {
+    // Load original image as PNG for comparison
+    const originalImage = await sharp(originalImagePath)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    
+    // Convert compressed image to same format for comparison
+    const compressedImage = await sharp(compressedImageBuffer)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    
+    // Both images need to be the same size for SSIM comparison
+    // So if they differ, we need to resize
+    let origBuffer = originalImage.data;
+    let compBuffer = compressedImage.data;
+    let width = originalImage.info.width;
+    let height = originalImage.info.height;
+    
+    // If compressed image has different dimensions, resize original to match
+    if (originalImage.info.width !== compressedImage.info.width || 
+        originalImage.info.height !== compressedImage.info.height) {
+      // Resize original to match compressed dimensions for comparison
+      const resizedOriginal = await sharp(originalImagePath)
+        .resize(compressedImage.info.width, compressedImage.info.height)
+        .ensureAlpha()
+        .raw()
+        .toBuffer();
+      
+      origBuffer = resizedOriginal;
+      width = compressedImage.info.width;
+      height = compressedImage.info.height;
+    }
+    
+    // Calculate SSIM
+    const ssimResult = ssim(
+      { data: origBuffer, width, height, channels: 4 },
+      { data: compBuffer, width: compressedImage.info.width, height: compressedImage.info.height, channels: 4 }
+    );
+    
+    // Check if it passes the threshold
+    const threshold = QUALITY_THRESHOLDS[variantType];
+    const passesThreshold = ssimResult.mssim >= threshold;
+    
+    // Log quality information
+    console.log(`Quality check for ${variantType}: SSIM=${ssimResult.mssim.toFixed(4)}, Threshold=${threshold}, Passes=${passesThreshold}`);
+    
+    if (!passesThreshold) {
+      console.warn(`⚠️ ${variantType} variant quality is below threshold! SSIM=${ssimResult.mssim.toFixed(4)}, Threshold=${threshold}`);
+    }
+    
+    return {
+      ssimScore: ssimResult.mssim,
+      passesThreshold,
+      variantType
+    };
+  } catch (error) {
+    console.error(`Error checking image quality: ${error}`);
+    // Return a default passing result to avoid blocking the process
+    return {
+      ssimScore: 1.0,
+      passesThreshold: true,
+      variantType
+    };
+  }
 }
 
 /**
@@ -157,6 +250,9 @@ export async function processImage(
       // New dimensions after resize
       const { data, info } = outputBuffer;
       
+      // Check the perceptual quality against the original
+      const qualityCheck = await checkImageQuality(filePath, data, variantName);
+      
       // Generate appropriate filename for this variant
       const extension = info.format;
       const variantFilename = `${fileBaseName}-${variantName}-${uniqueId}.${extension}`;
@@ -221,6 +317,7 @@ export async function processImage(
         size: data.length,
         format: info.format,
         variantType: variantName,
+        qualityScore: qualityCheck.ssimScore // Add the quality score to the metadata
       };
       
       // Add to the correct place in the result

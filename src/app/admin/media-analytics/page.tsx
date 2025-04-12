@@ -11,6 +11,16 @@ interface MediaAnalytics {
     standard: number;
     high: number;
   };
+  qualityMetrics?: {
+    averageSSIM: {
+      thumbnail: number;
+      medium: number;
+      large: number;
+      original: number;
+    };
+    belowThresholdCount: number;
+    totalProcessed: number;
+  };
 }
 
 // Simple chart component for quality choices
@@ -68,6 +78,103 @@ function QualityChoicesPieChart({ data }: { data: MediaAnalytics }) {
         <div className="flex items-center">
           <div className="w-3 h-3 bg-[#4F46E5] rounded-full mr-2"></div>
           <span className="text-sm text-gray-700">High Quality ({highPercent}%)</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// After the existing QualityChoicesPieChart component, add:
+function QualityMetricsChart({ data }: { data: MediaAnalytics }) {
+  // Only render if quality metrics exist
+  if (!data.qualityMetrics) {
+    return (
+      <div className="text-sm text-gray-500 h-40 flex items-center justify-center">
+        No quality metrics data available yet
+      </div>
+    );
+  }
+  
+  const metrics = data.qualityMetrics;
+  
+  // Calculate the percentage of images below threshold
+  const belowThresholdPercentage = metrics.totalProcessed > 0
+    ? Math.round((metrics.belowThresholdCount / metrics.totalProcessed) * 100)
+    : 0;
+  
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-between text-sm mb-2">
+        <span>Variant</span>
+        <span>Avg. SSIM Score</span>
+      </div>
+      
+      {/* Thumbnail quality */}
+      <div>
+        <div className="flex justify-between text-sm mb-1">
+          <span>Thumbnail</span>
+          <span className="font-medium">{metrics.averageSSIM.thumbnail.toFixed(3)}</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            className="bg-green-500 h-2 rounded-full" 
+            style={{ width: `${Math.min(metrics.averageSSIM.thumbnail * 100, 100)}%` }}
+          ></div>
+        </div>
+      </div>
+      
+      {/* Medium quality */}
+      <div>
+        <div className="flex justify-between text-sm mb-1">
+          <span>Medium</span>
+          <span className="font-medium">{metrics.averageSSIM.medium.toFixed(3)}</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            className="bg-green-500 h-2 rounded-full" 
+            style={{ width: `${Math.min(metrics.averageSSIM.medium * 100, 100)}%` }}
+          ></div>
+        </div>
+      </div>
+      
+      {/* Large quality */}
+      <div>
+        <div className="flex justify-between text-sm mb-1">
+          <span>Large</span>
+          <span className="font-medium">{metrics.averageSSIM.large.toFixed(3)}</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            className="bg-green-500 h-2 rounded-full" 
+            style={{ width: `${Math.min(metrics.averageSSIM.large * 100, 100)}%` }}
+          ></div>
+        </div>
+      </div>
+      
+      {/* Original quality */}
+      <div>
+        <div className="flex justify-between text-sm mb-1">
+          <span>Original</span>
+          <span className="font-medium">{metrics.averageSSIM.original.toFixed(3)}</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            className="bg-green-500 h-2 rounded-full" 
+            style={{ width: `${Math.min(metrics.averageSSIM.original * 100, 100)}%` }}
+          ></div>
+        </div>
+      </div>
+      
+      <div className="pt-2 text-xs text-gray-600">
+        <div className="flex justify-between">
+          <span>Total images analyzed:</span>
+          <span className="font-medium">{metrics.totalProcessed}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Images below threshold:</span>
+          <span className={`font-medium ${belowThresholdPercentage > 5 ? 'text-red-600' : 'text-green-600'}`}>
+            {metrics.belowThresholdCount} ({belowThresholdPercentage}%)
+          </span>
         </div>
       </div>
     </div>
@@ -226,6 +333,18 @@ export default function MediaAnalyticsPage() {
           </div>
           {analytics && (
             <QualityChoicesPieChart data={analytics} />
+          )}
+        </div>
+        
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="flex items-center mb-4">
+            <div className="p-2 rounded-full bg-teal-100 text-teal-600 mr-3">
+              <FiBarChart2 className="w-5 h-5" />
+            </div>
+            <h2 className="text-lg font-medium">Image Quality Metrics</h2>
+          </div>
+          {analytics && (
+            <QualityMetricsChart data={analytics} />
           )}
         </div>
         

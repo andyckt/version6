@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { 
   FiUsers, FiSettings, FiBarChart2, FiFile, 
   FiDatabase, FiAlertCircle, FiMenu, FiX, FiHome,
-  FiLogOut
+  FiLogOut, FiEdit
 } from 'react-icons/fi';
 import { logoutAdmin } from '@/app/actions';
 
@@ -26,6 +26,7 @@ export default function AdminLayout({
   
   const navigation: NavItem[] = [
     { name: 'Dashboard', href: '/admin', icon: <FiHome className="w-5 h-5" /> },
+    { name: 'Posts', href: '/admin/posts', icon: <FiEdit className="w-5 h-5" /> },
     { name: 'Users', href: '/admin/users', icon: <FiUsers className="w-5 h-5" /> },
     { name: 'Content', href: '/admin/content', icon: <FiFile className="w-5 h-5" /> },
     { name: 'Analytics', href: '/admin/analytics', icon: <FiBarChart2 className="w-5 h-5" /> },

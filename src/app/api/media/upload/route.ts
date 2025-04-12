@@ -43,6 +43,14 @@ export async function POST(request: NextRequest) {
     
     // Process each uploaded file
     const results = [];
+    let totalQualityScores = {
+      thumbnail: 0,
+      medium: 0,
+      large: 0,
+      original: 0
+    };
+    let belowThresholdCount = 0;
+    let totalProcessed = 0;
     
     for (const file of files) {
       try {
@@ -54,6 +62,27 @@ export async function POST(request: NextRequest) {
           file.originalname,
           file.mimetype
         );
+        
+        // Track quality metrics for analytics
+        totalProcessed++;
+        
+        // Check for quality scores and add to totals
+        if (processedImages.original.qualityScore) {
+          totalQualityScores.original += processedImages.original.qualityScore;
+          
+          // Check if any scores are below threshold (using 0.85 as a general threshold)
+          const GENERAL_THRESHOLD = 0.85;
+          if (processedImages.original.qualityScore < GENERAL_THRESHOLD) {
+            belowThresholdCount++;
+          }
+        }
+        
+        // Check variant quality scores
+        Object.entries(processedImages.variants).forEach(([variantName, variant]) => {
+          if (variant.qualityScore && ['thumbnail', 'medium', 'large'].includes(variantName)) {
+            totalQualityScores[variantName as keyof typeof totalQualityScores] += variant.qualityScore;
+          }
+        });
         
         console.log('Image processed successfully. Variants created:', Object.keys(processedImages.variants).join(', '));
         
@@ -194,6 +223,70 @@ export async function POST(request: NextRequest) {
           fs.unlinkSync(file.path);
         }
       }
+    }
+    
+    // Update analytics with quality metrics
+    try {
+      // Get existing analytics from localStorage (or create new)
+      const analyticsData = typeof localStorage !== 'undefined' && localStorage.getItem('mediaAnalytics')
+        ? JSON.parse(localStorage.getItem('mediaAnalytics') || '{}')
+        : { 
+            highResViews: 0, 
+            totalViews: 0, 
+            uploadQualityChoices: { standard: 0, high: 0 },
+            qualityMetrics: {
+              averageSSIM: {
+                thumbnail: 0,
+                medium: 0,
+                large: 0,
+                original: 0
+              },
+              belowThresholdCount: 0,
+              totalProcessed: 0
+            }
+          };
+      
+      // Initialize quality metrics if not present
+      if (!analyticsData.qualityMetrics) {
+        analyticsData.qualityMetrics = {
+          averageSSIM: {
+            thumbnail: 0,
+            medium: 0,
+            large: 0,
+            original: 0
+          },
+          belowThresholdCount: 0,
+          totalProcessed: 0
+        };
+      }
+      
+      // Calculate new averages
+      if (totalProcessed > 0) {
+        const oldTotal = analyticsData.qualityMetrics.totalProcessed || 0;
+        const newTotal = oldTotal + totalProcessed;
+        
+        // Update totals
+        analyticsData.qualityMetrics.totalProcessed = newTotal;
+        analyticsData.qualityMetrics.belowThresholdCount += belowThresholdCount;
+        
+        // Recalculate averages for each variant
+        Object.keys(totalQualityScores).forEach((variant) => {
+          const key = variant as keyof typeof totalQualityScores;
+          const oldAvg = analyticsData.qualityMetrics.averageSSIM[key] || 0;
+          const newAvg = oldTotal > 0 
+            ? (oldAvg * oldTotal + totalQualityScores[key]) / newTotal
+            : totalQualityScores[key] / totalProcessed;
+            
+          analyticsData.qualityMetrics.averageSSIM[key] = newAvg;
+        });
+      }
+      
+      // Store updated analytics
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('mediaAnalytics', JSON.stringify(analyticsData));
+      }
+    } catch (analyticsError) {
+      console.error('Failed to update quality analytics:', analyticsError);
     }
     
     // Return the processed images

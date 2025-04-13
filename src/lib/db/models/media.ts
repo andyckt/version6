@@ -64,17 +64,12 @@ export async function createMediaItem(imageSet: ProcessedImageSet, userId: strin
     mimeType: imageSet.metadata.mimeType,
     created: new Date(),
     status: MediaStatus.ACTIVE,
-    width: imageSet.original.width,
-    height: imageSet.original.height,
-    aspectRatio: imageSet.original.aspectRatio,
+    // Use large variant for dimensions since original is no longer available
+    width: imageSet.variants.large.width,
+    height: imageSet.variants.large.height,
+    aspectRatio: imageSet.variants.large.aspectRatio,
     variants: {
-      original: {
-        url: imageSet.original.url,
-        width: imageSet.original.width,
-        height: imageSet.original.height,
-        size: imageSet.original.size,
-        cloudinaryId: imageSet.original.cloudinaryId,
-      },
+      // Original variant removed
       grid: {
         url: imageSet.variants.grid.url,
         width: imageSet.variants.grid.width,
@@ -106,6 +101,7 @@ export async function createMediaItem(imageSet: ProcessedImageSet, userId: strin
     },
     metadata: {
       originalUploadTimestamp: imageSet.metadata.timestamp,
+      baseCloudinaryId: imageSet.metadata.baseCloudinaryId
     },
   };
   
@@ -198,16 +194,7 @@ export async function deleteMediaItem(id: string | ObjectId): Promise<boolean> {
     if (mediaItem.type === MediaType.IMAGE) {
       // Convert IMediaItem structure to ProcessedImageSet for the delete function
       const imageSet: ProcessedImageSet = {
-        original: {
-          url: mediaItem.variants.original?.url || '',
-          cloudinaryId: mediaItem.variants.original?.cloudinaryId,
-          width: mediaItem.variants.original?.width || 0,
-          height: mediaItem.variants.original?.height || 0,
-          aspectRatio: mediaItem.aspectRatio || '1:1',
-          size: mediaItem.variants.original?.size || 0,
-          format: 'webp',
-          variantType: 'original',
-        },
+        // No original field now
         variants: {
           grid: {
             url: mediaItem.variants.grid?.url || '',
@@ -260,13 +247,14 @@ export async function deleteMediaItem(id: string | ObjectId): Promise<boolean> {
             size: mediaItem.variants.large?.size || 0,
             format: 'webp',
             variantType: 'large',
-          },
+          }
         },
         metadata: {
           originalFilename: mediaItem.originalFilename,
           mimeType: mediaItem.mimeType,
-          timestamp: mediaItem.created.toISOString(),
-        },
+          timestamp: mediaItem.metadata?.originalUploadTimestamp || new Date().toISOString(),
+          baseCloudinaryId: mediaItem.metadata?.baseCloudinaryId
+        }
       };
       
       // Delete the actual files

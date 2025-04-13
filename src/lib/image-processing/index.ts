@@ -18,8 +18,7 @@ const QUALITY_THRESHOLDS = {
   grid: 0.85,       // Same threshold as thumbnail
   thumbnail: 0.85,  // Lower threshold for thumbnails
   medium: 0.90,     // Medium quality threshold
-  large: 0.92,      // Higher threshold for large images
-  original: 0.95    // Highest threshold for originals
+  large: 0.95      // Higher threshold for large images (increased from 0.92 since large is now the highest quality)
 };
 
 // Define image sizes and quality
@@ -27,8 +26,7 @@ export const IMAGE_VARIANTS = {
   grid: { width: 200, height: null, quality: 75 },    // New smaller variant for grid views
   thumbnail: { width: 300, height: null, quality: 75 },  // Small thumbnail for grids
   medium: { width: 800, height: null, quality: 80 },     // Medium-size (typical display)
-  large: { width: 1600, height: null, quality: 85 },     // Large (full screen/zoom)
-  original: { width: null, height: null, quality: 90 }   // Original with moderate compression
+  large: { width: 1600, height: null, quality: 90 }      // Large (full screen/zoom) - increased quality from 85 to 90
 };
 
 export type ImageVariantType = keyof typeof IMAGE_VARIANTS;
@@ -53,7 +51,6 @@ export interface ProcessedImage {
 }
 
 export interface ProcessedImageSet {
-  original: ProcessedImage;
   variants: {
     grid: ProcessedImage;
     thumbnail: ProcessedImage;
@@ -64,6 +61,7 @@ export interface ProcessedImageSet {
     originalFilename: string;
     mimeType: string;
     timestamp: string;
+    baseCloudinaryId?: string;
   };
 }
 
@@ -197,12 +195,16 @@ export async function processImage(
       throw new Error('Could not extract image dimensions');
     }
 
+    // Generate base Cloudinary ID for potential reference to original
+    const baseCloudinaryId = `media/${fileBaseName.substring(0, 40)}-${uniqueId}`;
+
     // Create processed image set
     const processedSet: Partial<ProcessedImageSet> = {
       metadata: {
         originalFilename: fileName,
         mimeType,
         timestamp: new Date().toISOString(),
+        baseCloudinaryId // Add base Cloudinary ID to metadata
       },
       variants: {} as any,
     };
@@ -236,7 +238,7 @@ export async function processImage(
             quality: config.quality,
             effort: 4, // 0-6, higher means more compression but slower processing (4 is a good balance)
             smartSubsample: true, // Better quality for lower file size
-            nearLossless: variantName === 'original' // Use near-lossless for original quality
+            nearLossless: false // No need for near-lossless as original variant is removed
           })
           .toBuffer({ resolveWithObject: true });
       } else if (mimeType.includes('png') && !isPhoto) {
@@ -334,11 +336,7 @@ export async function processImage(
       };
       
       // Add to the correct place in the result
-      if (variantName === 'original') {
-        processedSet.original = processedImage;
-      } else {
-        (processedSet.variants as any)[variantName] = processedImage;
-      }
+      (processedSet.variants as any)[variantName] = processedImage;
     });
     
     // Wait for all variants to be processed
@@ -360,11 +358,8 @@ export async function deleteImage(
   useCloudinary: boolean = shouldUseCloudinary()
 ): Promise<void> {
   try {
-    // Delete all variants
-    const allImages = [
-      imageSet.original,
-      ...Object.values(imageSet.variants)
-    ];
+    // Delete all variants (only includes grid, thumbnail, medium, and large now)
+    const allImages = Object.values(imageSet.variants);
     
     for (const image of allImages) {
       if (useCloudinary && image.cloudinaryId) {
@@ -376,6 +371,16 @@ export async function deleteImage(
         if (fs.existsSync(filePath)) {
           await promisify(fs.unlink)(filePath);
         }
+      }
+    }
+    
+    // If there's a baseCloudinaryId, we could optionally delete the original asset too
+    if (useCloudinary && imageSet.metadata.baseCloudinaryId) {
+      try {
+        // Uncomment if you want to also delete the original from Cloudinary
+        // await cloudinary.v2.uploader.destroy(imageSet.metadata.baseCloudinaryId);
+      } catch (originalError) {
+        console.error('Failed to delete original asset:', originalError);
       }
     }
   } catch (error) {

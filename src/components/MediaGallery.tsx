@@ -21,7 +21,6 @@ interface ExtendedMediaItem extends MediaItem {
     thumbnail?: MediaVariant;
     medium?: MediaVariant;
     large?: MediaVariant;
-    original?: MediaVariant;
   };
 }
 

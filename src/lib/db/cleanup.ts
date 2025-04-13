@@ -14,56 +14,12 @@ export async function cleanupOriginalMediaVariants(): Promise<{
   errors: number;
   message: string;
 }> {
-  const { db } = await connectToDatabase();
-  const now = new Date();
-  
-  // Calculate the cutoff date (60 days ago)
-  const cutoffDate = new Date(now);
-  cutoffDate.setDate(cutoffDate.getDate() - ORIGINAL_RETENTION_DAYS);
-  
-  // Find media items older than the cutoff that still have original variants
-  const mediaItems = await db.collection<IMediaItem>('media')
-    .find({
-      created: { $lt: cutoffDate },
-      'variants.original': { $exists: true },
-      status: MediaStatus.ACTIVE,
-    })
-    .limit(100) // Process in batches to avoid memory issues
-    .toArray();
-  
-  console.log(`Found ${mediaItems.length} media items with originals older than ${ORIGINAL_RETENTION_DAYS} days`);
-  
-  let processed = 0;
-  let errors = 0;
-  
-  for (const item of mediaItems) {
-    try {
-      // Only keep the CloudinaryId of the original for deletion
-      const originalCloudinaryId = item.variants.original?.cloudinaryId;
-      
-      // Delete the original variant from storage (Cloudinary)
-      if (originalCloudinaryId) {
-        await deleteOriginalVariantOnly(originalCloudinaryId);
-      }
-      
-      // Remove the original variant from the database document
-      await db.collection<IMediaItem>('media')
-        .updateOne(
-          { _id: item._id },
-          { $unset: { 'variants.original': '' } }
-        );
-      
-      processed++;
-    } catch (error) {
-      console.error(`Error cleaning up original variant for media ID ${item._id}:`, error);
-      errors++;
-    }
-  }
-  
+  // Original variant cleanup is no longer needed as we've removed original variants
+  // This function is kept for backward compatibility but won't find any items
   return {
-    processed,
-    errors,
-    message: `Processed ${processed} items, with ${errors} errors. ${mediaItems.length} items found.`
+    processed: 0,
+    errors: 0,
+    message: "Original variant cleanup is deprecated: original variants are no longer created."
   };
 }
 
@@ -72,14 +28,8 @@ export async function cleanupOriginalMediaVariants(): Promise<{
  * without affecting other variants
  */
 async function deleteOriginalVariantOnly(cloudinaryId: string): Promise<void> {
-  try {
-    const cloudinary = require('cloudinary').v2;
-    await cloudinary.uploader.destroy(cloudinaryId);
-    console.log(`Deleted original variant: ${cloudinaryId}`);
-  } catch (error) {
-    console.error(`Failed to delete Cloudinary resource: ${cloudinaryId}`, error);
-    throw error;
-  }
+  // This function is no longer used as original variants are no longer created
+  console.log(`Original variant deletion is deprecated. Would have deleted: ${cloudinaryId}`);
 }
 
 /**

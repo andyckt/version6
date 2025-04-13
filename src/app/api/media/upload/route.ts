@@ -46,8 +46,7 @@ export async function POST(request: NextRequest) {
     let totalQualityScores = {
       thumbnail: 0,
       medium: 0,
-      large: 0,
-      original: 0
+      large: 0
     };
     let belowThresholdCount = 0;
     let totalProcessed = 0;
@@ -66,13 +65,14 @@ export async function POST(request: NextRequest) {
         // Track quality metrics for analytics
         totalProcessed++;
         
-        // Check for quality scores and add to totals
-        if (processedImages.original.qualityScore) {
-          totalQualityScores.original += processedImages.original.qualityScore;
+        // Check for quality scores and add to totals - use large variant instead of original
+        if (processedImages.variants.large.qualityScore) {
+          // Use large for what was previously tracking original scores
+          totalQualityScores.large += processedImages.variants.large.qualityScore;
           
           // Check if any scores are below threshold (using 0.85 as a general threshold)
           const GENERAL_THRESHOLD = 0.85;
-          if (processedImages.original.qualityScore < GENERAL_THRESHOLD) {
+          if (processedImages.variants.large.qualityScore < GENERAL_THRESHOLD) {
             belowThresholdCount++;
           }
         }
@@ -111,17 +111,10 @@ export async function POST(request: NextRequest) {
               mimeType: processedImages.metadata.mimeType,
               created: new Date(),
               status: 'active',
-              width: processedImages.original.width,
-              height: processedImages.original.height,
-              aspectRatio: processedImages.original.aspectRatio,
+              width: processedImages.variants.large.width,
+              height: processedImages.variants.large.height,
+              aspectRatio: processedImages.variants.large.aspectRatio,
               variants: {
-                original: {
-                  url: processedImages.original.url,
-                  width: processedImages.original.width,
-                  height: processedImages.original.height,
-                  size: processedImages.original.size,
-                  cloudinaryId: processedImages.original.cloudinaryId,
-                },
                 thumbnail: {
                   url: processedImages.variants.thumbnail.url,
                   width: processedImages.variants.thumbnail.width,
@@ -143,6 +136,13 @@ export async function POST(request: NextRequest) {
                   size: processedImages.variants.large.size,
                   cloudinaryId: processedImages.variants.large.cloudinaryId,
                 },
+                grid: {
+                  url: processedImages.variants.grid.url,
+                  width: processedImages.variants.grid.width,
+                  height: processedImages.variants.grid.height,
+                  size: processedImages.variants.grid.size,
+                  cloudinaryId: processedImages.variants.grid.cloudinaryId,
+                }
               }
             };
           } else {
@@ -159,17 +159,10 @@ export async function POST(request: NextRequest) {
               mimeType: processedImages.metadata.mimeType,
               created: new Date(),
               status: 'active',
-              width: processedImages.original.width,
-              height: processedImages.original.height,
-              aspectRatio: processedImages.original.aspectRatio,
+              width: processedImages.variants.large.width,
+              height: processedImages.variants.large.height,
+              aspectRatio: processedImages.variants.large.aspectRatio,
               variants: {
-                original: {
-                  url: processedImages.original.url,
-                  width: processedImages.original.width,
-                  height: processedImages.original.height,
-                  size: processedImages.original.size,
-                  cloudinaryId: processedImages.original.cloudinaryId,
-                },
                 thumbnail: {
                   url: processedImages.variants.thumbnail.url,
                   width: processedImages.variants.thumbnail.width,
@@ -191,6 +184,13 @@ export async function POST(request: NextRequest) {
                   size: processedImages.variants.large.size,
                   cloudinaryId: processedImages.variants.large.cloudinaryId,
                 },
+                grid: {
+                  url: processedImages.variants.grid.url,
+                  width: processedImages.variants.grid.width,
+                  height: processedImages.variants.grid.height,
+                  size: processedImages.variants.grid.size,
+                  cloudinaryId: processedImages.variants.grid.cloudinaryId,
+                }
               }
             };
           }
@@ -200,8 +200,11 @@ export async function POST(request: NextRequest) {
         results.push({
           id: mediaItem._id,
           originalFilename: mediaItem.originalFilename,
-          url: mediaItem.variants.medium?.url,
+          url: mediaItem.variants.large?.url,
           thumbnailUrl: mediaItem.variants.thumbnail?.url,
+          gridUrl: mediaItem.variants.grid?.url,
+          mediumUrl: mediaItem.variants.medium?.url,
+          largeUrl: mediaItem.variants.large?.url,
           width: mediaItem.width,
           height: mediaItem.height,
           aspectRatio: mediaItem.aspectRatio,
@@ -239,7 +242,6 @@ export async function POST(request: NextRequest) {
                 thumbnail: 0,
                 medium: 0,
                 large: 0,
-                original: 0
               },
               belowThresholdCount: 0,
               totalProcessed: 0
@@ -253,40 +255,33 @@ export async function POST(request: NextRequest) {
             thumbnail: 0,
             medium: 0,
             large: 0,
-            original: 0
           },
           belowThresholdCount: 0,
           totalProcessed: 0
         };
       }
       
-      // Calculate new averages
+      // Update metrics
+      analyticsData.qualityMetrics.totalProcessed += totalProcessed;
+      analyticsData.qualityMetrics.belowThresholdCount += belowThresholdCount;
+      
       if (totalProcessed > 0) {
-        const oldTotal = analyticsData.qualityMetrics.totalProcessed || 0;
-        const newTotal = oldTotal + totalProcessed;
-        
-        // Update totals
-        analyticsData.qualityMetrics.totalProcessed = newTotal;
-        analyticsData.qualityMetrics.belowThresholdCount += belowThresholdCount;
-        
-        // Recalculate averages for each variant
-        Object.keys(totalQualityScores).forEach((variant) => {
-          const key = variant as keyof typeof totalQualityScores;
-          const oldAvg = analyticsData.qualityMetrics.averageSSIM[key] || 0;
-          const newAvg = oldTotal > 0 
-            ? (oldAvg * oldTotal + totalQualityScores[key]) / newTotal
-            : totalQualityScores[key] / totalProcessed;
-            
-          analyticsData.qualityMetrics.averageSSIM[key] = newAvg;
-        });
+        // Update average SSIM scores
+        analyticsData.qualityMetrics.averageSSIM.thumbnail = 
+          (analyticsData.qualityMetrics.averageSSIM.thumbnail + (totalQualityScores.thumbnail / totalProcessed)) / 2;
+        analyticsData.qualityMetrics.averageSSIM.medium = 
+          (analyticsData.qualityMetrics.averageSSIM.medium + (totalQualityScores.medium / totalProcessed)) / 2;
+        analyticsData.qualityMetrics.averageSSIM.large = 
+          (analyticsData.qualityMetrics.averageSSIM.large + (totalQualityScores.large / totalProcessed)) / 2;
       }
       
-      // Store updated analytics
+      // Save updated analytics
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('mediaAnalytics', JSON.stringify(analyticsData));
       }
     } catch (analyticsError) {
-      console.error('Failed to update quality analytics:', analyticsError);
+      // Non-critical error, just log it
+      console.warn('Failed to update media analytics:', analyticsError);
     }
     
     // Return the processed images

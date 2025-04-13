@@ -32,14 +32,14 @@ export async function GET(request: NextRequest) {
       width: item.width || 0,
       height: item.height || 0,
       aspectRatio: item.aspectRatio,
-      // Get URLs from variants
-      url: item.variants.original?.url || '',
+      // Get URLs from variants - use large as the highest quality variant
+      url: item.variants.large?.url || '',
       thumbnailUrl: item.variants.thumbnail?.url || '',
       gridUrl: item.variants.grid?.url || '',
       mediumUrl: item.variants.medium?.url || '',
       largeUrl: item.variants.large?.url || '',
-      // Total file size (original variant)
-      fileSize: item.variants.original?.size || 0
+      // Use large variant for file size
+      fileSize: item.variants.large?.size || 0
     }));
     
     return NextResponse.json({

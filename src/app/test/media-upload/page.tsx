@@ -35,10 +35,12 @@ export default function MediaUploadTestPage() {
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-2">How to use the uploaded media:</h3>
               <div className="bg-gray-50 p-4 rounded text-sm">
-                <p className="mb-2">1. The <code className="bg-gray-200 px-1 rounded">thumbnailUrl</code> is best for thumbnails and previews.</p>
-                <p className="mb-2">2. The <code className="bg-gray-200 px-1 rounded">url</code> is the medium-sized image, ideal for most content display.</p>
-                <p className="mb-2">3. For high-resolution display, you can construct the large URL by replacing <code className="bg-gray-200 px-1 rounded">medium</code> with <code className="bg-gray-200 px-1 rounded">large</code> in the URL path.</p>
-                <p className="mb-2">4. Store the <code className="bg-gray-200 px-1 rounded">id</code> in your database to reference this media.</p>
+                <p className="mb-2">1. The <code className="bg-gray-200 px-1 rounded">gridUrl</code> (200px) is best for grid layouts and small thumbnails.</p>
+                <p className="mb-2">2. The <code className="bg-gray-200 px-1 rounded">thumbnailUrl</code> (300px) is ideal for list items and medium thumbnails.</p>
+                <p className="mb-2">3. The <code className="bg-gray-200 px-1 rounded">mediumUrl</code> (800px) is suitable for content displays and typical viewing.</p>
+                <p className="mb-2">4. The <code className="bg-gray-200 px-1 rounded">largeUrl</code> (1600px) is the highest quality variant for full-screen and detailed viewing.</p>
+                <p className="mb-2">5. The <code className="bg-gray-200 px-1 rounded">url</code> is now an alias to largeUrl for backward compatibility.</p>
+                <p className="mb-2">6. Store the <code className="bg-gray-200 px-1 rounded">id</code> in your database to reference this media.</p>
               </div>
             </div>
           </div>

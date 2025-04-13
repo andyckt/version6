@@ -99,10 +99,10 @@ export async function GET(request: NextRequest) {
       
       // Get the grid variant URL for the primary image
       const primaryImage = mediaItem ? {
-        url: mediaItem.variants?.grid?.url || '',
+        url: mediaItem.variants?.medium?.url || '',
         aspectRatio: mediaItem.aspectRatio || '1:1',
-        width: mediaItem.variants?.grid?.width || 200,
-        height: mediaItem.variants?.grid?.height || 200
+        width: mediaItem.variants?.medium?.width || 800,
+        height: mediaItem.variants?.medium?.height || 800
       } : null;
       
       return {

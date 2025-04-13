@@ -54,6 +54,13 @@ export default function BlurImage({
     
     // Only add parameters if they're not already in the URL
     if (src.includes('/upload/')) {
+      // Handle different image variants
+      if (src.includes('w_800') || src.includes('medium')) {
+        // For medium images in content grid, use good quality but with loading optimizations
+        return src.replace('/upload/', '/upload/q_auto:good,f_auto,dpr_auto,c_limit/');
+      } else if (src.includes('w_300') || src.includes('thumbnail')) {
+        return src.replace('/upload/', '/upload/q_auto:good,f_auto,dpr_auto/');
+      }
       return src.replace('/upload/', '/upload/q_auto,f_auto,dpr_auto/');
     }
     

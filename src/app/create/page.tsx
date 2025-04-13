@@ -49,6 +49,14 @@ export default function CreatePost() {
   // For debouncing account search
   const accountSearchTimeout = useRef<NodeJS.Timeout | null>(null);
   
+  // Ref to track post creation success that won't be affected by closure issues
+  const postSuccessRef = useRef(false);
+  
+  // Update the ref when postSuccess changes
+  useEffect(() => {
+    postSuccessRef.current = postSuccess;
+  }, [postSuccess]);
+  
   // Show success notification
   const showSuccessNotification = (message: string) => {
     setSuccessMessage(message);
@@ -258,6 +266,7 @@ export default function CreatePost() {
           setIsSavingDraft(false);
         } else {
           setPostSuccess(true);
+          postSuccessRef.current = true;
           // Show success notification for published post
           showSuccessNotification('Post published successfully');
           
@@ -333,7 +342,9 @@ export default function CreatePost() {
   useEffect(() => {
     return () => {
       // Only run cleanup if there's media and the post wasn't successfully created
-      if (uploadedMedia.length > 0 && !postSuccess) {
+      // Use the ref instead of the state to avoid closure issues
+      if (uploadedMedia.length > 0 && !postSuccessRef.current) {
+        console.log('Cleaning up unused media on unmount');
         // Clean up uploaded media to prevent orphaned files
         fetch('/api/media/cleanup', {
           method: 'POST',
@@ -348,7 +359,7 @@ export default function CreatePost() {
         });
       }
     };
-  }, [uploadedMedia, postSuccess]);
+  }, [uploadedMedia]); // Remove postSuccess from dependencies
 
   // Load available users when component mounts
   useEffect(() => {

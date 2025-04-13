@@ -48,8 +48,21 @@ export async function POST(request: NextRequest) {
       }, { status: 404 });
     }
     
-    // For the example, we'll skip media verification
-    // In a real app, you would verify that the media exists and belongs to the user
+    // Verify that all media exists in the database
+    const mediaIds = body.media.map((item: { mediaId: string }) => 
+      new ObjectId(item.mediaId)
+    );
+    
+    const mediaCount = await db.collection('media').countDocuments({
+      _id: { $in: mediaIds }
+    });
+    
+    if (mediaCount !== mediaIds.length) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'One or more media items not found. They may have been removed or are invalid.' 
+      }, { status: 400 });
+    }
     
     // Create the post document
     const post = {

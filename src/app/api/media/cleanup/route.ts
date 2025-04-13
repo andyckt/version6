@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 
 /**
  * API endpoint to trigger media cleanup tasks
- * - Deletes original variants older than 60 days
+ * - Deletes media not referenced by any posts
  * - Cleans up unused media
  * 
  * POST /api/media/cleanup
@@ -48,9 +48,29 @@ export async function POST(request: NextRequest) {
       }
     });
     
+    // Check if any of these media items are referenced by posts
+    const referencedMedia = await db.collection('posts').distinct('media.mediaId', {
+      'media.mediaId': { $in: objectIds }
+    });
+    
+    // Convert to strings for easier comparison
+    const referencedMediaIds = referencedMedia.map(id => id.toString());
+    
+    // Filter out media that is referenced by posts
+    const mediaToDelete = objectIds.filter(id => !referencedMediaIds.includes(id.toString()));
+    
+    if (mediaToDelete.length === 0) {
+      return NextResponse.json({
+        success: true,
+        deleted: 0,
+        skipped: objectIds.length,
+        message: 'No media deleted - all items are referenced by posts'
+      });
+    }
+    
     // Find media records to get Cloudinary IDs before deletion
     const mediaRecords = await db.collection('media')
-      .find({ _id: { $in: objectIds } })
+      .find({ _id: { $in: mediaToDelete } })
       .toArray();
     
     // Extract Cloudinary IDs for deletion
@@ -67,7 +87,7 @@ export async function POST(request: NextRequest) {
     
     // Delete media records from MongoDB
     const result = await db.collection('media')
-      .deleteMany({ _id: { $in: objectIds } });
+      .deleteMany({ _id: { $in: mediaToDelete } });
     
     // Delete from Cloudinary in the background
     if (cloudinaryIds.length > 0) {
@@ -79,7 +99,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       deleted: result.deletedCount,
-      message: 'Media cleanup initiated'
+      skipped: objectIds.length - mediaToDelete.length,
+      message: `Media cleanup completed: ${result.deletedCount} deleted, ${objectIds.length - mediaToDelete.length} skipped (referenced by posts)`
     });
   } catch (error) {
     console.error('Error cleaning up media:', error);

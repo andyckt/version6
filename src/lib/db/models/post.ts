@@ -26,7 +26,10 @@ export interface IPost {
     mediaId: ObjectId | string; // Reference to media item
     sortOrder: number;          // Order of the media in the post
   }>;
-  taggedAccounts: string[];     // Usernames of tagged accounts
+  taggedAccounts: Array<{
+    username: string;           // Username of tagged account
+    accountType?: string;       // Type of account (user, merchant, etc.)
+  }>;
   created: Date;                // Post creation date
   updated?: Date;               // Post last updated date
   status: PostStatus;           // Post status

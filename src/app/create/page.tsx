@@ -35,7 +35,7 @@ export default function CreatePost() {
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
   const [hashtags, setHashtags] = useState<string[]>([]);
-  const [taggedAccounts, setTaggedAccounts] = useState<{username: string}[]>([]);
+  const [taggedAccounts, setTaggedAccounts] = useState<{username: string, accountType?: string}[]>([]);
   const [status, setStatus] = useState<PostStatus>('published');
   
   // For hashtag input
@@ -43,7 +43,8 @@ export default function CreatePost() {
   
   // For tagged accounts input
   const [accountInput, setAccountInput] = useState('');
-  const [suggestedAccounts, setSuggestedAccounts] = useState<{username: string, displayName: string, profileImage: string}[]>([]);
+  const [suggestedAccounts, setSuggestedAccounts] = useState<{username: string, displayName: string, profileImage?: string, accountType?: string}[]>([]);
+  const [accountSearchType, setAccountSearchType] = useState<'users' | 'merchants'>('users');
   
   // For debouncing account search
   const accountSearchTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -108,10 +109,31 @@ export default function CreatePost() {
     }
     
     try {
-      const response = await fetch(`/api/users/search?q=${encodeURIComponent(query)}`);
+      // Search endpoint based on selected type (users or merchants)
+      const endpoint = accountSearchType === 'users' 
+        ? `/api/users/search?q=${encodeURIComponent(query)}` 
+        : `/api/merchants/search?q=${encodeURIComponent(query)}`;
+        
+      const response = await fetch(endpoint);
       if (response.ok) {
         const data = await response.json();
-        setSuggestedAccounts(data.users);
+        
+        if (accountSearchType === 'users') {
+          // Map user data to a consistent format
+          setSuggestedAccounts(data.users.map((user: any) => ({
+            username: user.username,
+            displayName: user.displayName,
+            profileImage: user.profileImage,
+            accountType: 'user'
+          })));
+        } else {
+          // Map merchant data to a consistent format
+          setSuggestedAccounts(data.merchants.map((merchant: any) => ({
+            username: merchant.username,
+            displayName: merchant.displayName,
+            accountType: merchant.accountType || 'merchant'
+          })));
+        }
       }
     } catch (error) {
       console.error('Error searching accounts:', error);
@@ -149,9 +171,9 @@ export default function CreatePost() {
   };
   
   // Add a tagged account
-  const addTaggedAccount = (username: string) => {
+  const addTaggedAccount = (username: string, accountType?: string) => {
     if (username && !taggedAccounts.some(a => a.username === username)) {
-      setTaggedAccounts([...taggedAccounts, { username }]);
+      setTaggedAccounts([...taggedAccounts, { username, accountType }]);
       setAccountInput('');
       setSuggestedAccounts([]);
     }
@@ -665,12 +687,35 @@ export default function CreatePost() {
               <label htmlFor="taggedAccounts" className="block text-sm font-medium text-gray-700 mb-1">
                 Tag Accounts
               </label>
+              
+              {/* Account type toggle */}
+              <div className="flex mb-2 text-sm">
+                <button
+                  type="button"
+                  className={`px-3 py-1 rounded-l-lg ${accountSearchType === 'users' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-200 text-gray-700'}`}
+                  onClick={() => setAccountSearchType('users')}
+                >
+                  Users
+                </button>
+                <button
+                  type="button"
+                  className={`px-3 py-1 rounded-r-lg ${accountSearchType === 'merchants' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-200 text-gray-700'}`}
+                  onClick={() => setAccountSearchType('merchants')}
+                >
+                  Merchants
+                </button>
+              </div>
+              
               <div className="relative">
                 <input
                   type="text"
                   id="taggedAccounts"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                  placeholder="Search for accounts to tag"
+                  placeholder={`Search for ${accountSearchType} to tag`}
                   value={accountInput}
                   onChange={(e) => setAccountInput(e.target.value)}
                 />
@@ -681,18 +726,29 @@ export default function CreatePost() {
                       <div
                         key={account.username}
                         className="flex items-center p-2 hover:bg-gray-50 cursor-pointer"
-                        onClick={() => addTaggedAccount(account.username)}
+                        onClick={() => addTaggedAccount(account.username, account.accountType)}
                       >
                         <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 mr-2">
-                          <img
-                            src={account.profileImage || `/placeholder-avatar.jpg`}
-                            alt={account.username}
-                            className="w-full h-full object-cover"
-                          />
+                          {account.profileImage ? (
+                            <img
+                              src={account.profileImage}
+                              alt={account.username}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600">
+                              {account.displayName?.charAt(0) || account.username.charAt(0)}
+                            </div>
+                          )}
                         </div>
                         <div>
                           <p className="font-medium text-sm">{account.displayName}</p>
-                          <p className="text-xs text-gray-500">@{account.username}</p>
+                          <p className="text-xs text-gray-500">
+                            @{account.username}
+                            {account.accountType && account.accountType !== 'user' && (
+                              <span className="ml-1 text-blue-500">• {account.accountType}</span>
+                            )}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -705,7 +761,11 @@ export default function CreatePost() {
                   {taggedAccounts.map((account) => (
                     <div 
                       key={account.username}
-                      className="flex items-center bg-gray-100 text-sm px-3 py-1 rounded-full"
+                      className={`flex items-center text-sm px-3 py-1 rounded-full ${
+                        account.accountType && account.accountType !== 'user'
+                          ? 'bg-blue-50 text-blue-700'
+                          : 'bg-gray-100 text-gray-700'
+                      }`}
                     >
                       @{account.username}
                       <button

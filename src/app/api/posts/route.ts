@@ -70,7 +70,10 @@ export async function POST(request: NextRequest) {
       
       // Tagged accounts
       taggedAccounts: Array.isArray(body.taggedAccounts) 
-        ? body.taggedAccounts.map((account: { username: string }) => ({ username: account.username }))
+        ? body.taggedAccounts.map((account: { username: string, accountType?: string }) => ({ 
+            username: account.username,
+            accountType: account.accountType || 'user'
+          }))
         : [],
       
       // Media references

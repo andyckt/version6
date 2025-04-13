@@ -27,7 +27,8 @@ export interface MediaItem {
 }
 
 export interface TaggedAccount {
-  username: string;  // Reference to merchant username - merchant data will be fetched from merchant store
+  username: string;  // Reference to user or merchant username
+  accountType?: string; // Type of account (user, restaurant, hotel, etc.)
 }
 
 export const travelPosts: TravelPost[] = [];

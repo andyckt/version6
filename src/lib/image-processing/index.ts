@@ -44,10 +44,10 @@ export interface ProcessedImage {
   width: number;                // Width in pixels
   height: number;               // Height in pixels 
   aspectRatio: string;          // Aspect ratio as string (e.g., "16:9")
-  size: number;                 // File size in bytes
-  format: string;               // Image format (jpg, png, webp)
+  size?: number;                // File size in bytes (may not be available for Cloudinary transformations)
+  format: string;               // Image format (jpg, png, webp, auto)
   variantType: ImageVariantType; // Which variant this is
-  qualityScore?: number;        // SSIM quality score (0-1)
+  qualityScore?: number;        // SSIM quality score (0-1) - no longer used with Cloudinary transformations
 }
 
 export interface ProcessedImageSet {
@@ -90,6 +90,7 @@ export function shouldUseCloudinary(): boolean {
 
 /**
  * Check the perceptual quality of a compressed image against the original
+ * @deprecated This function is no longer used with Cloudinary transformations
  */
 async function checkImageQuality(
   originalImagePath: string,
@@ -187,6 +188,7 @@ export async function processImage(
     // Generate a unique ID for this upload
     const uniqueId = uuidv4();
     const fileBaseName = path.basename(fileName, path.extname(fileName));
+    const cloudinaryBasePath = `media/${fileBaseName.substring(0, 40)}-${uniqueId}`;
     
     // Get the original image metadata
     const metadata = await sharp(filePath).metadata();
@@ -195,118 +197,147 @@ export async function processImage(
       throw new Error('Could not extract image dimensions');
     }
 
-    // Generate base Cloudinary ID for potential reference to original
-    const baseCloudinaryId = `media/${fileBaseName.substring(0, 40)}-${uniqueId}`;
+    // Define the variants with their transformations
+    const variants = {
+      grid: { width: IMAGE_VARIANTS.grid.width, crop: 'limit', quality: 85 },
+      thumbnail: { width: IMAGE_VARIANTS.thumbnail.width, crop: 'limit', quality: 85 },
+      medium: { width: IMAGE_VARIANTS.medium.width, crop: 'limit', quality: 85 },
+      large: { width: IMAGE_VARIANTS.large.width, crop: 'limit', quality: 90 }
+    };
 
     // Create processed image set
-    const processedSet: Partial<ProcessedImageSet> = {
+    const processedSet: ProcessedImageSet = {
       metadata: {
         originalFilename: fileName,
         mimeType,
         timestamp: new Date().toISOString(),
-        baseCloudinaryId // Add base Cloudinary ID to metadata
+        baseCloudinaryId: cloudinaryBasePath
       },
-      variants: {} as any,
+      variants: {
+        grid: {} as ProcessedImage,
+        thumbnail: {} as ProcessedImage,
+        medium: {} as ProcessedImage,
+        large: {} as ProcessedImage
+      }
     };
 
-    // Process each variant
-    const variants = Object.entries(IMAGE_VARIANTS) as [ImageVariantType, typeof IMAGE_VARIANTS[ImageVariantType]][];
-    const variantPromises = variants.map(async ([variantName, config]) => {
-      // Only resize if dimensions are provided
-      let sharpInstance = sharp(filePath);
-      
-      // If this is not the original, resize accordingly
-      if (config.width || config.height) {
-        sharpInstance = sharpInstance.resize({
-          width: config.width || undefined,
-          height: config.height || undefined,
-          fit: 'inside',
-          withoutEnlargement: true
-        });
-      }
+    if (useCloudinary) {
+      // Upload to Cloudinary with eager transformations
+      const uploadResult = await new Promise<cloudinary.UploadApiResponse>((resolve, reject) => {
+        const uploadOptions = {
+          folder: '',  // Folder is included in cloudinaryBasePath
+          public_id: cloudinaryBasePath,
+          resource_type: 'image' as 'image',
+          // Generate all variants eagerly to avoid first-load delay
+          eager: [
+            variants.grid,
+            variants.thumbnail,
+            variants.medium,
+            variants.large
+          ],
+          eager_async: true, // Process eagerly in the background
+          // Additional optimization options
+          fetch_format: 'auto',
+          quality: 'auto',
+          responsive: true,
+          accessibility: 'darkmode',
+        };
+        
+        const uploadStream = cloudinary.v2.uploader.upload_stream(
+          uploadOptions,
+          (error, result) => {
+            if (error) reject(error);
+            else if (result) resolve(result);
+            else reject(new Error('Unknown upload error'));
+          }
+        );
+        
+        uploadStream.end(fs.readFileSync(filePath));
+      });
 
-      // Determine if this is a photo or graphic/illustration
-      // (Photos compress better with WebP, while graphics may benefit from PNG for certain cases)
-      const isPhoto = mimeType.includes('jpeg') || mimeType.includes('jpg');
+      // Calculate dimensions for each variant
+      const aspectRatio = uploadResult.width / uploadResult.height;
       
-      // Choose output format and options
-      let outputBuffer;
-      if (isPhoto || mimeType.includes('webp')) {
-        // Photos or existing WebP - use WebP with appropriate quality
-        outputBuffer = await sharpInstance
-          .webp({ 
-            quality: config.quality,
-            effort: 4, // 0-6, higher means more compression but slower processing (4 is a good balance)
-            smartSubsample: true, // Better quality for lower file size
-            nearLossless: false // No need for near-lossless as original variant is removed
-          })
-          .toBuffer({ resolveWithObject: true });
-      } else if (mimeType.includes('png') && !isPhoto) {
-        // PNG graphics/illustrations with transparency - keep as PNG with compression
-        outputBuffer = await sharpInstance
-          .png({ 
-            quality: config.quality,
-            compressionLevel: 9, // 0-9, higher means more compression
-            palette: true // Use palette to reduce colors for smaller file size
-          })
-          .toBuffer({ resolveWithObject: true });
-      } else if (mimeType.includes('gif')) {
-        // Handle GIFs - first frame only as static WebP
-        outputBuffer = await sharpInstance
-          .webp({ quality: config.quality })
-          .toBuffer({ resolveWithObject: true });
-      } else {
-        // Default - use WebP
-        outputBuffer = await sharpInstance
-          .webp({ quality: config.quality })
-          .toBuffer({ resolveWithObject: true });
-      }
-
-      // New dimensions after resize
-      const { data, info } = outputBuffer;
+      // Create URLs and metadata for each variant
+      const variantTypes: ImageVariantType[] = ['grid', 'thumbnail', 'medium', 'large'];
       
-      // Check the perceptual quality against the original
-      const qualityCheck = await checkImageQuality(filePath, data, variantName);
-      
-      // Generate appropriate filename for this variant
-      const extension = info.format;
-      const variantFilename = `${fileBaseName}-${variantName}-${uniqueId}.${extension}`;
-      
-      // Determine where to store the image
-      let url: string;
-      let cloudinaryId: string | undefined;
-      
-      if (useCloudinary) {
-        // Upload to Cloudinary with transformation parameters
-        // This allows Cloudinary to apply further optimizations and CDN benefits
-        const uploadResult = await new Promise<cloudinary.UploadApiResponse>((resolve, reject) => {
-          const uploadOptions = {
-            resource_type: 'image' as 'image',
-            public_id: `media/${variantName}/${fileBaseName.substring(0, 40)}-${uniqueId}`,
-            format: extension,
-            quality: config.quality.toString(),
-            // Add Cloudinary-specific optimizations
-            fetch_format: 'auto',
-            dpr: 'auto',
-            responsive: true,
-            accessibility: 'darkmode',
-          };
-          
-          const uploadStream = cloudinary.v2.uploader.upload_stream(
-            uploadOptions,
-            (error, result) => {
-              if (error) reject(error);
-              else if (result) resolve(result);
-              else reject(new Error('Unknown upload error'));
-            }
-          );
-          
-          uploadStream.end(data);
+      for (const variantType of variantTypes) {
+        const variantConfig = variants[variantType];
+        const targetWidth = Math.min(variantConfig.width as number, uploadResult.width);
+        const targetHeight = Math.round(targetWidth / aspectRatio);
+        
+        // Create the transformation URL
+        const url = cloudinary.v2.url(uploadResult.public_id, {
+          width: targetWidth,
+          crop: 'limit',
+          quality: variantType === 'large' ? 90 : 85,
+          fetch_format: 'auto',
+          flags: 'progressive'
         });
         
-        url = uploadResult.secure_url;
-        cloudinaryId = uploadResult.public_id;
-      } else {
+        // Store the variant info
+        processedSet.variants[variantType] = {
+          url,
+          cloudinaryId: uploadResult.public_id,
+          width: targetWidth,
+          height: targetHeight,
+          aspectRatio: calculateAspectRatio(targetWidth, targetHeight),
+          size: 0, // We don't know the exact size of the transformed image
+          format: 'auto', // Let Cloudinary determine the best format
+          variantType: variantType
+        };
+      }
+    } else {
+      // Local processing for development/testing
+      // Process each variant using Sharp
+      const variantPromises = Object.entries(IMAGE_VARIANTS).map(async ([variantName, config]) => {
+        const variantType = variantName as ImageVariantType;
+        let sharpInstance = sharp(filePath);
+        
+        // Resize according to variant config
+        if (config.width || config.height) {
+          sharpInstance = sharpInstance.resize({
+            width: config.width || undefined,
+            height: config.height || undefined,
+            fit: 'inside',
+            withoutEnlargement: true
+          });
+        }
+
+        // Determine if this is a photo or graphic
+        const isPhoto = mimeType.includes('jpeg') || mimeType.includes('jpg');
+        
+        // Choose output format and quality
+        let outputBuffer;
+        if (isPhoto || mimeType.includes('webp')) {
+          outputBuffer = await sharpInstance
+            .webp({ 
+              quality: config.quality,
+              effort: 4,
+              smartSubsample: true
+            })
+            .toBuffer({ resolveWithObject: true });
+        } else if (mimeType.includes('png') && !isPhoto) {
+          outputBuffer = await sharpInstance
+            .png({ 
+              quality: config.quality,
+              compressionLevel: 9,
+              palette: true
+            })
+            .toBuffer({ resolveWithObject: true });
+        } else {
+          outputBuffer = await sharpInstance
+            .webp({ quality: config.quality })
+            .toBuffer({ resolveWithObject: true });
+        }
+
+        // Get info about the processed image
+        const { data, info } = outputBuffer;
+        
+        // Generate filename and path
+        const extension = info.format;
+        const variantFilename = `${fileBaseName}-${variantName}-${uniqueId}.${extension}`;
+        
         // Store locally
         const uploadDir = path.join(process.cwd(), 'public', 'uploads');
         
@@ -319,31 +350,26 @@ export async function processImage(
         await promisify(fs.writeFile)(outputPath, data);
         
         // URL is relative to the public directory
-        url = `/uploads/${variantFilename}`;
-      }
+        const url = `/uploads/${variantFilename}`;
+        
+        // Store the variant info
+        processedSet.variants[variantType] = {
+          url,
+          width: info.width,
+          height: info.height,
+          aspectRatio: calculateAspectRatio(info.width, info.height),
+          size: data.length,
+          format: info.format,
+          variantType: variantType
+        };
+      });
       
-      // Create the processed image object
-      const processedImage: ProcessedImage = {
-        url,
-        cloudinaryId,
-        width: info.width,
-        height: info.height,
-        aspectRatio: calculateAspectRatio(info.width, info.height),
-        size: data.length,
-        format: info.format,
-        variantType: variantName,
-        qualityScore: qualityCheck.ssimScore // Add the quality score to the metadata
-      };
-      
-      // Add to the correct place in the result
-      (processedSet.variants as any)[variantName] = processedImage;
-    });
-    
-    // Wait for all variants to be processed
-    await Promise.all(variantPromises);
+      // Wait for all variants to be processed
+      await Promise.all(variantPromises);
+    }
     
     // Return the complete set
-    return processedSet as ProcessedImageSet;
+    return processedSet;
   } catch (error) {
     console.error('Image processing error:', error);
     throw new Error(`Failed to process image: ${(error as Error).message}`);
@@ -358,33 +384,48 @@ export async function deleteImage(
   useCloudinary: boolean = shouldUseCloudinary()
 ): Promise<void> {
   try {
-    // Delete all variants (only includes grid, thumbnail, medium, and large now)
-    const allImages = Object.values(imageSet.variants);
-    
-    for (const image of allImages) {
-      if (useCloudinary && image.cloudinaryId) {
+    if (useCloudinary) {
+      // With the new approach, all variants share the same base Cloudinary ID
+      // So we only need to delete the base asset
+      if (imageSet.metadata.baseCloudinaryId) {
         // Delete from Cloudinary
-        await cloudinary.v2.uploader.destroy(image.cloudinaryId);
-      } else if (!useCloudinary && image.url.startsWith('/uploads/')) {
-        // Delete local file
-        const filePath = path.join(process.cwd(), 'public', image.url);
-        if (fs.existsSync(filePath)) {
-          await promisify(fs.unlink)(filePath);
+        await cloudinary.v2.uploader.destroy(imageSet.metadata.baseCloudinaryId);
+        console.log(`Deleted Cloudinary asset: ${imageSet.metadata.baseCloudinaryId}`);
+      } else {
+        // Fallback to deleting individual variants if baseCloudinaryId is not available
+        // (for backward compatibility with older records)
+        const cloudinaryIds = Object.values(imageSet.variants)
+          .filter(variant => variant.cloudinaryId)
+          .map(variant => variant.cloudinaryId as string);
+        
+        // Delete unique IDs only (remove duplicates)
+        const uniqueIds: string[] = [];
+        cloudinaryIds.forEach(id => {
+          if (!uniqueIds.includes(id)) {
+            uniqueIds.push(id);
+          }
+        });
+        
+        for (const id of uniqueIds) {
+          await cloudinary.v2.uploader.destroy(id);
+          console.log(`Deleted Cloudinary asset: ${id}`);
+        }
+      }
+    } else {
+      // For local storage, delete each variant file
+      for (const variant of Object.values(imageSet.variants)) {
+        if (variant.url && variant.url.startsWith('/uploads/')) {
+          // Delete local file
+          const filePath = path.join(process.cwd(), 'public', variant.url);
+          if (fs.existsSync(filePath)) {
+            await promisify(fs.unlink)(filePath);
+            console.log(`Deleted local file: ${filePath}`);
+          }
         }
       }
     }
-    
-    // If there's a baseCloudinaryId, we could optionally delete the original asset too
-    if (useCloudinary && imageSet.metadata.baseCloudinaryId) {
-      try {
-        // Uncomment if you want to also delete the original from Cloudinary
-        // await cloudinary.v2.uploader.destroy(imageSet.metadata.baseCloudinaryId);
-      } catch (originalError) {
-        console.error('Failed to delete original asset:', originalError);
-      }
-    }
   } catch (error) {
-    console.error('Error deleting images:', error);
-    throw new Error(`Failed to delete images: ${(error as Error).message}`);
+    console.error('Error deleting image:', error);
+    throw new Error(`Failed to delete image: ${(error as Error).message}`);
   }
 } 

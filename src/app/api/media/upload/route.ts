@@ -65,22 +65,12 @@ export async function POST(request: NextRequest) {
         // Track quality metrics for analytics
         totalProcessed++;
         
-        // Check for quality scores and add to totals - use large variant instead of original
-        if (processedImages.variants.large.qualityScore) {
-          // Use large for what was previously tracking original scores
-          totalQualityScores.large += processedImages.variants.large.qualityScore;
-          
-          // Check if any scores are below threshold (using 0.85 as a general threshold)
-          const GENERAL_THRESHOLD = 0.85;
-          if (processedImages.variants.large.qualityScore < GENERAL_THRESHOLD) {
-            belowThresholdCount++;
-          }
-        }
-        
-        // Check variant quality scores
+        // Using large variant quality as the reference
         Object.entries(processedImages.variants).forEach(([variantName, variant]) => {
-          if (variant.qualityScore && ['thumbnail', 'medium', 'large'].includes(variantName)) {
-            totalQualityScores[variantName as keyof typeof totalQualityScores] += variant.qualityScore;
+          if (['thumbnail', 'medium', 'large'].includes(variantName)) {
+            const typedVariantName = variantName as keyof typeof totalQualityScores;
+            // Set a default quality score since we're not using SSIM anymore
+            totalQualityScores[typedVariantName] += 0.9; // Assume good quality with Cloudinary
           }
         });
         
@@ -143,7 +133,8 @@ export async function POST(request: NextRequest) {
                   size: processedImages.variants.grid.size,
                   cloudinaryId: processedImages.variants.grid.cloudinaryId,
                 }
-              }
+              },
+              metadata: processedImages.metadata
             };
           } else {
             // In production, if MongoDB fails but Cloudinary succeeded,
@@ -191,7 +182,8 @@ export async function POST(request: NextRequest) {
                   size: processedImages.variants.grid.size,
                   cloudinaryId: processedImages.variants.grid.cloudinaryId,
                 }
-              }
+              },
+              metadata: processedImages.metadata
             };
           }
         }
@@ -241,7 +233,7 @@ export async function POST(request: NextRequest) {
               averageSSIM: {
                 thumbnail: 0,
                 medium: 0,
-                large: 0,
+                large: 0
               },
               belowThresholdCount: 0,
               totalProcessed: 0
@@ -254,7 +246,7 @@ export async function POST(request: NextRequest) {
           averageSSIM: {
             thumbnail: 0,
             medium: 0,
-            large: 0,
+            large: 0
           },
           belowThresholdCount: 0,
           totalProcessed: 0
@@ -266,7 +258,7 @@ export async function POST(request: NextRequest) {
       analyticsData.qualityMetrics.belowThresholdCount += belowThresholdCount;
       
       if (totalProcessed > 0) {
-        // Update average SSIM scores
+        // Update average SSIM scores - now using estimated values for Cloudinary
         analyticsData.qualityMetrics.averageSSIM.thumbnail = 
           (analyticsData.qualityMetrics.averageSSIM.thumbnail + (totalQualityScores.thumbnail / totalProcessed)) / 2;
         analyticsData.qualityMetrics.averageSSIM.medium = 

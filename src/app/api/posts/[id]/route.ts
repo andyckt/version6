@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPostById, updatePost, deletePost, incrementPostStat, PostStatus, IPost } from '@/lib/db/models/post';
+import { getPostById, getPostWithDetails, updatePost, deletePost, incrementPostStat, PostStatus, IPost } from '@/lib/db/models/post';
 import { ObjectId } from 'mongodb';
 
 /**
@@ -13,8 +13,8 @@ export async function GET(
   try {
     const id = params.id;
     
-    // Get the post
-    const post = await getPostById(id);
+    // Get the post with full details including media
+    const post = await getPostWithDetails(id);
     
     if (!post) {
       return NextResponse.json(
@@ -32,10 +32,24 @@ export async function GET(
       hashtags: post.hashtags,
       created: post.created,
       status: post.status,
-      media: post.media.map(m => ({
-        id: typeof m.mediaId === 'string' ? m.mediaId : m.mediaId.toString(),
-        sortOrder: m.sortOrder
+      // Include detailed media information
+      media: post.mediaDetails.map((media: any) => ({
+        id: media._id?.toString(),
+        type: media.type || 'image',
+        sortOrder: media.sortOrder,
+        width: media.width,
+        height: media.height,
+        aspectRatio: media.aspectRatio,
+        // Include all available variant URLs
+        url: media.variants?.medium?.url || '',
+        variants: {
+          grid: media.variants?.grid,
+          thumbnail: media.variants?.thumbnail,
+          medium: media.variants?.medium,
+          large: media.variants?.large,
+        }
       })),
+      user: post.user,
       taggedAccounts: post.taggedAccounts,
       likes: post.likes,
       views: post.views,

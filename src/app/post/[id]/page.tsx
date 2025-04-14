@@ -507,22 +507,26 @@ export default function PostDetail({ params }: { params: { id: string } }) {
               </Link>
               
               {/* Center section - Profile and username */}
-              <Link 
-                href={`/user/${post.username}`}
-                className="flex items-center gap-2.5 group"
-              >
-                <div className="w-9 h-9 rounded-full overflow-hidden">
-                  <img 
-                    src={getUserByUsername(post.username)?.profileImage || '/placeholder-profile.jpg'} 
-                    alt={post.username}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-medium group-hover:underline">{getUserByUsername(post.username)?.displayName || post.username}</span>
-                  <span className="text-xs text-gray-500">@{post.username}</span>
-                </div>
-              </Link>
+              {post.user && (
+                <Link 
+                  href={`/user/${post.user.username}`}
+                  className="flex items-center gap-2.5 group"
+                >
+                  <div className="w-9 h-9 rounded-full overflow-hidden">
+                    <img 
+                      src={post.user.profileImage || '/placeholder-profile.jpg'} 
+                      alt={post.user.username}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-medium group-hover:underline">
+                      {post.user.displayName || post.user.username}
+                    </span>
+                    <span className="text-xs text-gray-500">@{post.user.username}</span>
+                  </div>
+                </Link>
+              )}
               
               {/* Right section - Share button */}
               <button 

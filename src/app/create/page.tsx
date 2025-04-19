@@ -24,6 +24,8 @@ export default function CreatePost() {
   const [successMessage, setSuccessMessage] = useState('');
   const [showNotification, setShowNotification] = useState(false);
   const [notificationFading, setNotificationFading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState('');
   
   // User selection
   const [users, setUsers] = useState<{_id: string, username: string, displayName: string, profileImage?: string}[]>([]);
@@ -77,14 +79,20 @@ export default function CreatePost() {
   
   // Handle media upload completion - this starts the background processing
   const handleMediaUpload = (media: UploadedMedia[]) => {
-    setUploadedMedia(media);
+    setUploadedMedia(prevMedia => [...prevMedia, ...media]);
+    setIsUploading(false);
     
-    // Automatically advance to details step after media is uploaded
-    setCurrentStep('details');
+    // Don't automatically advance to details step anymore
+    // setCurrentStep('details');
     
     // Start simulated background processing 
     // In a real app, this would be where media optimization happens server-side
     simulateBackgroundProcessing();
+  };
+  
+  // Handle when media upload starts
+  const handleMediaUploadStart = () => {
+    setIsUploading(true);
   };
   
   // Simulate background processing of media while user fills out form
@@ -174,8 +182,8 @@ export default function CreatePost() {
   };
   
   // Remove a hashtag
-  const removeHashtag = (tag: string) => {
-    setHashtags(hashtags.filter(t => t !== tag));
+  const removeHashtag = (index: number) => {
+    setHashtags(hashtags.filter((_, i) => i !== index));
   };
   
   // Add a tagged account
@@ -193,7 +201,7 @@ export default function CreatePost() {
   };
   
   // Handle hashtag input key press
-  const handleHashtagKeyPress = (e: React.KeyboardEvent) => {
+  const handleHashtagKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
       addHashtag();
@@ -426,18 +434,18 @@ export default function CreatePost() {
             {currentStep === 'details' ? (
               <div className="flex items-center space-x-2">
                 <button
-                  className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-full text-sm font-medium transition-colors hover:bg-gray-300 disabled:opacity-50"
+                  className="px-4 py-1.5 bg-gray-200 text-gray-800 rounded-full text-sm font-medium transition-colors hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={(e) => handleSubmit(e, true)}
                   disabled={!title.trim() || !selectedUserId || !uploadedMedia.length || isProcessing || isExiting || isSavingDraft || isPublishing}
                 >
                   {isSavingDraft ? 'Saving...' : 'Save Draft'}
                 </button>
                 <button
-                  className="px-4 py-1.5 bg-blue-600 text-white rounded-full text-sm font-medium transition-colors hover:bg-blue-700 disabled:opacity-50"
+                  className="px-4 py-1.5 bg-blue-600 text-white rounded-full text-sm font-medium transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={(e) => handleSubmit(e, false)}
                   disabled={!title.trim() || !selectedUserId || !uploadedMedia.length || isProcessing || isExiting || isSavingDraft || isPublishing}
                 >
-                  {isPublishing ? 'Posting...' : 'Post'}
+                  {isPublishing ? 'Publishing...' : 'Publish Post'}
                 </button>
               </div>
             ) : (
@@ -489,7 +497,7 @@ export default function CreatePost() {
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">
-              {currentStep === 'media' && 'Upload Media'}
+              {currentStep === 'media' && 'Create Post'}
               {currentStep === 'details' && 'Add Details'}
               {currentStep === 'publishing' && 'Publishing'}
             </span>
@@ -511,287 +519,329 @@ export default function CreatePost() {
           </div>
         </div>
         
-        {/* Media upload step */}
+        {/* Combined media upload and details step */}
         {currentStep === 'media' && (
-          <div>
-            <h2 className="text-lg font-medium mb-4">Upload Photos or Videos</h2>
-            <MediaUploader
-              onMediaUpload={handleMediaUpload}
-              maxFiles={10}
-              acceptedTypes="image/*,video/*"
-              className="mb-8"
-            />
-          </div>
-        )}
-        
-        {/* Details step */}
-        {currentStep === 'details' && (
-          <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
-            {/* User selection */}
-            <div className="mb-6">
-              <h2 className="text-lg font-medium mb-4">Post As</h2>
-              <div className="flex items-center">
-                {loadingUsers ? (
-                  <div className="flex items-center space-x-2">
-                    <FiLoader className="w-4 h-4 animate-spin" />
-                    <span className="text-sm">Loading users...</span>
-                  </div>
-                ) : (
-                  <div className="w-full">
-                    <label htmlFor="userSelect" className="block text-sm font-medium text-gray-700 mb-1">
-                      Select User
-                    </label>
-                    <select
-                      id="userSelect"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white"
-                      value={selectedUserId}
-                      onChange={(e) => setSelectedUserId(e.target.value)}
-                      required
-                    >
-                      <option value="" disabled>Select a user to post as</option>
-                      {users.map(user => (
-                        <option key={user._id} value={user._id}>
-                          @{user.username} - {user.displayName}
-                        </option>
-                      ))}
-                    </select>
-                    {selectedUserId && (
-                      <div className="mt-2 flex items-center">
-                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 mr-2">
-                          {users.find(u => u._id === selectedUserId)?.profileImage ? (
-                            <img
-                              src={users.find(u => u._id === selectedUserId)?.profileImage}
-                              alt="Profile"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
-                              {users.find(u => u._id === selectedUserId)?.username?.[0]?.toUpperCase() || '?'}
-                            </div>
-                          )}
-                        </div>
-                        <div className="text-sm">
-                          <p className="font-medium">{users.find(u => u._id === selectedUserId)?.displayName}</p>
-                          <p className="text-gray-500">@{users.find(u => u._id === selectedUserId)?.username}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {/* Preview of uploaded media */}
-            <div className="flex overflow-x-auto gap-2 py-2">
-              {uploadedMedia.map((media, index) => (
-                <div key={index} className="relative flex-shrink-0 rounded-lg overflow-hidden">
-                  <img 
-                    src={media.thumbnailUrl || media.url} 
-                    alt={`Uploaded media ${index + 1}`}
-                    className="w-24 h-24 object-cover"
-                  />
-                  {index === 0 && (
-                    <div className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-1.5 py-0.5 rounded-sm">
-                      Cover
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            
-            {/* Title */}
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                Title *
-              </label>
-              <input
-                type="text"
-                id="title"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                placeholder="Add a title for your post"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
+          <div className="space-y-6">
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <h2 className="text-lg font-medium mb-4">Upload Photos or Videos</h2>
+              <MediaUploader
+                onMediaUpload={handleMediaUpload}
+                onUploadStart={handleMediaUploadStart}
+                maxFiles={10}
+                acceptedTypes="image/*,video/*"
+                className="mb-4"
               />
             </div>
             
-            {/* Description */}
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                Description
-              </label>
-              <textarea
-                id="description"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                placeholder="Write a description for your post"
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                Tip: Use @username to tag accounts in your description
-              </p>
-            </div>
-            
-            {/* Location */}
-            <div>
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
-                Location
-              </label>
-              <input
-                type="text"
-                id="location"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                placeholder="Add a location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
-            </div>
-            
-            {/* Hashtags */}
-            <div>
-              <label htmlFor="hashtags" className="block text-sm font-medium text-gray-700 mb-1">
-                Hashtags
-              </label>
-              <div className="flex items-center">
-                <input
-                  type="text"
-                  id="hashtags"
-                  className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                  placeholder="Add hashtags (press Enter to add)"
-                  value={hashtagInput}
-                  onChange={(e) => setHashtagInput(e.target.value.replace(/[^a-zA-Z0-9]/g, ''))}
-                  onKeyDown={handleHashtagKeyPress}
-                />
-                <button
-                  type="button"
-                  className="ml-2 px-3 py-3 bg-gray-100 text-gray-800 rounded-lg"
-                  onClick={addHashtag}
-                >
-                  Add
-                </button>
-              </div>
+            {/* Show details form even during media upload */}
+            <div className={`bg-white rounded-lg`}>
+              <h2 className="text-lg font-medium mb-4">Post Details</h2>
               
-              {hashtags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {hashtags.map((tag) => (
-                    <div 
-                      key={tag}
-                      className="flex items-center bg-gray-100 text-sm px-3 py-1 rounded-full"
-                    >
-                      #{tag}
-                      <button
-                        type="button"
-                        className="ml-1 text-gray-500 hover:text-gray-700"
-                        onClick={() => removeHashtag(tag)}
-                      >
-                        &times;
-                      </button>
-                    </div>
-                  ))}
+              {/* Show upload status when uploading */}
+              {isUploading && (
+                <div className="mb-4 p-3 bg-blue-50 rounded-md">
+                  <div className="flex items-center">
+                    <FiLoader className="w-4 h-4 text-blue-500 animate-spin mr-2" />
+                    <p className="text-sm text-blue-700">
+                      Uploading images... Please wait while we process your files. You can fill out the post details below while waiting.
+                    </p>
+                  </div>
                 </div>
               )}
-            </div>
-            
-            {/* Tagged Accounts */}
-            <div>
-              <label htmlFor="taggedAccounts" className="block text-sm font-medium text-gray-700 mb-1">
-                Tag Accounts
-              </label>
               
-              {/* Account type toggle */}
-              <div className="flex mb-2 text-sm">
-                <button
-                  type="button"
-                  className={`px-3 py-1 rounded-l-lg ${accountSearchType === 'users' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-200 text-gray-700'}`}
-                  onClick={() => setAccountSearchType('users')}
+              {/* User selection */}
+              <div className="mb-6">
+                <label htmlFor="userSelect" className="block text-sm font-medium text-gray-700 mb-1">
+                  Post as *
+                </label>
+                <select
+                  id="userSelect"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  value={selectedUserId}
+                  onChange={(e) => setSelectedUserId(e.target.value)}
+                  disabled={loadingUsers || isProcessing || isPublishing || isSavingDraft}
+                  required
                 >
-                  Users
-                </button>
-                <button
-                  type="button"
-                  className={`px-3 py-1 rounded-r-lg ${accountSearchType === 'merchants' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-200 text-gray-700'}`}
-                  onClick={() => setAccountSearchType('merchants')}
-                >
-                  Merchants
-                </button>
+                  {loadingUsers ? (
+                    <option value="">Loading users...</option>
+                  ) : users.length === 0 ? (
+                    <option value="">No users available</option>
+                  ) : (
+                    <>
+                      <option value="">Select a user</option>
+                      {users.map(user => (
+                        <option key={user._id} value={user._id}>
+                          {user.displayName} (@{user.username})
+                        </option>
+                      ))}
+                    </>
+                  )}
+                </select>
               </div>
+
+              {/* Media preview if available */}
+              {uploadedMedia.length > 0 && (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Uploaded Media
+                  </label>
+                  <div className="flex overflow-x-auto gap-2 py-2">
+                    {uploadedMedia.map((media, index) => (
+                      <div key={index} className="relative flex-shrink-0 rounded-lg overflow-hidden">
+                        <img 
+                          src={media.thumbnailUrl || media.url} 
+                          alt={`Uploaded media ${index + 1}`}
+                          className="w-24 h-24 object-cover"
+                        />
+                        {index === 0 && (
+                          <div className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-1.5 py-0.5 rounded-sm">
+                            Cover
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               
-              <div className="relative">
+              {/* Title */}
+              <div className="mb-6">
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                  Title *
+                </label>
                 <input
                   type="text"
-                  id="taggedAccounts"
+                  id="title"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                  placeholder={`Search for ${accountSearchType} to tag`}
-                  value={accountInput}
-                  onChange={(e) => setAccountInput(e.target.value)}
+                  placeholder="Add a title for your post"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  disabled={isProcessing || isPublishing || isSavingDraft}
+                  required
                 />
+              </div>
+              
+              {/* Description */}
+              <div className="mb-6">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  placeholder="Write a description for your post"
+                  rows={4}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  disabled={isProcessing || isPublishing || isSavingDraft}
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Tip: Use @username to tag accounts in your description
+                </p>
+              </div>
+              
+              {/* Location */}
+              <div className="mb-6">
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  id="location"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  placeholder="Add a location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  disabled={isProcessing || isPublishing || isSavingDraft}
+                />
+              </div>
+              
+              {/* Hashtags section */}
+              <div className="mb-6">
+                <label htmlFor="hashtags" className="block text-sm font-medium text-gray-700 mb-1">
+                  Hashtags
+                </label>
                 
-                {suggestedAccounts.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                    {suggestedAccounts.map((account) => (
-                      <div
-                        key={account.username}
-                        className="flex items-center p-2 hover:bg-gray-50 cursor-pointer"
-                        onClick={() => addTaggedAccount(account.username, account.accountType)}
-                      >
-                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 mr-2">
-                          {account.profileImage ? (
-                            <img
-                              src={account.profileImage}
-                              alt={account.username}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600">
-                              {account.displayName?.charAt(0) || account.username.charAt(0)}
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium text-sm">{account.displayName}</p>
-                          <p className="text-xs text-gray-500">
-                            @{account.username}
-                            {account.accountType && account.accountType !== 'user' && (
-                              <span className="ml-1 text-blue-500">• {account.accountType}</span>
-                            )}
-                          </p>
-                        </div>
-                      </div>
+                <div className="flex">
+                  <div className="flex-grow">
+                    <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-600 focus-within:border-transparent">
+                      <span className="text-gray-500 mr-1">#</span>
+                      <input
+                        type="text"
+                        id="hashtags"
+                        placeholder="Add hashtags"
+                        className="flex-grow border-none focus:outline-none focus:ring-0 p-1"
+                        value={hashtagInput}
+                        onChange={(e) => setHashtagInput(e.target.value.replace(/\s+/g, ''))}
+                        onKeyDown={handleHashtagKeyDown}
+                        disabled={isProcessing || isPublishing || isSavingDraft}
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="ml-2 px-3 py-2 bg-gray-200 text-gray-800 rounded-lg transition-colors hover:bg-gray-300 disabled:opacity-50"
+                    onClick={addHashtag}
+                    disabled={!hashtagInput.trim() || hashtags.includes(hashtagInput.trim()) || isProcessing || isPublishing || isSavingDraft}
+                  >
+                    Add
+                  </button>
+                </div>
+                
+                {hashtags.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {hashtags.map((tag, index) => (
+                      <span key={index} className="inline-flex items-center px-2 py-1 rounded-md text-sm bg-blue-100 text-blue-800">
+                        #{tag}
+                        <button
+                          type="button"
+                          className="ml-1 text-blue-600 hover:text-blue-800"
+                          onClick={() => removeHashtag(index)}
+                          disabled={isProcessing || isPublishing || isSavingDraft}
+                        >
+                          &times;
+                        </button>
+                      </span>
                     ))}
                   </div>
                 )}
               </div>
               
-              {taggedAccounts.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {taggedAccounts.map((account) => (
-                    <div 
-                      key={account.username}
-                      className={`flex items-center text-sm px-3 py-1 rounded-full ${
-                        account.accountType && account.accountType !== 'user'
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'bg-gray-100 text-gray-700'
-                      }`}
-                    >
-                      @{account.username}
-                      <button
-                        type="button"
-                        className="ml-1 text-gray-500 hover:text-gray-700"
-                        onClick={() => removeTaggedAccount(account.username)}
-                      >
-                        &times;
-                      </button>
-                    </div>
-                  ))}
+              {/* Tagged Accounts section */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tag Accounts
+                </label>
+                
+                {/* Toggle buttons for account type */}
+                <div className="flex mb-3 border border-gray-200 rounded-lg p-1 w-fit">
+                  <button
+                    type="button"
+                    className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                      accountSearchType === 'users' 
+                        ? 'bg-blue-500 text-white' 
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setAccountSearchType('users')}
+                  >
+                    Users
+                  </button>
+                  <button
+                    type="button"
+                    className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                      accountSearchType === 'merchants' 
+                        ? 'bg-blue-500 text-white' 
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setAccountSearchType('merchants')}
+                  >
+                    Merchants
+                  </button>
                 </div>
-              )}
+                
+                <div className="flex">
+                  <div className="flex-grow">
+                    <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-600 focus-within:border-transparent">
+                      <span className="text-gray-500 mr-1">@</span>
+                      <input
+                        type="text"
+                        placeholder={`Search for ${accountSearchType === 'users' ? 'users' : 'merchants'} to tag`}
+                        className="flex-grow border-none focus:outline-none focus:ring-0 p-1"
+                        value={accountInput}
+                        onChange={(e) => setAccountInput(e.target.value)}
+                        disabled={isProcessing || isPublishing || isSavingDraft}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Optional search button */}
+                  {accountInput.length > 1 && (
+                    <button
+                      type="button"
+                      className="ml-2 px-4 py-1.5 bg-gray-200 text-gray-800 rounded-full text-sm font-medium transition-colors hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={() => searchAccounts(accountInput)}
+                      disabled={!accountInput || isProcessing || isPublishing || isSavingDraft}
+                    >
+                      Search
+                    </button>
+                  )}
+                </div>
+                
+                {/* Suggested accounts */}
+                {suggestedAccounts.length > 0 && (
+                  <div className="mt-2 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden max-h-48 overflow-y-auto">
+                    {suggestedAccounts.map(account => (
+                      <div
+                        key={account.username}
+                        className="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center"
+                        onClick={() => addTaggedAccount(account.username, account.accountType)}
+                      >
+                        <div className="w-8 h-8 bg-gray-200 rounded-full flex-shrink-0 mr-2 overflow-hidden">
+                          {account.profileImage ? (
+                            <img 
+                              src={account.profileImage} 
+                              alt={account.displayName || account.username}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600">
+                              {account.username.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{account.displayName || account.username}</p>
+                          <p className="text-xs text-gray-500">@{account.username}</p>
+                        </div>
+                        <div className="ml-auto px-2 py-0.5 bg-gray-100 rounded-full text-xs text-gray-600">
+                          {account.accountType || 'User'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Tagged accounts display */}
+                {taggedAccounts.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {taggedAccounts.map(account => (
+                      <span key={account.username} className="inline-flex items-center px-2 py-1 rounded-md text-sm bg-blue-100 text-blue-800">
+                        @{account.username}
+                        <button
+                          type="button"
+                          className="ml-1 text-blue-600 hover:text-blue-800"
+                          onClick={() => removeTaggedAccount(account.username)}
+                          disabled={isProcessing || isPublishing || isSavingDraft}
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              {/* Action buttons */}
+              <div className="flex justify-end mt-6 gap-3">
+                <button
+                  type="button"
+                  onClick={(e) => handleSubmit(e, true)}
+                  disabled={!uploadedMedia.length || !title.trim() || !selectedUserId || isProcessing || isExiting || isSavingDraft || isPublishing}
+                  className="px-4 py-1.5 bg-gray-200 text-gray-800 rounded-full text-sm font-medium transition-colors hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSavingDraft ? 'Saving...' : 'Save Draft'}
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => handleSubmit(e, false)}
+                  disabled={!uploadedMedia.length || !title.trim() || !selectedUserId || isProcessing || isExiting || isSavingDraft || isPublishing}
+                  className="px-4 py-1.5 bg-blue-600 text-white rounded-full text-sm font-medium transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isPublishing ? 'Publishing...' : 'Publish Post'}
+                </button>
+              </div>
             </div>
-          </form>
+          </div>
         )}
         
         {/* Publishing step */}
@@ -819,7 +869,7 @@ export default function CreatePost() {
                 <p className="text-gray-500 mb-4">Please try again</p>
                 <button
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-                  onClick={() => setCurrentStep('details')}
+                  onClick={() => setCurrentStep('media')}
                 >
                   Go Back
                 </button>

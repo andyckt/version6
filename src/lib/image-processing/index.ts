@@ -184,6 +184,9 @@ export async function processImage(
   mimeType: string,
   useCloudinary: boolean = shouldUseCloudinary()
 ): Promise<ProcessedImageSet> {
+  const processingStartTime = Date.now();
+  console.log(`Starting processImage for ${fileName} at ${new Date().toISOString()}`);
+  
   try {
     // Generate a unique ID for this upload
     const uniqueId = uuidv4();
@@ -191,7 +194,10 @@ export async function processImage(
     const cloudinaryBasePath = `media/${fileBaseName.substring(0, 40)}-${uniqueId}`;
     
     // Get the original image metadata
+    console.log(`Reading metadata for ${fileName}`);
+    const metadataStartTime = Date.now();
     const metadata = await sharp(filePath).metadata();
+    console.log(`Metadata read in ${Date.now() - metadataStartTime}ms`);
     
     if (!metadata.width || !metadata.height) {
       throw new Error('Could not extract image dimensions');
@@ -199,10 +205,10 @@ export async function processImage(
 
     // Define the variants with their transformations
     const variants = {
-      grid: { width: IMAGE_VARIANTS.grid.width, crop: 'limit', quality: 85 },
-      thumbnail: { width: IMAGE_VARIANTS.thumbnail.width, crop: 'limit', quality: 85 },
-      medium: { width: IMAGE_VARIANTS.medium.width, crop: 'limit', quality: 85 },
-      large: { width: IMAGE_VARIANTS.large.width, crop: 'limit', quality: 90 }
+      grid: { width: IMAGE_VARIANTS.grid.width, crop: 'limit', quality: 75 },       // Reduced from 85
+      thumbnail: { width: IMAGE_VARIANTS.thumbnail.width, crop: 'limit', quality: 75 }, // Reduced from 85
+      medium: { width: IMAGE_VARIANTS.medium.width, crop: 'limit', quality: 80 },     // Reduced from 85
+      large: { width: IMAGE_VARIANTS.large.width, crop: 'limit', quality: 85 }      // Reduced from 90
     };
 
     // Create processed image set
@@ -223,6 +229,9 @@ export async function processImage(
 
     if (useCloudinary) {
       // Upload to Cloudinary with eager transformations
+      const cloudinaryStartTime = Date.now();
+      console.log(`Starting Cloudinary upload for ${fileName}`);
+      
       const uploadResult = await new Promise<cloudinary.UploadApiResponse>((resolve, reject) => {
         const uploadOptions = {
           folder: '',  // Folder is included in cloudinaryBasePath
@@ -254,6 +263,8 @@ export async function processImage(
         
         uploadStream.end(fs.readFileSync(filePath));
       });
+      
+      console.log(`Cloudinary upload completed in ${Date.now() - cloudinaryStartTime}ms`);
 
       // Calculate dimensions for each variant
       const aspectRatio = uploadResult.width / uploadResult.height;
@@ -270,7 +281,7 @@ export async function processImage(
         const url = cloudinary.v2.url(uploadResult.public_id, {
           width: targetWidth,
           crop: 'limit',
-          quality: variantType === 'large' ? 90 : 85,
+          quality: variantType === 'large' ? 85 : variantType === 'medium' ? 80 : 75,
           fetch_format: 'auto',
           flags: 'progressive'
         });
@@ -290,8 +301,15 @@ export async function processImage(
     } else {
       // Local processing for development/testing
       // Process each variant using Sharp
+      console.log(`Starting local Sharp processing for ${fileName} with ${Object.keys(IMAGE_VARIANTS).length} variants`);
+      const sharpStartTime = Date.now();
+      
       const variantPromises = Object.entries(IMAGE_VARIANTS).map(async ([variantName, config]) => {
+        const variantStartTime = Date.now();
         const variantType = variantName as ImageVariantType;
+        
+        // Process variants in parallel with the same Sharp instance
+        // Clone the sharp instance for parallel processing
         let sharpInstance = sharp(filePath);
         
         // Resize according to variant config
@@ -307,13 +325,13 @@ export async function processImage(
         // Determine if this is a photo or graphic
         const isPhoto = mimeType.includes('jpeg') || mimeType.includes('jpg');
         
-        // Choose output format and quality
+        // Choose output format and quality with optimized settings
         let outputBuffer;
         if (isPhoto || mimeType.includes('webp')) {
           outputBuffer = await sharpInstance
             .webp({ 
               quality: config.quality,
-              effort: 4,
+              effort: 4, // Medium effort to balance speed and compression
               smartSubsample: true
             })
             .toBuffer({ resolveWithObject: true });
@@ -338,40 +356,61 @@ export async function processImage(
         const extension = info.format;
         const variantFilename = `${fileBaseName}-${variantName}-${uniqueId}.${extension}`;
         
-        // Store locally
+        // Store locally - create directory outside of the loop
         const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-        
-        // Create the directory if it doesn't exist
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        
-        const outputPath = path.join(uploadDir, variantFilename);
-        await promisify(fs.writeFile)(outputPath, data);
         
         // URL is relative to the public directory
         const url = `/uploads/${variantFilename}`;
         
-        // Store the variant info
-        processedSet.variants[variantType] = {
-          url,
-          width: info.width,
-          height: info.height,
-          aspectRatio: calculateAspectRatio(info.width, info.height),
-          size: data.length,
-          format: info.format,
-          variantType: variantType
+        console.log(`Variant ${variantName} processed in ${Date.now() - variantStartTime}ms`);
+        
+        // Return the variant info and data for writing to file
+        return {
+          variantType,
+          data,
+          filePath: path.join(uploadDir, variantFilename),
+          info: {
+            url,
+            width: info.width,
+            height: info.height,
+            aspectRatio: calculateAspectRatio(info.width, info.height),
+            size: data.length,
+            format: info.format,
+            variantType: variantType
+          }
         };
       });
       
-      // Wait for all variants to be processed
-      await Promise.all(variantPromises);
+      // Process all variants in parallel
+      console.log(`Waiting for all ${Object.keys(IMAGE_VARIANTS).length} variants to be processed...`);
+      const processedVariants = await Promise.all(variantPromises);
+      console.log(`All variants processed in ${Date.now() - sharpStartTime}ms`);
+      
+      // Create the upload directory only once
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      if (!fs.existsSync(uploadDir)) {
+        await promisify(fs.mkdir)(uploadDir, { recursive: true });
+      }
+      
+      // Write all files to disk in parallel
+      const writeStartTime = Date.now();
+      console.log(`Writing ${processedVariants.length} files to disk...`);
+      await Promise.all(
+        processedVariants.map(async variant => {
+          await promisify(fs.writeFile)(variant.filePath, variant.data);
+          
+          // Store the variant info in our result object
+          processedSet.variants[variant.variantType] = variant.info;
+        })
+      );
+      console.log(`All files written to disk in ${Date.now() - writeStartTime}ms`);
     }
     
+    console.log(`Total processing time for ${fileName}: ${Date.now() - processingStartTime}ms`);
     // Return the complete set
     return processedSet;
   } catch (error) {
-    console.error('Image processing error:', error);
+    console.error(`Image processing error for ${fileName}:`, error);
     throw new Error(`Failed to process image: ${(error as Error).message}`);
   }
 }

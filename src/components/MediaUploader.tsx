@@ -2,7 +2,7 @@
 
 import { useState, useRef, ChangeEvent, DragEvent, useEffect } from 'react';
 import Image from 'next/image';
-import { FiUpload, FiX, FiLoader, FiImage, FiZoomIn } from 'react-icons/fi';
+import { FiUpload, FiX, FiLoader, FiImage, FiZoomIn, FiAlertCircle, FiCheck, FiUploadCloud } from 'react-icons/fi';
 import imageCompression from 'browser-image-compression';
 
 export interface UploadedMedia {
@@ -20,6 +20,7 @@ export interface UploadedMedia {
 
 interface MediaUploaderProps {
   onMediaUpload?: (media: UploadedMedia[]) => void;
+  onUploadStart?: () => void;
   maxFiles?: number;
   acceptedTypes?: string;
   className?: string;
@@ -27,6 +28,7 @@ interface MediaUploaderProps {
 
 export default function MediaUploader({
   onMediaUpload,
+  onUploadStart,
   maxFiles = 5,
   acceptedTypes = "image/*",
   className = "",
@@ -39,24 +41,29 @@ export default function MediaUploader({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [compressionStats, setCompressionStats] = useState<Record<string, { original: number, compressed: number }>>({});
   const [useHighQuality, setUseHighQuality] = useState<boolean>(false);
+  const [filesToProcess, setFilesToProcess] = useState<number>(0);
+  const [filesProcessed, setFilesProcessed] = useState<number>(0);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Compress image with quality preservation
   const compressImage = async (file: File): Promise<File> => {
-    setIsCompressing(true);
-    
     try {
+      // Determine if this is a PNG file that needs more aggressive compression
+      const isPNG = file.type.includes('png');
+      
       // Determine if this is a detailed/important image that needs higher quality
       // For now, assume all images are important in a travel context
       const options = {
-        maxSizeMB: useHighQuality ? 3 : 1.5,             
+        // Even more aggressive compression for PNGs since Cloudinary converts them to JPG anyway
+        maxSizeMB: isPNG ? (useHighQuality ? 0.8 : 0.4) : (useHighQuality ? 3 : 1.5),
         maxWidthOrHeight: useHighQuality ? 2560 : 2048,   
-        initialQuality: useHighQuality ? 0.9 : 0.85,     
+        // Lower quality for PNGs since they're typically travel photos and will be converted
+        initialQuality: isPNG ? (useHighQuality ? 0.75 : 0.65) : (useHighQuality ? 0.9 : 0.85),
         useWebWorker: true,
         preserveExif: true,                              
         exifOrientationFix: true,
-        fileType: file.type.includes('png') ? 'image/png' : 'image/jpeg',
+        fileType: file.type,
         alwaysKeepResolution: true,
       };
       
@@ -86,27 +93,42 @@ export default function MediaUploader({
     } catch (error) {
       console.error('Image compression error:', error);
       return file; // Return original file if compression fails
-    } finally {
-      setIsCompressing(false);
     }
   };
   
   // Process multiple files with compression
   const processFiles = async (fileList: FileList): Promise<File[]> => {
     const filesToProcess = Array.from(fileList).slice(0, maxFiles);
-    const processedFiles: File[] = [];
     
-    // Process each file
-    for (const file of filesToProcess) {
+    // Reset counters
+    setFilesProcessed(0);
+    setFilesToProcess(filesToProcess.length);
+    setIsCompressing(true);
+    
+    // Process files in parallel
+    const processPromises = filesToProcess.map(async (file, index) => {
       if (file.type.startsWith('image/')) {
-        // Compress images
-        const processedFile = await compressImage(file);
-        processedFiles.push(processedFile);
+        try {
+          const result = await compressImage(file);
+          // Increment processed count
+          setFilesProcessed(prev => prev + 1);
+          return result;
+        } catch (error) {
+          console.error('Error compressing file:', file.name, error);
+          // Still count as processed even if error
+          setFilesProcessed(prev => prev + 1);
+          return file; // Use original if compression fails
+        }
       } else {
         // Non-image files pass through unchanged
-        processedFiles.push(file);
+        setFilesProcessed(prev => prev + 1);
+        return file;
       }
-    }
+    });
+    
+    // Wait for all files to be processed in parallel
+    const processedFiles = await Promise.all(processPromises);
+    setIsCompressing(false);
     
     return processedFiles;
   };
@@ -135,6 +157,11 @@ export default function MediaUploader({
   const uploadFiles = async (files: File[]) => {
     setIsUploading(true);
     setUploadError(null);
+    
+    // Notify parent component that upload has started
+    if (onUploadStart) {
+      onUploadStart();
+    }
     
     try {
       // Create a FormData object to send to the server
@@ -242,14 +269,8 @@ export default function MediaUploader({
     const savedBytes = totalOriginal - totalCompressed;
     const savingsPercent = Math.round((savedBytes / totalOriginal) * 100);
     
-    // Log the statistics (for debugging)
-    console.log('Compression stats:', {
-      totalOriginal,
-      totalCompressed,
-      savedBytes,
-      savingsPercent,
-      items: Object.keys(compressionStats).length
-    });
+    // Count PNG files
+    const pngFiles = Object.keys(compressionStats).filter(name => name.toLowerCase().endsWith('.png')).length;
     
     // Format for human-readable display
     const formatSize = (bytes: number) => {
@@ -264,7 +285,8 @@ export default function MediaUploader({
       original: formatSize(totalOriginal),
       compressed: formatSize(totalCompressed),
       saved: formatSize(savedBytes),
-      percent: savingsPercent
+      percent: savingsPercent,
+      pngCount: pngFiles
     };
   };
   
@@ -327,118 +349,83 @@ export default function MediaUploader({
         disabled={isUploading || isCompressing}
       />
       
-      {/* Quality toggle */}
-      <div className="flex items-center justify-end mb-2">
-        <label className="flex items-center text-sm text-gray-700">
-          <input
-            type="checkbox"
-            checked={useHighQuality}
-            onChange={toggleHighQuality}
-            className="mr-2 h-4 w-4"
-            disabled={isUploading || isCompressing}
-          />
-          High quality upload
-        </label>
-        <div className="ml-2 text-xs text-gray-500 inline-flex items-center">
-          <FiZoomIn className="mr-1" />
-          {useHighQuality ? 'Less compression, higher quality' : 'Standard quality'}
-        </div>
-      </div>
-
-      {/* Drop zone */}
-      <div
-        className={`
-          border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-          ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50'}
-          ${(isUploading || isCompressing) ? 'opacity-50 cursor-not-allowed' : ''}
-        `}
-        onClick={!(isUploading || isCompressing) ? openFileDialog : undefined}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        <div className="flex flex-col items-center justify-center">
-          {isCompressing ? (
-            <div className="flex flex-col items-center space-y-3">
-              <FiLoader className="w-8 h-8 text-blue-500 animate-spin" />
-              <p className="text-sm text-gray-500">Optimizing images...</p>
-            </div>
-          ) : isUploading ? (
-            <div className="flex flex-col items-center space-y-3">
-              <FiLoader className="w-8 h-8 text-blue-500 animate-spin" />
-              <p className="text-sm text-gray-500">Uploading... {uploadProgress}%</p>
-              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-blue-500 transition-all duration-200"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
-            </div>
-          ) : (
-            <>
-              <FiUpload className="w-8 h-8 text-gray-400 mb-2" />
-              <p className="text-sm font-medium text-gray-700">
-                Drop your images here, or <span className="text-blue-500">click to browse</span>
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Upload up to {maxFiles} images (JPG, PNG, WebP)
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {useHighQuality 
-                  ? 'Using high quality mode (up to 3MB per image)' 
-                  : 'Images will be optimized for web (up to 1.5MB per image)'}
-              </p>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Compression statistics - Make more prominent and ensure it's always visible after compression */}
-      {Object.keys(compressionStats).length > 0 && savings && (
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
-          <h3 className="text-sm font-medium text-blue-800 mb-1">Image Optimization Results</h3>
-          <div className="text-sm text-blue-700">
-            <p>
-              <span className="font-medium">Files optimized:</span> {Object.keys(compressionStats).length}
-            </p>
-            <p>
-              <span className="font-medium">Size reduction:</span> {savings.original} → {savings.compressed}
-            </p>
-            <p>
-              <span className="font-medium">Space saved:</span> {savings.saved} ({savings.percent}%)
-            </p>
+      {/* Upload progress indicator */}
+      {isUploading && (
+        <div className="mb-4">
+          <div className="flex justify-between text-xs text-gray-500 mb-1">
+            <span>Uploading {uploadProgress}%</span>
+          </div>
+          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-blue-600 transition-all duration-200"
+              style={{ width: `${uploadProgress}%` }}
+            ></div>
           </div>
         </div>
       )}
-
-      {/* Error message */}
-      {uploadError && (
-        <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
-          {uploadError}
+      
+      {/* Compression progress indicator */}
+      {isCompressing && (
+        <div className="mb-4">
+          <div className="flex justify-between text-xs text-gray-500 mb-1">
+            <span>Compressing images...</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+            <span className="text-sm text-gray-600">Processing {filesProcessed}/{filesToProcess}</span>
+          </div>
         </div>
       )}
-
-      {/* Preview of uploaded files */}
+      
+      {/* Upload error */}
+      {uploadError && (
+        <div className="mb-4 p-3 bg-red-50 rounded-md">
+          <div className="flex">
+            <FiAlertCircle className="w-5 h-5 text-red-500 mr-2 flex-shrink-0" />
+            <p className="text-sm text-red-700">{uploadError}</p>
+          </div>
+        </div>
+      )}
+      
+      {/* Compression stats */}
+      {savings && Object.keys(compressionStats).length > 0 && !isUploading && !isCompressing && (
+        <div className="mb-4 p-3 bg-green-50 rounded-md">
+          <div className="flex">
+            <FiCheck className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
+            <div>
+              <p className="text-sm text-green-700">
+                Reduced file size by {savings.percent}% ({savings.saved} saved)
+              </p>
+              {savings.pngCount > 0 && (
+                <p className="text-xs text-green-600 mt-1">
+                  {savings.pngCount} PNG {savings.pngCount === 1 ? 'file' : 'files'} optimized
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Display uploaded files */}
       {uploadedFiles.length > 0 && (
-        <div className="mt-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Uploaded Files</h3>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Uploaded files ({uploadedFiles.length}/{maxFiles})
+          </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {uploadedFiles.map((file, index) => (
-              <div key={`${file.id}-${index}`} className="relative group rounded-lg overflow-hidden">
-                <div className="aspect-square relative">
-                  <Image
-                    src={file.thumbnailUrl || file.url}
-                    alt={file.originalFilename}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 25vw" 
-                    className="object-cover"
-                  />
-                </div>
+              <div key={file.id} className="relative group aspect-square">
+                <Image
+                  src={file.thumbnailUrl || file.url}
+                  alt={file.originalFilename || `Uploaded image ${index + 1}`}
+                  fill
+                  className="object-cover rounded-lg"
+                />
                 <button
                   type="button"
                   onClick={() => handleRemoveFile(index)}
-                  className="absolute top-1 right-1 bg-black bg-opacity-60 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  aria-label="Remove image"
+                  className="absolute top-1 right-1 bg-black bg-opacity-60 rounded-full p-1 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                  aria-label="Remove file"
                 >
                   <FiX className="w-4 h-4" />
                 </button>
@@ -447,6 +434,56 @@ export default function MediaUploader({
           </div>
         </div>
       )}
+      
+      {/* Drop zone */}
+      <div 
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        onClick={openFileDialog}
+        className={`
+          border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer
+          transition-colors duration-200
+          ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'}
+          ${isUploading || isCompressing ? 'opacity-50 cursor-not-allowed' : ''}
+        `}
+      >
+        <FiUploadCloud className="w-10 h-10 text-gray-400 mb-2" />
+        <p className="text-sm text-gray-600 text-center mb-1">
+          Drag and drop files here, or click to select
+        </p>
+        <p className="text-xs text-gray-500 text-center mb-3">
+          Supports: {acceptedTypes.replace(/\*/g, 'all')} (Max: {maxFiles} files)
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-2">
+          <button
+            type="button"
+            className="px-4 py-1.5 bg-blue-600 text-white rounded-full text-sm font-medium transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={openFileDialog}
+            disabled={isUploading || isCompressing || uploadedFiles.length >= maxFiles}
+          >
+            Select Files
+          </button>
+          
+          {/* Quality toggle button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleHighQuality();
+            }}
+            className={`
+              px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center
+              ${useHighQuality 
+                ? 'bg-gray-200 text-gray-800 hover:bg-gray-300' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}
+            `}
+          >
+            {useHighQuality ? 'High Quality' : 'Standard Quality'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 } 

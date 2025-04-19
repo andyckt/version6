@@ -58,36 +58,53 @@ export function withUpload(fieldName: string, maxCount = 1) {
         // Take only up to maxCount files
         const processableFiles = fileArray.slice(0, maxCount);
         
-        for (const file of processableFiles) {
-          // Check file size
+        // Process all files in parallel instead of sequentially
+        const processedFiles = await Promise.all(processableFiles.map(async (file) => {
+          // Check file size and mime type
           if (file.size > MAX_FILE_SIZE) {
             return {
-              files: [],
-              fields: formData.fields,
+              valid: false,
               error: `File ${file.originalFilename} exceeds the maximum size of ${MAX_FILE_SIZE / (1024 * 1024)}MB`,
             };
           }
 
-          // Check mime type
           if (!ALLOWED_IMAGE_TYPES.includes(file.mimetype || '')) {
             return {
-              files: [],
-              fields: formData.fields,
+              valid: false,
               error: `File ${file.originalFilename} has unsupported type. Allowed types: ${ALLOWED_IMAGE_TYPES.join(', ')}`,
             };
           }
 
-          // Add to our files array in the format we want
-          files.push({
-            fieldname: fieldName,
-            originalname: file.originalFilename || 'unknown',
-            encoding: 'utf-8',
-            mimetype: file.mimetype || 'application/octet-stream',
-            path: file.filepath,
-            size: file.size,
-            filename: file.newFilename || 'unknown',
-          });
+          // Valid file, format it as we need
+          return {
+            valid: true,
+            fileData: {
+              fieldname: fieldName,
+              originalname: file.originalFilename || 'unknown',
+              encoding: 'utf-8',
+              mimetype: file.mimetype || 'application/octet-stream',
+              path: file.filepath,
+              size: file.size,
+              filename: file.newFilename || 'unknown',
+            }
+          };
+        }));
+
+        // Check if any files failed validation
+        const invalidFile = processedFiles.find(result => !result.valid);
+        if (invalidFile) {
+          return {
+            files: [],
+            fields: formData.fields,
+            error: invalidFile.error,
+          };
         }
+
+        // All files are valid, collect them
+        files.push(...processedFiles
+          .filter(result => result.valid)
+          .map(result => (result as any).fileData)
+        );
       }
       
       return {

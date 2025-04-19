@@ -39,12 +39,13 @@ export default function MediaUploader({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [compressionStats, setCompressionStats] = useState<Record<string, { original: number, compressed: number }>>({});
   const [useHighQuality, setUseHighQuality] = useState<boolean>(false);
+  const [compressingFiles, setCompressingFiles] = useState<Record<string, boolean>>({});
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Compress image with quality preservation
   const compressImage = async (file: File): Promise<File> => {
-    setIsCompressing(true);
+    setCompressingFiles(prev => ({ ...prev, [file.name]: true }));
     
     try {
       // Determine if this is a detailed/important image that needs higher quality
@@ -87,28 +88,36 @@ export default function MediaUploader({
       console.error('Image compression error:', error);
       return file; // Return original file if compression fails
     } finally {
-      setIsCompressing(false);
+      setCompressingFiles(prev => ({ ...prev, [file.name]: false }));
     }
   };
   
-  // Process multiple files with compression
+  // Process multiple files with compression in parallel
   const processFiles = async (fileList: FileList): Promise<File[]> => {
     const filesToProcess = Array.from(fileList).slice(0, maxFiles);
-    const processedFiles: File[] = [];
     
-    // Process each file
-    for (const file of filesToProcess) {
-      if (file.type.startsWith('image/')) {
-        // Compress images
-        const processedFile = await compressImage(file);
-        processedFiles.push(processedFile);
-      } else {
-        // Non-image files pass through unchanged
-        processedFiles.push(file);
-      }
+    // Set the global compressing state
+    setIsCompressing(true);
+    
+    try {
+      // Process all image files in parallel
+      const processPromises = filesToProcess.map(async (file) => {
+        if (file.type.startsWith('image/')) {
+          // Compress images in parallel
+          return await compressImage(file);
+        } else {
+          // Non-image files pass through unchanged
+          return file;
+        }
+      });
+      
+      // Wait for all files to be processed
+      const processedFiles = await Promise.all(processPromises);
+      return processedFiles;
+    } finally {
+      // Clear the global compressing state when all done
+      setIsCompressing(false);
     }
-    
-    return processedFiles;
   };
 
   // Handler for when files are selected via the file input
@@ -314,6 +323,9 @@ export default function MediaUploader({
     }
   };
 
+  // Get count of files currently being compressed
+  const compressingCount = Object.values(compressingFiles).filter(Boolean).length;
+
   return (
     <div className={`w-full ${className}`}>
       {/* Hidden file input */}
@@ -361,7 +373,9 @@ export default function MediaUploader({
           {isCompressing ? (
             <div className="flex flex-col items-center space-y-3">
               <FiLoader className="w-8 h-8 text-blue-500 animate-spin" />
-              <p className="text-sm text-gray-500">Optimizing images...</p>
+              <p className="text-sm text-gray-500">
+                Optimizing {compressingCount} {compressingCount === 1 ? 'image' : 'images'}...
+              </p>
             </div>
           ) : isUploading ? (
             <div className="flex flex-col items-center space-y-3">

@@ -135,17 +135,17 @@ async function checkImageQuality(
     // Calculate SSIM - manually cast buffer types for compatibility with ssim.js expectations
     const ssimResult = ssim(
       { 
-        data: origBuffer as any, 
+        data: origBuffer as unknown as Uint8ClampedArray, 
         width, 
         height, 
         channels: 4 
-      },
+      } as any,
       { 
-        data: compBuffer as any, 
+        data: compBuffer as unknown as Uint8ClampedArray, 
         width: compressedImage.info.width, 
         height: compressedImage.info.height, 
         channels: 4 
-      }
+      } as any
     );
     
     // Check if it passes the threshold
@@ -347,25 +347,35 @@ export async function processImage(
         }
         
         const outputPath = path.join(uploadDir, variantFilename);
+        
+        // Write file asynchronously (but still await it)
         await promisify(fs.writeFile)(outputPath, data);
         
         // URL is relative to the public directory
         const url = `/uploads/${variantFilename}`;
         
-        // Store the variant info
-        processedSet.variants[variantType] = {
-          url,
-          width: info.width,
-          height: info.height,
-          aspectRatio: calculateAspectRatio(info.width, info.height),
-          size: data.length,
-          format: info.format,
-          variantType: variantType
+        // Return the variant info (instead of directly setting it)
+        return {
+          variantType,
+          variantData: {
+            url,
+            width: info.width,
+            height: info.height,
+            aspectRatio: calculateAspectRatio(info.width, info.height),
+            size: data.length,
+            format: info.format,
+            variantType: variantType
+          }
         };
       });
       
       // Wait for all variants to be processed
-      await Promise.all(variantPromises);
+      const variantResults = await Promise.all(variantPromises);
+      
+      // Assign each result to the appropriate variant in the processedSet
+      variantResults.forEach(({ variantType, variantData }) => {
+        processedSet.variants[variantType] = variantData;
+      });
     }
     
     // Return the complete set

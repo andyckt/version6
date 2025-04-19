@@ -12,6 +12,13 @@ export async function POST(request: NextRequest) {
     // Parse the request body
     const body = await request.json();
     
+    console.log('POST /api/posts - Request body:', {
+      userId: body.userId,
+      title: body.title?.substring(0, 30),
+      mediaCount: body.media?.length,
+      hashtags: body.hashtags?.length
+    });
+    
     // Get the user ID from the request body
     if (!body.userId) {
       return NextResponse.json({ 
@@ -42,6 +49,7 @@ export async function POST(request: NextRequest) {
     const user = await db.collection('users').findOne({ _id: new ObjectId(body.userId) });
     
     if (!user) {
+      console.error('User not found:', body.userId);
       return NextResponse.json({ 
         success: false, 
         error: 'User not found' 
@@ -49,18 +57,35 @@ export async function POST(request: NextRequest) {
     }
     
     // Verify that all media exists in the database
-    const mediaIds = body.media.map((item: { mediaId: string }) => 
-      new ObjectId(item.mediaId)
-    );
-    
-    const mediaCount = await db.collection('media').countDocuments({
-      _id: { $in: mediaIds }
+    const mediaIds = body.media.map((item: { mediaId: string }) => {
+      try {
+        return new ObjectId(item.mediaId);
+      } catch (error) {
+        console.error('Invalid media ID format:', item.mediaId);
+        throw new Error(`Invalid media ID format: ${item.mediaId}`);
+      }
     });
     
-    if (mediaCount !== mediaIds.length) {
+    console.log('Searching for media IDs in database:', mediaIds);
+    
+    const mediaItems = await db.collection('media').find({
+      _id: { $in: mediaIds }
+    }).toArray();
+    
+    const foundIds = mediaItems.map(item => item._id.toString());
+    console.log('Found media items:', mediaItems.length);
+    console.log('Media IDs from request:', mediaIds.map(id => id.toString()));
+    console.log('Media IDs found in DB:', foundIds);
+    
+    const missingIds = mediaIds.filter((id: ObjectId) => 
+      !foundIds.includes(id.toString())
+    ).map((id: ObjectId) => id.toString());
+    
+    if (missingIds.length > 0) {
+      console.error('Missing media IDs:', missingIds);
       return NextResponse.json({ 
         success: false, 
-        error: 'One or more media items not found. They may have been removed or are invalid.' 
+        error: `One or more media items not found. Missing IDs: ${missingIds.join(', ')}` 
       }, { status: 400 });
     }
     

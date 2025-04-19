@@ -176,6 +176,32 @@ async function checkImageQuality(
 }
 
 /**
+ * Sanitizes a filename for use as a Cloudinary public_id
+ * Removes special characters, emoji, and limits length
+ */
+function sanitizeForCloudinary(filename: string): string {
+  // Remove file extension if present
+  const nameWithoutExt = filename.replace(/\.[^/.]+$/, "");
+  
+  // Replace emoji and special characters with nothing
+  const sanitized = nameWithoutExt
+    // Basic emoji removal - not comprehensive but handles common cases
+    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '')
+    // Convert to simple ASCII characters only
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove accents
+    // Remove special characters, keeping only alphanumeric, hyphen, underscore
+    .replace(/[^\w\-]/g, '_')
+    // Replace multiple underscores with a single one
+    .replace(/__+/g, '_')
+    // Limit to 30 characters
+    .substring(0, 30);
+  
+  // Ensure we still have at least some characters
+  return sanitized || 'image';
+}
+
+/**
  * Process image from a local file path
  */
 export async function processImage(
@@ -191,7 +217,14 @@ export async function processImage(
     // Generate a unique ID for this upload
     const uniqueId = uuidv4();
     const fileBaseName = path.basename(fileName, path.extname(fileName));
-    const cloudinaryBasePath = `media/${fileBaseName.substring(0, 40)}-${uniqueId}`;
+    
+    // Sanitize filename for Cloudinary
+    const sanitizedBaseName = sanitizeForCloudinary(fileBaseName);
+    const cloudinaryBasePath = `media/${sanitizedBaseName}-${uniqueId}`;
+    
+    console.log(`Original filename: ${fileBaseName}`);
+    console.log(`Sanitized for Cloudinary: ${sanitizedBaseName}`);
+    console.log(`Cloudinary path: ${cloudinaryBasePath}`);
     
     // Get the original image metadata
     console.log(`Reading metadata for ${fileName}`);
@@ -252,11 +285,19 @@ export async function processImage(
           accessibility: 'darkmode',
         };
         
+        console.log(`Uploading to Cloudinary with options:`, JSON.stringify(uploadOptions));
+        
         const uploadStream = cloudinary.v2.uploader.upload_stream(
           uploadOptions,
           (error, result) => {
-            if (error) reject(error);
-            else if (result) resolve(result);
+            if (error) {
+              console.error('Cloudinary upload error:', error);
+              reject(error);
+            }
+            else if (result) {
+              console.log(`Cloudinary upload success, public_id: ${result.public_id}`);
+              resolve(result);
+            }
             else reject(new Error('Unknown upload error'));
           }
         );

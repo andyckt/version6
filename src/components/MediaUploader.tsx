@@ -51,20 +51,37 @@ export default function MediaUploader({
     try {
       // Determine if this is a PNG file that needs more aggressive compression
       const isPNG = file.type.includes('png');
+      const isLargePNG = isPNG && file.size > 5 * 1024 * 1024; // Check if PNG is larger than 5MB
       
-      // Determine if this is a detailed/important image that needs higher quality
-      // For now, assume all images are important in a travel context
+      // Log original file info
+      console.log(`Compressing: ${file.name}, Size: ${(file.size / (1024 * 1024)).toFixed(2)}MB, Type: ${file.type}`);
+      
+      // Configure compression options based on file type and size
       const options = {
-        // Even more aggressive compression for PNGs since Cloudinary converts them to JPG anyway
-        maxSizeMB: isPNG ? (useHighQuality ? 0.8 : 0.4) : (useHighQuality ? 3 : 1.5),
-        maxWidthOrHeight: useHighQuality ? 2560 : 2048,   
-        // Lower quality for PNGs since they're typically travel photos and will be converted
-        initialQuality: isPNG ? (useHighQuality ? 0.75 : 0.65) : (useHighQuality ? 0.9 : 0.85),
+        // Much more aggressive compression for large PNGs
+        maxSizeMB: isPNG 
+          ? (isLargePNG 
+              ? 0.2 // Super aggressive for large PNGs (10MB+)
+              : (useHighQuality ? 0.5 : 0.3)) // Still aggressive for regular PNGs
+          : (useHighQuality ? 3 : 1.5), // Original settings for JPGs and other formats
+          
+        // Limit dimensions more aggressively for large PNGs
+        maxWidthOrHeight: isPNG && isLargePNG
+          ? 1600 // Force large PNGs to maximum 1600px
+          : (useHighQuality ? 2560 : 2048),
+           
+        // Much lower quality for PNGs since they're converted to JPG anyway
+        initialQuality: isPNG
+          ? (isLargePNG 
+              ? 0.5 // 50% quality for large PNGs
+              : (useHighQuality ? 0.7 : 0.6)) // Reduced quality for regular PNGs
+          : (useHighQuality ? 0.9 : 0.85), // Original settings for JPGs
+          
         useWebWorker: true,
-        preserveExif: true,                              
+        preserveExif: !isPNG, // Don't preserve EXIF for PNGs to reduce size
         exifOrientationFix: true,
-        fileType: file.type,
-        alwaysKeepResolution: true,
+        fileType: isPNG ? 'image/jpeg' : file.type, // Force PNG to JPEG conversion for large PNGs
+        alwaysKeepResolution: !isLargePNG, // Allow resolution reduction for large PNGs
       };
       
       // Store original size for stats
@@ -72,7 +89,9 @@ export default function MediaUploader({
       const originalSize = file.size;
       
       // Perform compression
+      console.log(`Starting compression with options:`, options);
       const compressedFile = await imageCompression(file, options);
+      console.log(`Compressed size: ${(compressedFile.size / (1024 * 1024)).toFixed(2)}MB, Reduction: ${(100 - (compressedFile.size / originalSize) * 100).toFixed(1)}%`);
       
       // Update compression stats
       setCompressionStats(prev => ({

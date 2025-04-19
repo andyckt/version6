@@ -243,6 +243,9 @@ export default function CreatePost() {
       isPrimary: index === 0
     }));
     
+    console.log('Creating post with media items:', JSON.stringify(mediaItems));
+    console.log('First few media IDs:', mediaItems.slice(0, 3).map(item => item.mediaId));
+    
     // Create post payload
     const postData = {
       userId: selectedUserId,
@@ -256,6 +259,7 @@ export default function CreatePost() {
     };
     
     try {
+      console.log('Sending POST request to create post...');
       // Send POST request to create post
       const response = await fetch('/api/posts', {
         method: 'POST',
@@ -265,9 +269,14 @@ export default function CreatePost() {
         body: JSON.stringify(postData)
       });
       
+      // Log response status
+      console.log('Post creation response status:', response.status);
+      
+      // Get response data
+      const responseData = await response.json();
+      console.log('Post creation response:', responseData);
+      
       if (response.ok) {
-        const data = await response.json();
-        
         if (saveAsDraft) {
           // Show success notification for draft
           showSuccessNotification('Draft saved successfully');
@@ -284,7 +293,7 @@ export default function CreatePost() {
           }, 1500);
         }
       } else {
-        throw new Error(`Failed to ${saveAsDraft ? 'save draft' : 'create post'}`);
+        throw new Error(responseData.error || `Failed to ${saveAsDraft ? 'save draft' : 'create post'}`);
       }
     } catch (error) {
       console.error(`Error ${saveAsDraft ? 'saving draft' : 'creating post'}:`, error);

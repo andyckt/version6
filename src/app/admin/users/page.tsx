@@ -76,8 +76,8 @@ export default function AdminUsersPage() {
       
       const data = await response.json();
       setUsers(data.users || []);
-      setTotalPages(data.pagination.totalPages || 1);
-      setCurrentPage(data.pagination.page || 1);
+      setTotalPages(data.pagination?.totalPages || 1);
+      setCurrentPage(data.pagination?.page || 1);
     } catch (err: any) {
       setError(err.message || 'An error occurred while fetching users');
       setUsers([]);

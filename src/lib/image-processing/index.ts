@@ -15,7 +15,6 @@ cloudinary.v2.config({
 
 // Quality thresholds for perceptual quality checks
 const QUALITY_THRESHOLDS = {
-  grid: 0.85,       // Same threshold as thumbnail
   thumbnail: 0.85,  // Lower threshold for thumbnails
   medium: 0.90,     // Medium quality threshold
   large: 0.95      // Higher threshold for large images (increased from 0.92 since large is now the highest quality)
@@ -23,7 +22,6 @@ const QUALITY_THRESHOLDS = {
 
 // Define image sizes and quality
 export const IMAGE_VARIANTS = {
-  grid: { width: 200, height: null, quality: 75 },    // New smaller variant for grid views
   thumbnail: { width: 300, height: null, quality: 75 },  // Small thumbnail for grids
   medium: { width: 800, height: null, quality: 80 },     // Medium-size (typical display)
   large: { width: 1600, height: null, quality: 90 }      // Large (full screen/zoom) - increased quality from 85 to 90
@@ -52,7 +50,6 @@ export interface ProcessedImage {
 
 export interface ProcessedImageSet {
   variants: {
-    grid: ProcessedImage;
     thumbnail: ProcessedImage;
     medium: ProcessedImage;
     large: ProcessedImage;
@@ -238,10 +235,9 @@ export async function processImage(
 
     // Define the variants with their transformations
     const variants = {
-      grid: { width: IMAGE_VARIANTS.grid.width, crop: 'limit', quality: 75 },       // Reduced from 85
-      thumbnail: { width: IMAGE_VARIANTS.thumbnail.width, crop: 'limit', quality: 75 }, // Reduced from 85
-      medium: { width: IMAGE_VARIANTS.medium.width, crop: 'limit', quality: 80 },     // Reduced from 85
-      large: { width: IMAGE_VARIANTS.large.width, crop: 'limit', quality: 85 }      // Reduced from 90
+      thumbnail: { width: IMAGE_VARIANTS.thumbnail.width, crop: 'limit', quality: 75 },
+      medium: { width: IMAGE_VARIANTS.medium.width, crop: 'limit', quality: 80 },
+      large: { width: IMAGE_VARIANTS.large.width, crop: 'limit', quality: 85 }
     };
 
     // Create processed image set
@@ -253,7 +249,6 @@ export async function processImage(
         baseCloudinaryId: cloudinaryBasePath
       },
       variants: {
-        grid: {} as ProcessedImage,
         thumbnail: {} as ProcessedImage,
         medium: {} as ProcessedImage,
         large: {} as ProcessedImage
@@ -272,7 +267,6 @@ export async function processImage(
           resource_type: 'image' as 'image',
           // Generate all variants eagerly to avoid first-load delay
           eager: [
-            variants.grid,
             variants.thumbnail,
             variants.medium,
             variants.large
@@ -311,7 +305,7 @@ export async function processImage(
       const aspectRatio = uploadResult.width / uploadResult.height;
       
       // Create URLs and metadata for each variant
-      const variantTypes: ImageVariantType[] = ['grid', 'thumbnail', 'medium', 'large'];
+      const variantTypes: ImageVariantType[] = ['thumbnail', 'medium', 'large'];
       
       for (const variantType of variantTypes) {
         const variantConfig = variants[variantType];

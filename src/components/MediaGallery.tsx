@@ -17,7 +17,6 @@ interface MediaVariant {
 
 interface ExtendedMediaItem extends MediaItem {
   variants?: {
-    grid?: MediaVariant;
     thumbnail?: MediaVariant;
     medium?: MediaVariant;
     large?: MediaVariant;
@@ -64,7 +63,7 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
   }, []);
   
   // Helper function to get the appropriate variant URL based on context
-  const getVariantUrl = (item: ExtendedMediaItem, variant: 'grid' | 'thumbnail' | 'medium' | 'large' = 'medium') => {
+  const getVariantUrl = (item: ExtendedMediaItem, variant: 'thumbnail' | 'medium' | 'large' = 'medium') => {
     if (!item) return '';
     
     // For modern media objects with variants structure
@@ -75,7 +74,7 @@ export default function MediaGallery({ media, className = '' }: MediaGalleryProp
     // For legacy URLs that include variant pattern
     if (typeof item.url === 'string') {
       // Check for variant pattern in URL
-      const variantPattern = /\/(grid|thumbnail|medium|large)\//;
+      const variantPattern = /\/(thumbnail|medium|large)\//;
       if (variantPattern.test(item.url)) {
         return item.url.replace(variantPattern, `/${variant}/`);
       }

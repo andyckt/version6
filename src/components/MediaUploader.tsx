@@ -9,13 +9,13 @@ export interface UploadedMedia {
   id: string;
   url: string;           // Default URL (now using large)
   thumbnailUrl: string;  // Thumbnail variant (300px)
-  gridUrl: string;       // Grid variant (200px)
   mediumUrl: string;     // Medium variant (800px)
   largeUrl: string;      // Large variant (1600px max)
   width: number;
   height: number;
   aspectRatio: string;
-  originalFilename: string;
+  originalFilename?: string;
+  size?: number;
 }
 
 interface MediaUploaderProps {

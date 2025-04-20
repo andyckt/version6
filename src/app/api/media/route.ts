@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
       // Get URLs from variants - use large as the highest quality variant
       url: item.variants.large?.url || '',
       thumbnailUrl: item.variants.thumbnail?.url || '',
-      gridUrl: item.variants.grid?.url || '',
       mediumUrl: item.variants.medium?.url || '',
       largeUrl: item.variants.large?.url || '',
       // Use large variant for file size

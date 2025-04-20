@@ -212,16 +212,30 @@ export async function POST(request: NextRequest) {
             aspectRatio: mediaItem.aspectRatio,
           };
           
-          // Clean up the temp file
-          fs.unlinkSync(file.path);
+          // Clean up the temp file with error handling
+          try {
+            if (fs.existsSync(file.path)) {
+              fs.unlinkSync(file.path);
+            }
+          } catch (cleanupError: unknown) {
+            const errorMessage = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
+            console.warn(`[${fileId}] Warning: Could not delete temporary file: ${errorMessage}`);
+            // Non-critical error, continue with the upload
+          }
           
           return result;
         } catch (fileError) {
           console.error('Error processing file:', file.originalname, fileError);
           
           // Clean up the temp file if it exists
-          if (fs.existsSync(file.path)) {
-            fs.unlinkSync(file.path);
+          try {
+            if (fs.existsSync(file.path)) {
+              fs.unlinkSync(file.path);
+            }
+          } catch (cleanupError: unknown) {
+            const errorMessage = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
+            console.warn(`Warning: Could not delete temporary file during error handling: ${errorMessage}`);
+            // Non-critical error, continue with the upload
           }
           
           // Return error result
@@ -243,8 +257,14 @@ export async function POST(request: NextRequest) {
       
       // Clean up any remaining temp files
       for (const file of files) {
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
+        try {
+          if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path);
+          }
+        } catch (cleanupError: unknown) {
+          const errorMessage = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
+          console.warn(`Warning: Could not delete temporary file in batch cleanup: ${errorMessage}`);
+          // Non-critical error, continue with the cleanup
         }
       }
     }

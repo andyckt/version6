@@ -23,19 +23,18 @@ export async function GET(request: NextRequest) {
     
     // Format the response
     const formattedMedia = mediaItems.map(item => ({
-      id: item._id?.toString(),
+      id: item._id?.toString() || '',
       userId: item.userId.toString(),
       type: item.type,
-      originalFilename: item.originalFilename,
+      originalFilename: item.originalFilename || '',
       mimeType: item.mimeType,
       created: item.created,
       width: item.width || 0,
       height: item.height || 0,
-      aspectRatio: item.aspectRatio,
+      aspectRatio: item.aspectRatio || '1:1',
       // Get URLs from variants - use large as the highest quality variant
       url: item.variants.large?.url || '',
       thumbnailUrl: item.variants.thumbnail?.url || '',
-      gridUrl: item.variants.grid?.url || '',
       mediumUrl: item.variants.medium?.url || '',
       largeUrl: item.variants.large?.url || '',
       // Use large variant for file size

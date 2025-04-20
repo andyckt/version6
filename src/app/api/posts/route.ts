@@ -1,7 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPost, getPublishedPosts, IPost, PostStatus } from '@/lib/db/models/post';
 import { ObjectId } from 'mongodb';
-import { connectToDatabase } from '@/lib/mongodb';
+import { connectToDatabase } from '@/lib/db/mongodb';
+
+// Helper functions
+async function countMedia(query: any) {
+  const { db } = await connectToDatabase();
+  return await db.collection('media').countDocuments(query);
+}
+
+async function getMediaByIds(mediaIds: (ObjectId | string)[], userId: string) {
+  const { db } = await connectToDatabase();
+  
+  // Convert the query to handle both string and ObjectId IDs
+  const query: any = { userId: new ObjectId(userId) };
+  
+  // Split IDs into ObjectIds and string IDs (for development mock IDs)
+  const objectIds = mediaIds.filter(id => id instanceof ObjectId) as ObjectId[];
+  const stringIds = mediaIds.filter(id => typeof id === 'string') as string[];
+  
+  if (objectIds.length > 0 && stringIds.length === 0) {
+    // Only ObjectIds
+    query._id = { $in: objectIds };
+  } else if (stringIds.length > 0 && objectIds.length === 0) {
+    // Only string IDs (mock IDs in development)
+    query._id = { $in: stringIds };
+  } else {
+    // Mixed IDs - use $or
+    query.$or = [
+      { _id: { $in: objectIds } },
+      { _id: { $in: stringIds } }
+    ];
+  }
+  
+  return await db.collection('media').find(query).toArray();
+}
 
 /**
  * Create a new post
@@ -56,37 +89,45 @@ export async function POST(request: NextRequest) {
       }, { status: 404 });
     }
     
-    // Verify that all media exists in the database
+    // Validate and convert media IDs to ObjectId
     const mediaIds = body.media.map((item: { mediaId: string }) => {
-      try {
+      if (process.env.NODE_ENV === 'development' && item.mediaId.startsWith('mock-id-')) {
+        return item.mediaId; // Allow mock IDs in development
+      } else if (/^[0-9a-fA-F]{24}$/.test(item.mediaId)) {
         return new ObjectId(item.mediaId);
-      } catch (error) {
-        console.error('Invalid media ID format:', item.mediaId);
+      } else {
         throw new Error(`Invalid media ID format: ${item.mediaId}`);
       }
     });
     
-    console.log('Searching for media IDs in database:', mediaIds);
-    
-    const mediaItems = await db.collection('media').find({
-      _id: { $in: mediaIds }
-    }).toArray();
-    
-    const foundIds = mediaItems.map(item => item._id.toString());
-    console.log('Found media items:', mediaItems.length);
-    console.log('Media IDs from request:', mediaIds.map(id => id.toString()));
-    console.log('Media IDs found in DB:', foundIds);
-    
-    const missingIds = mediaIds.filter((id: ObjectId) => 
-      !foundIds.includes(id.toString())
-    ).map((id: ObjectId) => id.toString());
-    
-    if (missingIds.length > 0) {
-      console.error('Missing media IDs:', missingIds);
-      return NextResponse.json({ 
-        success: false, 
-        error: `One or more media items not found. Missing IDs: ${missingIds.join(', ')}` 
-      }, { status: 400 });
+    // For development only - if using mock IDs, skip the DB lookup
+    if (process.env.NODE_ENV === 'development' && mediaIds.some(id => typeof id === 'string' && id.toString().startsWith('mock-id-'))) {
+      // Skip media validation in development with mock IDs
+      console.log('Development mode: Using mock media IDs without validation');
+    } else {
+      // In production, verify that media exists and belongs to user
+      const count = await countMedia({
+        $or: [
+          { _id: { $in: mediaIds.filter(id => id instanceof ObjectId) } },
+          { _id: { $in: mediaIds.filter(id => typeof id === 'string') } }
+        ],
+        userId: new ObjectId(body.userId)
+      });
+      
+      console.log('Found media items:', count);
+      console.log('Media IDs from request:', mediaIds.map(id => id.toString()));
+      
+      // Get actual media IDs from database to confirm they exist
+      const mediaItems = await getMediaByIds(mediaIds, body.userId);
+      
+      if (!mediaItems || mediaItems.length !== mediaIds.length) {
+        console.error(`Not all media found. Requested: ${mediaIds.length}, Found: ${mediaItems?.length || 0}`);
+        console.log('Media IDs found in DB:', mediaItems?.map(item => item._id.toString()));
+        return NextResponse.json({ 
+          success: false, 
+          error: 'One or more media items not found or do not belong to user'
+        }, { status: 404 });
+      }
     }
     
     // Create the post document

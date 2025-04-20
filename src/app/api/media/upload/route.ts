@@ -135,13 +135,6 @@ export async function POST(request: NextRequest) {
                     height: processedImages.variants.large.height,
                     size: processedImages.variants.large.size,
                     cloudinaryId: processedImages.variants.large.cloudinaryId,
-                  },
-                  grid: {
-                    url: processedImages.variants.grid.url,
-                    width: processedImages.variants.grid.width,
-                    height: processedImages.variants.grid.height,
-                    size: processedImages.variants.grid.size,
-                    cloudinaryId: processedImages.variants.grid.cloudinaryId,
                   }
                 },
                 metadata: processedImages.metadata
@@ -204,7 +197,6 @@ export async function POST(request: NextRequest) {
             originalFilename: mediaItem.originalFilename,
             url: mediaItem.variants.large?.url,
             thumbnailUrl: mediaItem.variants.thumbnail?.url,
-            gridUrl: mediaItem.variants.grid?.url,
             mediumUrl: mediaItem.variants.medium?.url,
             largeUrl: mediaItem.variants.large?.url,
             width: mediaItem.width,

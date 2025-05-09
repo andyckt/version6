@@ -27,6 +27,9 @@ export const IMAGE_VARIANTS = {
   large: { width: 1600, height: null, quality: 90 }      // Large (full screen/zoom) - increased quality from 85 to 90
 };
 
+// Maximum number of images to process in parallel
+export const MAX_PARALLEL_PROCESSING = 3;
+
 export type ImageVariantType = keyof typeof IMAGE_VARIANTS;
 
 // Add a type for quality check results

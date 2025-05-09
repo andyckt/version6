@@ -4,6 +4,23 @@ import { useState, useRef, ChangeEvent, DragEvent, useEffect } from 'react';
 import Image from 'next/image';
 import { FiUpload, FiX, FiLoader, FiImage, FiZoomIn, FiAlertCircle, FiCheck, FiUploadCloud } from 'react-icons/fi';
 import imageCompression from 'browser-image-compression';
+import toast from 'react-hot-toast';
+
+// Calculate average compression percentage from stats
+const calculateAverageCompression = (stats: Record<string, { original: number, compressed: number }>) => {
+  if (Object.keys(stats).length === 0) return 0;
+  
+  let totalSavings = 0;
+  let totalFiles = 0;
+  
+  Object.values(stats).forEach(({ original, compressed }) => {
+    const savingsPercent = ((original - compressed) / original) * 100;
+    totalSavings += savingsPercent;
+    totalFiles++;
+  });
+  
+  return totalFiles > 0 ? Math.round(totalSavings / totalFiles) : 0;
+};
 
 export interface UploadedMedia {
   id: string;
@@ -43,10 +60,7 @@ export default function MediaUploader({
   const [useHighQuality, setUseHighQuality] = useState<boolean>(false);
   const [filesToProcess, setFilesToProcess] = useState<number>(0);
   const [filesProcessed, setFilesProcessed] = useState<number>(0);
-  const [currentBatch, setCurrentBatch] = useState<number>(1);
-  const [totalBatches, setTotalBatches] = useState<number>(1);
   
-  const BATCH_SIZE = 5; // Process in batches of 5 for performance
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Compress image with quality preservation
@@ -120,21 +134,15 @@ export default function MediaUploader({
   
   // Process multiple files with compression
   const processFiles = async (fileList: FileList): Promise<File[]> => {
-    // Take up to maxFiles from the input
-    const allFilesToProcess = Array.from(fileList).slice(0, maxFiles);
+    const filesToProcess = Array.from(fileList).slice(0, maxFiles);
     
     // Reset counters
     setFilesProcessed(0);
-    setFilesToProcess(allFilesToProcess.length);
+    setFilesToProcess(filesToProcess.length);
     setIsCompressing(true);
     
-    // Calculate total batches
-    const batches = Math.ceil(allFilesToProcess.length / BATCH_SIZE);
-    setTotalBatches(batches);
-    setCurrentBatch(1);
-    
-    // Process all files in parallel for compression
-    const processPromises = allFilesToProcess.map(async (file, index) => {
+    // Process files in parallel
+    const processPromises = filesToProcess.map(async (file, index) => {
       if (file.type.startsWith('image/')) {
         try {
           const result = await compressImage(file);
@@ -181,98 +189,102 @@ export default function MediaUploader({
     }
   };
 
-  // Common function to handle file uploads
-  const uploadFiles = async (files: File[]) => {
-    setIsUploading(true);
-    setUploadError(null);
+  // Upload files to the server
+  const uploadFiles = async (files: File[]): Promise<void> => {
+    if (files.length === 0) return;
     
-    // Notify parent component that upload has started
+    // Signal that the upload is starting
     if (onUploadStart) {
       onUploadStart();
     }
     
+    setIsUploading(true);
+    setUploadProgress(0);
+    setUploadError(null);
+    
     try {
-      // Split files into batches of BATCH_SIZE
-      const fileBatches = [];
-      for (let i = 0; i < files.length; i += BATCH_SIZE) {
-        fileBatches.push(files.slice(i, i + BATCH_SIZE));
+      const formData = new FormData();
+      
+      // Append each file to the form data
+      files.forEach(file => {
+        formData.append('media', file);
+      });
+      
+      // If there's more than 5 files, show batch notification
+      if (files.length > 5) {
+        toast(`Processing ${files.length} files in batches for optimal performance...`);
       }
       
-      let allUploadedMedia: UploadedMedia[] = [];
-      
-      // Process each batch sequentially
-      for (let batchIndex = 0; batchIndex < fileBatches.length; batchIndex++) {
-        const batch = fileBatches[batchIndex];
-        setCurrentBatch(batchIndex + 1);
-        
-        // Create a FormData object for this batch
-        const formData = new FormData();
-        
-        // Append each file in the batch to formData
-        batch.forEach(file => {
-          formData.append('media', file);
-        });
-        
-        // Upload the batch with progress monitoring
-        const xhr = new XMLHttpRequest();
-        
-        xhr.upload.addEventListener('progress', (event) => {
-          if (event.lengthComputable) {
-            // Calculate overall progress across batches
-            const batchProgress = Math.round((event.loaded / event.total) * 100);
-            const overallProgress = Math.round(
-              ((batchIndex * 100) + batchProgress) / fileBatches.length
-            );
-            setUploadProgress(overallProgress);
-          }
-        });
-        
-        // Create a promise to handle the XHR response for this batch
-        const uploadBatchPromise = new Promise<UploadedMedia[]>((resolve, reject) => {
-          xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4) {
-              if (xhr.status >= 200 && xhr.status < 300) {
-                const response = JSON.parse(xhr.responseText);
-                if (response.success) {
-                  resolve(response.files);
-                } else {
-                  reject(new Error(response.error || 'Upload failed'));
-                }
-              } else {
-                reject(new Error(`Upload failed with status ${xhr.status}`));
-              }
-            }
-          };
-        });
-        
-        // Send the request for this batch
-        xhr.open('POST', '/api/media/upload');
-        xhr.send(formData);
-        
-        // Wait for this batch to complete before proceeding to the next
-        const batchUploadedMedia = await uploadBatchPromise;
-        allUploadedMedia = [...allUploadedMedia, ...batchUploadedMedia];
+      // Add high quality flag if enabled
+      if (useHighQuality) {
+        formData.append('highQuality', 'true');
       }
       
-      // Update state with all the uploaded files
-      setUploadedFiles(prev => [...prev, ...allUploadedMedia]);
+      // Upload the files
+      const response = await fetch('/api/media/upload', {
+        method: 'POST',
+        body: formData
+      });
       
-      // Call the callback if provided
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      
+      // Handle successful upload
+      const uploadedMediaFiles = result.files
+        .filter((file: any) => !file.error)
+        .map((file: any) => ({
+          id: file.id || `temp-${Date.now()}`,
+          url: file.url || file.largeUrl,
+          thumbnailUrl: file.thumbnailUrl,
+          mediumUrl: file.mediumUrl,
+          largeUrl: file.largeUrl,
+          width: file.width,
+          height: file.height,
+          aspectRatio: file.aspectRatio,
+          originalFilename: file.originalFilename,
+          size: file.size
+        }));
+      
+      // Update the state with the new files
+      setUploadedFiles(prevFiles => [...prevFiles, ...uploadedMediaFiles]);
+      
+      // Call the callback with the uploaded files
       if (onMediaUpload) {
-        onMediaUpload(allUploadedMedia);
+        onMediaUpload(uploadedMediaFiles);
       }
+      
+      // Show success message
+      if (uploadedMediaFiles.length > 0) {
+        // Show compression stats if available
+        const compressionInfo = Object.values(compressionStats).length > 0 
+          ? `\nAvg compression: ${calculateAverageCompression(compressionStats)}%` 
+          : '';
+        
+        toast.success(
+          `Successfully uploaded ${uploadedMediaFiles.length} files${compressionInfo}`
+        );
+      }
+      
+      // Show warnings for any files that failed
+      const failedFiles = result.files.filter((file: any) => file.error);
+      if (failedFiles.length > 0) {
+        toast.error(`${failedFiles.length} files failed to upload`);
+      }
+      
     } catch (error) {
       console.error('Upload error:', error);
-      setUploadError((error as Error).message || 'Failed to upload files');
+      setUploadError(error instanceof Error ? error.message : 'Unknown upload error');
+      toast.error(error instanceof Error ? error.message : 'Failed to upload files');
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
-      setCurrentBatch(1);
-      
-      // Clear the file input so the same file can be selected again
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
     }
   };
 
@@ -402,9 +414,6 @@ export default function MediaUploader({
         <div className="mb-4">
           <div className="flex justify-between text-xs text-gray-500 mb-1">
             <span>Uploading {uploadProgress}%</span>
-            {totalBatches > 1 && (
-              <span>Batch {currentBatch} of {totalBatches}</span>
-            )}
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
             <div 
@@ -504,7 +513,7 @@ export default function MediaUploader({
           Drag and drop files here, or click to select
         </p>
         <p className="text-xs text-gray-500 text-center mb-3">
-          Supports: {acceptedTypes.replace(/\*/g, 'all')} (Max: {maxFiles} files, processed in batches of {BATCH_SIZE})
+          Supports: {acceptedTypes.replace(/\*/g, 'all')} (Max: {maxFiles} files)
         </p>
         
         <div className="flex flex-col sm:flex-row gap-2">

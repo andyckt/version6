@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  swcMinify: true, // Use SWC minifier for better performance
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production', // Remove console in production
+  },
+  poweredByHeader: false, // Remove the powered-by header
   images: {
     // Deprecated, but keeping for backward compatibility
     domains: ['placehold.co', 'picsum.photos', 'storage.googleapis.com', 'images.pexels.com', 'player.vimeo.com', 'images.unsplash.com', 'source.unsplash.com', 'res.cloudinary.com'],
@@ -48,7 +53,7 @@ const nextConfig = {
       },
     ],
     formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 86400, // 24 hours cache for images
+    minimumCacheTTL: 604800, // Increased to 1 week cache for images
     deviceSizes: [320, 640, 750, 828, 1080, 1200, 1920], // Device breakpoint sizes
     imageSizes: [16, 32, 48, 64, 96, 128, 256], // Image sizes for srcsets
     dangerouslyAllowSVG: true,
@@ -101,6 +106,16 @@ const nextConfig = {
           },
         ],
       },
+      {
+        // Apply cache headers to images from next/image
+        source: '/_next/image/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable', // 1 year cache
+          },
+        ],
+      },
     ];
   },
   // Optimize image assets using Sharp for better performance
@@ -125,6 +140,12 @@ const nextConfig = {
     });
     
     return config;
+  },
+  // Experimental features
+  experimental: {
+    optimizeCss: true, // CSS optimization for better performance
+    optimizeServerReact: true, // Optimize React for server components
+    scrollRestoration: true, // Restore scroll position on navigation
   },
 }
 

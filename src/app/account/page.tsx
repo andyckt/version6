@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Navigation from '@/components/Navigation';
 import PageTransition from '@/components/PageTransition';
 import { FiArrowRight, FiCheck, FiInfo, FiAlertCircle, FiClock, FiGlobe, FiMapPin, FiLock, FiMenu, FiX } from 'react-icons/fi';
@@ -14,6 +14,7 @@ export default function Account() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [userId, setUserId] = useState('');
+  const [pageLoaded, setPageLoaded] = useState(false);
   
   // Invite code states
   const [inviteCode, setInviteCode] = useState('');
@@ -27,24 +28,17 @@ export default function Account() {
   // Fake waiting list count - 4 figure number
   const [waitingCount, setWaitingCount] = useState(3487);
   
-  // Animation variants
+  // Indicate that page has loaded
+  useEffect(() => {
+    setPageLoaded(true);
+  }, []);
+  
+  // Animation variants - simplified for better performance
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1,
-      transition: { 
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { type: "spring", stiffness: 300, damping: 24 }
+      transition: { duration: 0.5 }
     }
   };
   
@@ -76,7 +70,7 @@ export default function Account() {
     // - Alphanumeric characters, underscores, and periods
     // - No consecutive periods
     // - Cannot start or end with a period
-    // - Length between 1-30 characters
+    // - Length between 1-15 characters
     if (!/^[a-z0-9_]{1,15}$/.test(username)) {
       setError('Username can only contain lowercase letters, numbers, and underscores (max 15 characters)');
       setIsLoading(false);
@@ -114,25 +108,9 @@ export default function Account() {
     }
   };
 
-  // Animated number counter for waiting list
-  const [displayCount, setDisplayCount] = useState(0);
-  
-  useEffect(() => {
-    const duration = 2000; // Animation duration in ms
-    const steps = 50; // Number of steps in the animation
-    const increment = Math.ceil(waitingCount / steps);
-    let current = 0;
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= waitingCount) {
-        setDisplayCount(waitingCount);
-        clearInterval(timer);
-      } else {
-        setDisplayCount(current);
-      }
-    }, duration / steps);
-    
-    return () => clearInterval(timer);
+  // Memoized counter to avoid unnecessary rerenders
+  const displayCount = useMemo(() => {
+    return waitingCount;
   }, [waitingCount]);
 
   const handleInviteSubmit = (e: React.FormEvent) => {
@@ -155,21 +133,32 @@ export default function Account() {
         setInviteError('Invalid invite code. Please try again.');
       }
       setInviteLoading(false);
-    }, 1000);
+    }, 500); // Reduced from 1000ms to 500ms for faster response
+  };
+
+  // Simplified background decorations - only show when page is loaded
+  const BackgroundDecorations = () => {
+    if (!pageLoaded) return null;
+    
+    return (
+      <>
+        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-primary/10 to-transparent z-0"></div>
+        <div className="absolute top-20 right-20 w-64 h-64 rounded-full bg-primary/5 z-0"></div>
+        <div className="absolute bottom-20 left-20 w-32 h-32 rounded-full bg-primary/5 z-0"></div>
+        <div className="hidden md:block absolute top-1/4 left-10 transform -rotate-12">
+          <FiMapPin className="text-primary/20 w-16 h-16" />
+        </div>
+        <div className="hidden md:block absolute bottom-1/4 right-10 transform rotate-12">
+          <FiGlobe className="text-primary/20 w-16 h-16" />
+        </div>
+      </>
+    );
   };
 
   return (
     <main className="min-h-screen bg-gray-50 relative overflow-hidden">
-      {/* Background decoration elements */}
-      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-primary/10 to-transparent z-0"></div>
-      <div className="absolute top-20 right-20 w-64 h-64 rounded-full bg-primary/5 z-0"></div>
-      <div className="absolute bottom-20 left-20 w-32 h-32 rounded-full bg-primary/5 z-0"></div>
-      <div className="hidden md:block absolute top-1/4 left-10 transform -rotate-12">
-        <FiMapPin className="text-primary/20 w-16 h-16" />
-      </div>
-      <div className="hidden md:block absolute bottom-1/4 right-10 transform rotate-12">
-        <FiGlobe className="text-primary/20 w-16 h-16" />
-      </div>
+      {/* Background decoration elements - only rendered when page is loaded */}
+      <BackgroundDecorations />
       
       {/* Hamburger menu button - fixed position on both mobile and desktop */}
       <motion.button
@@ -186,6 +175,7 @@ export default function Account() {
               src="/icons/gif-food.gif" 
               alt="Menu" 
               className="w-full h-full object-cover" 
+              loading="lazy"
             />
           </div>
         )}
@@ -207,12 +197,7 @@ export default function Account() {
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 300, 
-                damping: 30,
-                exit: { duration: 0.4, ease: [0.36, 0.07, 0.19, 0.97] }
-              }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="pt-8">
@@ -255,17 +240,11 @@ export default function Account() {
                         </div>
                       )}
                       
-                      <motion.button
+                      <button
                         type="submit"
                         className={`w-full py-3 bg-purple-500 rounded-lg font-medium text-white flex justify-center items-center
-                          ${inviteLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                          ${inviteLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-purple-600'}`}
                         disabled={inviteLoading}
-                        whileTap={{ scale: 0.97 }}
-                        whileHover={{ 
-                          scale: inviteLoading ? 1 : 1.02,
-                          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" 
-                        }}
-                        transition={{ duration: 0.2 }}
                       >
                         {inviteLoading ? (
                           <>
@@ -273,25 +252,16 @@ export default function Account() {
                             Verifying...
                           </>
                         ) : (
-                          <motion.div 
-                            className="flex items-center justify-center w-full"
-                            initial={{ x: 0 }}
-                            whileHover={{ x: 5 }}
-                            transition={{ type: "spring", stiffness: 400 }}
-                          >
+                          <div className="flex items-center justify-center w-full">
                             Apply Code
                             <FiArrowRight className="ml-2" />
-                          </motion.div>
+                          </div>
                         )}
-                      </motion.button>
+                      </button>
                     </form>
                   </>
                 ) : (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
+                  <div>
                     <div className="flex flex-col items-center text-center">
                       <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
                         <FiCheck className="w-8 h-8 text-purple-500" />
@@ -307,7 +277,7 @@ export default function Account() {
                         Use a different code
                       </button>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
                 
                 <div className="mt-8 pt-6 border-t border-gray-100">
@@ -335,36 +305,19 @@ export default function Account() {
               <div className="max-w-md mx-auto">
                 <div className="mb-6 text-center">
                   <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7 }}
+                    variants={containerVariants} 
+                    initial="hidden"
+                    animate="visible"
                   >
-                    <motion.h1 
-                      className="text-2xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-amber-500"
-                      style={{ backgroundSize: "200%" }}
-                      animate={{ 
-                        backgroundPosition: ["0% center", "200% center"]
-                      }}
-                      transition={{ 
-                        duration: 5,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                        ease: "linear"
-                      }}
-                    >
+                    <h1 className="text-2xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-amber-500">
                       Join the Waitlist
-                    </motion.h1>
+                    </h1>
                   </motion.div>
                 </div>
                 
                 <div>
                   {/* Stats bar */}
-                  <motion.div 
-                    className="mb-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
+                  <div className="mb-6">
                     <div className="bg-white rounded-lg shadow-md p-4 text-center border border-gray-100 w-full flex items-center">
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center">
@@ -378,14 +331,9 @@ export default function Account() {
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                   
-                  <motion.div 
-                    className="bg-white rounded-xl shadow-md p-6 mb-6 border border-gray-100"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
+                  <div className="bg-white rounded-xl shadow-md p-6 mb-6 border border-gray-100">
                     <div className="flex items-start mb-5">
                       <div className="flex-shrink-0">
                         <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center">
@@ -450,17 +398,11 @@ export default function Account() {
                         </div>
                       )}
                       
-                      <motion.button
+                      <button
                         type="submit"
                         className={`w-full py-3.5 bg-primary rounded-lg font-medium text-white flex justify-center items-center
-                          ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                          ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-primary/90'}`}
                         disabled={isLoading}
-                        whileTap={{ scale: 0.97 }}
-                        whileHover={{ 
-                          scale: isLoading ? 1 : 1.02,
-                          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" 
-                        }}
-                        transition={{ duration: 0.2 }}
                       >
                         {isLoading ? (
                           <>
@@ -468,19 +410,14 @@ export default function Account() {
                             Processing...
                           </>
                         ) : (
-                          <motion.div 
-                            className="flex items-center justify-center w-full"
-                            initial={{ x: 0 }}
-                            whileHover={{ x: 5 }}
-                            transition={{ type: "spring", stiffness: 400 }}
-                          >
+                          <div className="flex items-center justify-center w-full">
                             Join Waiting List
                             <FiArrowRight className="ml-2" />
-                          </motion.div>
+                          </div>
                         )}
-                      </motion.button>
+                      </button>
                     </form>
-                  </motion.div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -490,15 +427,10 @@ export default function Account() {
               {showInviteMenu && (
                 <motion.div 
                   className="hidden md:block md:col-span-1"
-                  initial={{ opacity: 0, x: 300 }}
+                  initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 300 }}
-                  transition={{ 
-                    type: "spring", 
-                    stiffness: 300, 
-                    damping: 30,
-                    exit: { duration: 0.4, ease: [0.36, 0.07, 0.19, 0.97] }
-                  }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{ duration: 0.3 }}
                 >
                   <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 sticky top-20">
                     {!showInviteSuccess ? (
@@ -540,17 +472,11 @@ export default function Account() {
                             </div>
                           )}
                           
-                          <motion.button
+                          <button
                             type="submit"
                             className={`w-full py-3 bg-purple-500 rounded-lg font-medium text-white flex justify-center items-center
-                              ${inviteLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                              ${inviteLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-purple-600'}`}
                             disabled={inviteLoading}
-                            whileTap={{ scale: 0.97 }}
-                            whileHover={{ 
-                              scale: inviteLoading ? 1 : 1.02,
-                              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" 
-                            }}
-                            transition={{ duration: 0.2 }}
                           >
                             {inviteLoading ? (
                               <>
@@ -558,25 +484,16 @@ export default function Account() {
                                 Verifying...
                               </>
                             ) : (
-                              <motion.div 
-                                className="flex items-center justify-center w-full"
-                                initial={{ x: 0 }}
-                                whileHover={{ x: 5 }}
-                                transition={{ type: "spring", stiffness: 400 }}
-                              >
+                              <div className="flex items-center justify-center w-full">
                                 Apply Code
                                 <FiArrowRight className="ml-2" />
-                              </motion.div>
+                              </div>
                             )}
-                          </motion.button>
+                          </button>
                         </form>
                       </>
                     ) : (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3 }}
-                      >
+                      <div>
                         <div className="flex flex-col items-center text-center">
                           <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
                             <FiCheck className="w-8 h-8 text-purple-500" />
@@ -592,7 +509,7 @@ export default function Account() {
                             Use a different code
                           </button>
                         </div>
-                      </motion.div>
+                      </div>
                     )}
                     
                     <div className="mt-6 pt-6 border-t border-gray-100">
@@ -613,24 +530,10 @@ export default function Account() {
           </div>
         ) : (
           <div className="min-h-screen flex items-center justify-center px-4 relative z-10">
-            <motion.div
-              className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 border border-gray-100"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <motion.div
-                className="w-20 h-20 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 260,
-                  damping: 20
-                }}
-              >
+            <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+              <div className="w-20 h-20 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <FiCheck className="w-10 h-10 text-primary" />
-              </motion.div>
+              </div>
               
               <div>
                 <h2 className="text-2xl font-bold text-center mb-2">You're on the list!</h2>
@@ -646,20 +549,16 @@ export default function Account() {
                   </div>
                 )}
                 
-                <motion.div
-                  className="text-center"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
+                <div className="text-center">
                   <Link 
                     href="/" 
                     className="inline-block bg-primary text-black font-medium px-6 py-2.5 rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Back to Home
                   </Link>
-                </motion.div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
       </PageTransition>

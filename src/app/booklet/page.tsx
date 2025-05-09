@@ -1,20 +1,41 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import Header from '@/components/Header'
 import Navigation from '@/components/Navigation'
 import PageTransition from '@/components/PageTransition'
-import WelcomeContent from '@/components/WelcomeContent'
-import FoodSpotsContent from '@/components/FoodSpotsContent'
-import AttractionsContent from '@/components/AttractionsContent'
-import FashionSpotsContent from '@/components/FashionSpotsContent'
-import ChineseSpaContent from '@/components/ChineseSpaContent'
-import HotelContent from '@/components/HotelContent'
-import GetDrunkContent from '@/components/GetDrunkContent'
-import NightClubsContent from '@/components/NightClubsContent'
-import ShanghaiTipsContent from '@/components/ShanghaiTipsContent'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiBookOpen, FiMapPin, FiStar, FiCoffee, FiShoppingBag, FiMoon, FiHome, FiWind, FiMusic, FiInfo, FiChevronLeft } from 'react-icons/fi'
+
+// Dynamically import content components with loading fallbacks
+const WelcomeContent = dynamic(() => import('@/components/WelcomeContent'), {
+  loading: () => <div className="py-8 animate-pulse"><div className="h-8 bg-gray-200 rounded w-2/3 mb-4"></div><div className="h-24 bg-gray-100 rounded"></div></div>
+})
+const ShanghaiTipsContent = dynamic(() => import('@/components/ShanghaiTipsContent'), {
+  loading: () => <div className="py-8 animate-pulse"><div className="h-8 bg-gray-200 rounded w-2/3 mb-4"></div><div className="h-24 bg-gray-100 rounded"></div></div>
+})
+const FoodSpotsContent = dynamic(() => import('@/components/FoodSpotsContent'), {
+  loading: () => <div className="py-8 animate-pulse"><div className="h-8 bg-gray-200 rounded w-2/3 mb-4"></div><div className="h-24 bg-gray-100 rounded"></div></div>
+})
+const AttractionsContent = dynamic(() => import('@/components/AttractionsContent'), {
+  loading: () => <div className="py-8 animate-pulse"><div className="h-8 bg-gray-200 rounded w-2/3 mb-4"></div><div className="h-24 bg-gray-100 rounded"></div></div>
+})
+const FashionSpotsContent = dynamic(() => import('@/components/FashionSpotsContent'), {
+  loading: () => <div className="py-8 animate-pulse"><div className="h-8 bg-gray-200 rounded w-2/3 mb-4"></div><div className="h-24 bg-gray-100 rounded"></div></div>
+})
+const HotelContent = dynamic(() => import('@/components/HotelContent'), {
+  loading: () => <div className="py-8 animate-pulse"><div className="h-8 bg-gray-200 rounded w-2/3 mb-4"></div><div className="h-24 bg-gray-100 rounded"></div></div>
+})
+const ChineseSpaContent = dynamic(() => import('@/components/ChineseSpaContent'), {
+  loading: () => <div className="py-8 animate-pulse"><div className="h-8 bg-gray-200 rounded w-2/3 mb-4"></div><div className="h-24 bg-gray-100 rounded"></div></div>
+})
+const GetDrunkContent = dynamic(() => import('@/components/GetDrunkContent'), {
+  loading: () => <div className="py-8 animate-pulse"><div className="h-8 bg-gray-200 rounded w-2/3 mb-4"></div><div className="h-24 bg-gray-100 rounded"></div></div>
+})
+const NightClubsContent = dynamic(() => import('@/components/NightClubsContent'), {
+  loading: () => <div className="py-8 animate-pulse"><div className="h-8 bg-gray-200 rounded w-2/3 mb-4"></div><div className="h-24 bg-gray-100 rounded"></div></div>
+})
 
 export default function Booklet() {
   const [activeSection, setActiveSection] = useState<string | null>(null)
@@ -114,6 +135,14 @@ export default function Booklet() {
       icon: FiShoppingBag,
     },
   ]
+
+  // Prefetch component for active section
+  useEffect(() => {
+    if (activeSection) {
+      // Dynamically prefetch the active content
+      import(`@/components/${activeSection.charAt(0).toUpperCase() + activeSection.slice(1).replace(/-([a-z])/g, g => g[1].toUpperCase())}Content`);
+    }
+  }, [activeSection]);
 
   return (
     <main className="pb-16 min-h-screen bg-gradient-to-b from-gray-50 to-white">

@@ -46,7 +46,7 @@ export default function CreatePost() {
   // For tagged accounts input
   const [accountInput, setAccountInput] = useState('');
   const [suggestedAccounts, setSuggestedAccounts] = useState<{username: string, displayName: string, profileImage?: string, accountType?: string}[]>([]);
-  const [accountSearchType, setAccountSearchType] = useState<'users' | 'merchants'>('users');
+  const [accountSearchType, setAccountSearchType] = useState<'users' | 'merchants'>('merchants');
   
   // For debouncing account search
   const accountSearchTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -727,17 +727,6 @@ export default function CreatePost() {
                   <button
                     type="button"
                     className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                      accountSearchType === 'users' 
-                        ? 'bg-blue-500 text-white' 
-                        : 'text-gray-600 hover:bg-gray-100'
-                    }`}
-                    onClick={() => setAccountSearchType('users')}
-                  >
-                    Users
-                  </button>
-                  <button
-                    type="button"
-                    className={`px-3 py-1 rounded-full text-sm transition-colors ${
                       accountSearchType === 'merchants' 
                         ? 'bg-blue-500 text-white' 
                         : 'text-gray-600 hover:bg-gray-100'
@@ -745,6 +734,17 @@ export default function CreatePost() {
                     onClick={() => setAccountSearchType('merchants')}
                   >
                     Merchants
+                  </button>
+                  <button
+                    type="button"
+                    className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                      accountSearchType === 'users' 
+                        ? 'bg-blue-500 text-white' 
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setAccountSearchType('users')}
+                  >
+                    Users
                   </button>
                 </div>
                 

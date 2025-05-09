@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import { merchants } from '@/data/merchants';
 
 // Helper function to read merchants data
 async function readMerchantsData() {
@@ -17,8 +18,8 @@ async function writeMerchantsData(data: any) {
 
 export async function GET() {
   try {
-    const data = await readMerchantsData();
-    return NextResponse.json(data.merchants);
+    // Use merchants.ts array directly instead of reading from JSON file
+    return NextResponse.json(merchants);
   } catch (error) {
     console.error('Error reading merchants:', error);
     return NextResponse.json({ error: 'Failed to fetch merchants' }, { status: 500 });

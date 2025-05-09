@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import { merchants } from '@/data/merchants';
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,32 +14,24 @@ export async function GET(request: NextRequest) {
       }, { status: 400 });
     }
     
-    // Connect to database
-    const { db } = await connectToDatabase();
-    
-    // Search for merchants by username or displayName
-    // Using a case-insensitive regex search
-    const merchants = await db.collection('merchants')
-      .find({
-        $or: [
-          { username: { $regex: query, $options: 'i' } },
-          { displayName: { $regex: query, $options: 'i' } }
-        ]
-      })
-      .project({
-        _id: 1,
-        username: 1,
-        displayName: 1,
-        verified: 1,
-        accountType: 1,
-        merchantType: 1
-      })
-      .limit(10)
-      .toArray();
+    // Search for merchants in merchants.ts instead of MongoDB
+    const lowercaseQuery = query.toLowerCase();
+    const matchingMerchants = merchants.filter(merchant => 
+      merchant.username.toLowerCase().includes(lowercaseQuery) || 
+      merchant.displayName.toLowerCase().includes(lowercaseQuery)
+    ).slice(0, 10)
+    .map(merchant => ({
+      _id: merchant.id.toString(),
+      username: merchant.username,
+      displayName: merchant.displayName,
+      verified: merchant.verified,
+      accountType: merchant.accountType,
+      merchantType: merchant.merchantType
+    }));
     
     return NextResponse.json({ 
       success: true, 
-      merchants
+      merchants: matchingMerchants
     });
   } catch (error) {
     console.error('Error searching merchants:', error);

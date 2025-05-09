@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useMemo } from 'react'
+import { validateCloudinaryUrl, fixCloudinaryUrl, getCloudinaryCloudName } from '@/lib/cloudinary-config';
 
 interface BlurImageProps {
   src: string;
@@ -44,28 +45,65 @@ export default function BlurImage({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<string | null>(null);
+
+  // Validate if the src is a valid URL string
+  const isValidUrl = typeof src === 'string' && src.length > 0 && (
+    src.startsWith('http://') || 
+    src.startsWith('https://') || 
+    src.startsWith('/')
+  );
+
+  // If src is invalid, set error state immediately
+  useEffect(() => {
+    if (!isValidUrl) {
+      setHasError(true);
+      setIsLoading(false);
+      setDebugInfo('Invalid image URL format');
+    }
+  }, [isValidUrl, src]);
 
   // Check if this is a Cloudinary image URL
   const isCloudinaryUrl = typeof src === 'string' && src.includes('res.cloudinary.com');
 
-  // For Cloudinary URLs, apply automatic optimization parameters if not already present
+  // For Cloudinary URLs, fix potential issues and apply optimization parameters
   const optimizedSrc = useMemo(() => {
+    if (!isValidUrl) return '';
     if (!isCloudinaryUrl || !src) return src;
     
-    // Only add parameters if they're not already in the URL
-    if (src.includes('/upload/')) {
-      // Handle different image variants
-      if (src.includes('w_800') || src.includes('medium')) {
-        // For medium images in content grid, use good quality but with loading optimizations
-        return src.replace('/upload/', '/upload/q_auto:good,f_auto,dpr_auto,c_limit/');
-      } else if (src.includes('w_300') || src.includes('thumbnail')) {
-        return src.replace('/upload/', '/upload/q_auto:good,f_auto,dpr_auto/');
+    try {
+      // Fix potentially malformed Cloudinary URL
+      let fixedUrl = fixCloudinaryUrl(src);
+      
+      // Cloud name for debugging
+      const cloudName = getCloudinaryCloudName();
+      
+      // Only add parameters if they're not already in the URL
+      if (fixedUrl.includes('/upload/') && !fixedUrl.includes('q_auto')) {
+        // Handle different image variants
+        if (fixedUrl.includes('w_800') || fixedUrl.includes('medium')) {
+          // For medium images in content grid, use good quality but with loading optimizations
+          fixedUrl = fixedUrl.replace('/upload/', '/upload/q_auto:good,f_auto,dpr_auto,c_limit/');
+        } else if (fixedUrl.includes('w_300') || fixedUrl.includes('thumbnail')) {
+          fixedUrl = fixedUrl.replace('/upload/', '/upload/q_auto:good,f_auto,dpr_auto/');
+        } else {
+          fixedUrl = fixedUrl.replace('/upload/', '/upload/q_auto,f_auto,dpr_auto/');
+        }
       }
-      return src.replace('/upload/', '/upload/q_auto,f_auto,dpr_auto/');
+      
+      // Validation - if cloudName is found but not in the URL, log an issue
+      if (cloudName && !fixedUrl.includes(`res.cloudinary.com/${cloudName}`)) {
+        console.warn(`Cloudinary URL uses different cloud name than configured: ${fixedUrl}`);
+        setDebugInfo(`Cloudinary cloud name mismatch: expected ${cloudName}`);
+      }
+      
+      return fixedUrl;
+    } catch (err) {
+      console.error('Error optimizing Cloudinary URL:', err, src);
+      setDebugInfo(`Cloudinary URL error: ${err}`);
+      return src; // Return original src on error
     }
-    
-    return src;
-  }, [src, isCloudinaryUrl]);
+  }, [src, isCloudinaryUrl, isValidUrl]);
 
   useEffect(() => {
     // Set a small timeout to prevent layout shifts during initial load
@@ -79,6 +117,9 @@ export default function BlurImage({
   const handleError = () => {
     setHasError(true);
     setIsLoading(false);
+    // Set debug info with image URL to help diagnose the issue
+    setDebugInfo(`Failed to load image: ${src?.substring(0, 100)}${isCloudinaryUrl ? ' (Cloudinary)' : ''}`);
+    console.error('Image failed to load:', src);
     if (onError) onError();
   };
 
@@ -90,6 +131,18 @@ export default function BlurImage({
       : 'cover'; // Default to cover
 
   if (hasError) {
+    return (
+      <div className={`relative overflow-hidden ${aspectRatio} bg-gray-100 flex items-center justify-center flex-col`}>
+        <span className="text-gray-500 text-sm">Image unavailable</span>
+        {process.env.NODE_ENV === 'development' && debugInfo && (
+          <span className="text-xs text-red-400 mt-1 px-2 text-center">{debugInfo}</span>
+        )}
+      </div>
+    );
+  }
+
+  // If source is invalid, avoid rendering Image component at all
+  if (!isValidUrl) {
     return (
       <div className={`relative overflow-hidden ${aspectRatio} bg-gray-100 flex items-center justify-center`}>
         <span className="text-gray-500 text-sm">Image unavailable</span>
@@ -123,7 +176,11 @@ export default function BlurImage({
           ${className}
         `}
         style={{ objectFit }}
-        onLoad={() => setIsLoading(false)}
+        onLoad={() => {
+          setIsLoading(false);
+          // Clear any debug info on successful load
+          setDebugInfo(null);
+        }}
         onError={handleError}
         loading={priority ? 'eager' : 'lazy'}
         // Enable next-gen formats like WebP and AVIF

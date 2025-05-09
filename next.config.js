@@ -123,6 +123,10 @@ const nextConfig = {
     
     return config;
   },
+  // Expose Cloudinary environment variables to the browser
+  env: {
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME
+  }
 }
 
 module.exports = nextConfig 

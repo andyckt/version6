@@ -10,10 +10,9 @@ export async function GET(request: Request) {
   }
   
   try {
-    // Fetch the page content
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://yourproductionurl.com' 
-      : 'http://localhost:3000';
+    // Get base URL from the request URL to avoid hardcoding
+    const requestUrl = new URL(request.url);
+    const baseUrl = `${requestUrl.protocol}//${requestUrl.host}`;
     
     const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : url;
     const response = await fetch(fullUrl);

@@ -7,7 +7,30 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Travel Platform',
-  description: 'Discover authentic travel experiences',
+  description: 'Discover authentic travel experiences, find local spots, and share your travel moments',
+  keywords: 'travel, explore, food, attractions, hotel, luxury, drink, accommodation, nightlife, experiences',
+  authors: [{ name: 'Travel Platform Team' }],
+  creator: 'Travel Platform Team',
+  publisher: 'Travel Platform',
+  metadataBase: new URL(process.env.NEXTAUTH_URL || 'https://travel-platform.vercel.app'),
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: '/',
+    title: 'Travel Platform',
+    description: 'Discover authentic travel experiences, find local spots, and share your travel moments',
+    siteName: 'Travel Platform',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Travel Platform',
+    description: 'Discover authentic travel experiences, find local spots, and share your travel moments',
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-icon.png',
+  },
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 }
 
 export default function RootLayout({

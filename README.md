@@ -1,16 +1,17 @@
-# Travel App - Waitlist
+# Travel App Platform
 
-A Next.js application that includes a waitlist page for collecting early user signups.
+A Next.js application for discovering and sharing travel experiences.
 
 ## Features
 
-- Animated waiting list page
-- Username reservation system
-- Email confirmation when users join the waitlist
-- Admin view for waitlist entries
-- Real-time waitlist counter
+- Content feed with travel posts from users
+- Merchant profiles (restaurants, hotels, attractions, shopping venues, bars/clubs)
+- User accounts for sharing travel posts
+- Categories for content filtering
+- MongoDB-based backend with API routes
+- Social features (like, bookmark, and share)
 
-## Setup
+## Local Development
 
 ### Installation
 
@@ -19,58 +20,60 @@ A Next.js application that includes a waitlist page for collecting early user si
 ```bash
 npm install
 ```
-3. Run the development server:
+3. Set up environment variables (copy from `.env.local.example`):
+```bash
+cp .env.local.example .env.local
+```
+4. Run the development server:
 ```bash
 npm run dev
 ```
 
-### Email Configuration
+### Production Build
 
-The waitlist uses Nodemailer to send confirmation emails. You can configure it in two ways:
+To test the production build locally:
 
-#### Option 1: Use Ethereal Email for testing (default)
-
-By default, the application is set to use Ethereal Email, which provides a free testing service that doesn't actually send emails to real addresses but allows you to see what would be sent.
-
-With this configuration, when a user signs up, you'll see a URL in the console that you can click to view the test email.
-
-#### Option 2: Configure a real SMTP server
-
-To send real emails:
-
-1. Create or edit `.env.local` at the root of your project
-2. Configure the following variables:
-
-```
-# Email Configuration
-EMAIL_HOST=smtp.youremailprovider.com
-EMAIL_PORT=587  # Common ports: 587 (TLS) or 465 (SSL)
-EMAIL_USER=your-email@example.com
-EMAIL_PASS=your-email-password  # For Gmail, use an App Password
-EMAIL_FROM="Travel App Team" <noreply@yourdomain.com>
-
-# Set to false to use the above SMTP settings
-USE_TEST_EMAIL=false
+```bash
+npm run build
+npm start
 ```
 
-Common SMTP configurations:
+## Deployment to Vercel
 
-- **Gmail**:
-  - Host: smtp.gmail.com
-  - Port: 587
-  - Require "Less secure app access" or an App Password
+### Prerequisites
 
-- **Outlook/Hotmail**:
-  - Host: smtp.office365.com
-  - Port: 587
+- A MongoDB database (Atlas recommended)
+- Cloudinary account for image hosting
+- Vercel account
 
-- **Yahoo**:
-  - Host: smtp.mail.yahoo.com
-  - Port: 587
+### Steps to Deploy
 
-## Waitlist Data
+1. Push your code to GitHub/GitLab/Bitbucket
+2. Import your project in the Vercel dashboard
+3. Configure environment variables in the Vercel project settings:
+   - `MONGODB_URI`
+   - `MONGODB_DB`
+   - `NEXTAUTH_URL` (set to your deployment URL)
+   - `NEXTAUTH_SECRET`
+   - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
+   - `CLOUDINARY_API_KEY`
+   - `CLOUDINARY_API_SECRET`
+4. Deploy!
 
-The waitlist entries are stored in a `waiting-list.json` file at the root of the project. In a production environment, you would want to replace this with a real database.
+### Using Vercel CLI
+
+You can also deploy directly from the command line:
+
+```bash
+# Install Vercel CLI if you haven't already
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Deploy from your project directory
+vercel
+```
 
 ## License
 

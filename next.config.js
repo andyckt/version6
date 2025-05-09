@@ -55,11 +55,8 @@ const nextConfig = {
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  // Configure API routes to handle large file uploads
-  api: {
-    bodyParser: false, // Disables body parsing, we'll handle it ourselves with formidable
-    responseLimit: '8mb', // Increase the response size limit to handle larger files
-  },
+  // Note: the api config has been removed as it's not valid in Next.js config
+  // Configure body parser in individual API routes instead
   // Add custom headers for static assets
   async headers() {
     return [

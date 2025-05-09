@@ -10,12 +10,12 @@ interface BusinessInfoProps {
 }
 
 export default function BusinessInfo({ businessInfo, merchant, className = '' }: BusinessInfoProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
   // Don't render for HotelMerchant and StreetMerchant types
   if (isHotelMerchant(merchant) || isStreetMerchant(merchant)) {
     return null;
   }
-
-  const [isExpanded, setIsExpanded] = useState(false);
 
   // Toggle expanded state
   const toggleExpanded = () => {

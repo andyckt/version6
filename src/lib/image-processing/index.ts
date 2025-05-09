@@ -134,14 +134,12 @@ async function checkImageQuality(
       { 
         data: origBuffer as any, 
         width, 
-        height, 
-        channels: 4 
+        height
       },
       { 
         data: compBuffer as any, 
         width: compressedImage.info.width, 
-        height: compressedImage.info.height, 
-        channels: 4 
+        height: compressedImage.info.height
       }
     );
     

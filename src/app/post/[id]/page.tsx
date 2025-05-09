@@ -460,18 +460,26 @@ export default function PostDetail({ params }: { params: { id: string } }) {
     });
   };
 
-  // Function to render description with highlighted @mentions
+  // Function to render description with highlighted @mentions while removing hashtags
   // This works with the @mention feature in the post creation form where users can type @ to trigger 
   // a dropdown of accounts to mention in their description. When users type @ followed by a username 
   // and a space, the mention is confirmed and will be rendered as a clickable link by this function.
+  // Hashtags (#tag) are filtered out since they're already displayed in the dedicated hashtags section.
   const renderDescriptionWithMentions = (description: string) => {
     if (!description) return null;
+    
+    // First, remove all hashtags from the text
+    // This regex looks for hashtags and replaces them with empty string
+    const withoutHashtags = description.replace(/#\w+/g, '');
+    
+    // Then trim any extra spaces that might have been created
+    const cleanedDesc = withoutHashtags.replace(/\s+/g, ' ').trim();
     
     // Regular expression to find @mentions
     const mentionRegex = /@(\w+)/g;
     
     // Split the description by @mentions
-    const parts = description.split(mentionRegex);
+    const parts = cleanedDesc.split(mentionRegex);
     
     // Render each part, with links for mentions
     return parts.map((part, index) => {

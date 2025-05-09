@@ -55,6 +55,10 @@ export default function CreatePost() {
   const [descriptionSelectionStart, setDescriptionSelectionStart] = useState<number | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   
+  // For #hashtags in description
+  const [hashtagMode, setHashtagMode] = useState(false);
+  const [hashtagQuery, setHashtagQuery] = useState('');
+  
   // For debouncing account search
   const accountSearchTimeout = useRef<NodeJS.Timeout | null>(null);
   
@@ -247,7 +251,41 @@ export default function CreatePost() {
         setMentionQuery('');
         setMentionSuggestions([]);
       }
-    } else {
+    } 
+    // Check if we should be in hashtag mode
+    else if (hashtagMode) {
+      // Find the # symbol position that started this hashtag
+      const textBeforeCursor = text.substring(0, cursorPosition);
+      const lastHashSymbol = textBeforeCursor.lastIndexOf('#');
+      
+      if (lastHashSymbol >= 0) {
+        // Extract the query from the # symbol to the cursor
+        const query = textBeforeCursor.substring(lastHashSymbol + 1);
+        
+        // If space was pressed, create a hashtag and exit hashtag mode
+        if (query.includes(' ')) {
+          // Extract the hashtag (text between # and space)
+          const newHashtag = query.substring(0, query.indexOf(' '));
+          
+          // Only add if it's a valid hashtag (not empty and not already added)
+          if (newHashtag && newHashtag.trim() && !hashtags.includes(newHashtag)) {
+            setHashtags([...hashtags, newHashtag]);
+          }
+          
+          // Exit hashtag mode
+          setHashtagMode(false);
+          setHashtagQuery('');
+        } else {
+          // Update the hashtag query
+          setHashtagQuery(query);
+        }
+      } else {
+        // If we can't find the # symbol anymore, exit hashtag mode
+        setHashtagMode(false);
+        setHashtagQuery('');
+      }
+    }
+    else {
       // Check if an @ was just typed and it's not inside a word
       const shouldEnterMentionMode = () => {
         if (cursorPosition > 0 && text.charAt(cursorPosition - 1) === '@') {
@@ -259,10 +297,24 @@ export default function CreatePost() {
         return false;
       };
       
+      // Check if a # was just typed and it's not inside a word
+      const shouldEnterHashtagMode = () => {
+        if (cursorPosition > 0 && text.charAt(cursorPosition - 1) === '#') {
+          // Check if the # is at the start of the text or preceded by a space
+          if (cursorPosition === 1 || text.charAt(cursorPosition - 2) === ' ' || text.charAt(cursorPosition - 2) === '\n') {
+            return true;
+          }
+        }
+        return false;
+      };
+      
       if (shouldEnterMentionMode()) {
         setMentionMode(true);
         setMentionQuery('');
         setMentionSuggestions([]); // Clear suggestions until user types something
+      } else if (shouldEnterHashtagMode()) {
+        setHashtagMode(true);
+        setHashtagQuery('');
       }
     }
   };
@@ -368,6 +420,14 @@ export default function CreatePost() {
       return;
     }
     
+    // If in hashtag mode and pressing escape, exit hashtag mode
+    if (hashtagMode && e.key === 'Escape') {
+      e.preventDefault();
+      setHashtagMode(false);
+      setHashtagQuery('');
+      return;
+    }
+    
     // If in mention mode and pressing enter or tab with suggestions, select first suggestion
     if (mentionMode && (e.key === 'Enter' || e.key === 'Tab') && mentionSuggestions.length > 0) {
       e.preventDefault();
@@ -386,6 +446,12 @@ export default function CreatePost() {
         setMentionMode(false);
         setMentionQuery('');
       }
+    }
+    
+    // If in hashtag mode and pressing space, commit the hashtag if not empty
+    if (hashtagMode && e.key === ' ' && hashtagQuery.length > 0) {
+      // Let the handleDescriptionChange function handle this
+      // We don't need to prevent default because we want the space character
     }
   };
   
@@ -509,6 +575,9 @@ export default function CreatePost() {
     // No special processing is needed because the post detail page
     // already has a renderDescriptionWithMentions function that looks for @username patterns
     // and renders them as clickable links to merchant profiles
+    // 
+    // Similarly, hashtags (#tag) in the description are automatically detected
+    // and rendered in a special way on the post detail page
     return text.trim();
   };
   
@@ -882,9 +951,21 @@ export default function CreatePost() {
                       ))}
                     </div>
                   )}
+                  
+                  {/* Hashtag indicator */}
+                  {hashtagMode && hashtagQuery.length > 0 && (
+                    <div className="absolute z-10 mt-2 bg-white border border-gray-200 rounded-lg shadow-sm p-2">
+                      <div className="px-3 py-2 bg-blue-50 rounded-lg">
+                        <p className="text-sm font-medium text-blue-700">
+                          Adding hashtag: <span className="bg-blue-100 px-2 py-0.5 rounded">#{hashtagQuery}</span>
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">Press Space to add this hashtag</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  Tip: Type @ to mention users or merchants in your description
+                  Tip: Type @ to mention users or merchants. Type # to add hashtags.
                 </p>
               </div>
               
@@ -904,40 +985,13 @@ export default function CreatePost() {
                 />
               </div>
               
-              {/* Hashtags section */}
-              <div className="mb-6">
-                <label htmlFor="hashtags" className="block text-sm font-medium text-gray-700 mb-1">
-                  Hashtags
-                </label>
-                
-                <div className="flex">
-                  <div className="flex-grow">
-                    <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-600 focus-within:border-transparent">
-                      <span className="text-gray-500 mr-1">#</span>
-                      <input
-                        type="text"
-                        id="hashtags"
-                        placeholder="Add hashtags"
-                        className="flex-grow border-none focus:outline-none focus:ring-0 p-1"
-                        value={hashtagInput}
-                        onChange={(e) => setHashtagInput(e.target.value.replace(/\s+/g, ''))}
-                        onKeyDown={handleHashtagKeyDown}
-                        disabled={isProcessing || isPublishing || isSavingDraft}
-                      />
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="ml-2 px-3 py-2 bg-gray-200 text-gray-800 rounded-lg transition-colors hover:bg-gray-300 disabled:opacity-50"
-                    onClick={addHashtag}
-                    disabled={!hashtagInput.trim() || hashtags.includes(hashtagInput.trim()) || isProcessing || isPublishing || isSavingDraft}
-                  >
-                    Add
-                  </button>
-                </div>
-                
-                {hashtags.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
+              {/* Display hashtags from description */}
+              {hashtags.length > 0 && (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Hashtags from Description
+                  </label>
+                  <div className="flex flex-wrap gap-2">
                     {hashtags.map((tag, index) => (
                       <span key={index} className="inline-flex items-center px-2 py-1 rounded-md text-sm bg-blue-100 text-blue-800">
                         #{tag}
@@ -952,8 +1006,8 @@ export default function CreatePost() {
                       </span>
                     ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
               
               {/* Tagged Accounts section */}
               <div className="mb-6">

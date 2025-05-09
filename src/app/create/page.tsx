@@ -48,6 +48,13 @@ export default function CreatePost() {
   const [suggestedAccounts, setSuggestedAccounts] = useState<{username: string, displayName: string, profileImage?: string, accountType?: string}[]>([]);
   const [accountSearchType, setAccountSearchType] = useState<'users' | 'merchants'>('merchants');
   
+  // For @mentions in description
+  const [mentionMode, setMentionMode] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState('');
+  const [mentionSuggestions, setMentionSuggestions] = useState<{username: string, displayName: string, profileImage?: string, accountType?: string}[]>([]);
+  const [descriptionSelectionStart, setDescriptionSelectionStart] = useState<number | null>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  
   // For debouncing account search
   const accountSearchTimeout = useRef<NodeJS.Timeout | null>(null);
   
@@ -200,6 +207,188 @@ export default function CreatePost() {
     setTaggedAccounts(taggedAccounts.filter(a => a.username !== username));
   };
   
+  // Handle mention detection in description
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const text = e.target.value;
+    setDescription(text);
+    
+    // Get cursor position
+    const cursorPosition = e.target.selectionStart;
+    setDescriptionSelectionStart(cursorPosition);
+    
+    // Check if we should be in mention mode
+    if (mentionMode) {
+      // Find the @ symbol position that started this mention
+      const textBeforeCursor = text.substring(0, cursorPosition);
+      const lastAtSymbol = textBeforeCursor.lastIndexOf('@');
+      
+      if (lastAtSymbol >= 0) {
+        // Extract the query from the @ symbol to the cursor
+        const query = textBeforeCursor.substring(lastAtSymbol + 1);
+        
+        // If space was pressed, exit mention mode
+        if (query.includes(' ')) {
+          setMentionMode(false);
+          setMentionQuery('');
+          setMentionSuggestions([]);
+        } else {
+          setMentionQuery(query);
+          
+          // Search for matching accounts if query is not empty
+          if (query.length > 0) {
+            searchMentions(query);
+          } else {
+            setMentionSuggestions([]);
+          }
+        }
+      } else {
+        // If we can't find the @ symbol anymore, exit mention mode
+        setMentionMode(false);
+        setMentionQuery('');
+        setMentionSuggestions([]);
+      }
+    } else {
+      // Check if an @ was just typed and it's not inside a word
+      const shouldEnterMentionMode = () => {
+        if (cursorPosition > 0 && text.charAt(cursorPosition - 1) === '@') {
+          // Check if the @ is at the start of the text or preceded by a space
+          if (cursorPosition === 1 || text.charAt(cursorPosition - 2) === ' ' || text.charAt(cursorPosition - 2) === '\n') {
+            return true;
+          }
+        }
+        return false;
+      };
+      
+      if (shouldEnterMentionMode()) {
+        setMentionMode(true);
+        setMentionQuery('');
+        setMentionSuggestions([]); // Clear suggestions until user types something
+      }
+    }
+  };
+  
+  // Search for accounts that match mention query
+  const searchMentions = async (query: string) => {
+    if (!query || query.length < 1) {
+      setMentionSuggestions([]);
+      return;
+    }
+    
+    try {
+      // First check for merchants, then users (prioritize merchants)
+      const merchantEndpoint = `/api/merchants/search?q=${encodeURIComponent(query)}`;
+      const merchantResponse = await fetch(merchantEndpoint);
+      
+      if (merchantResponse.ok) {
+        const data = await merchantResponse.json();
+        
+        // Map merchant data to a consistent format
+        const merchantSuggestions = data.merchants.map((merchant: any) => ({
+          username: merchant.username,
+          displayName: merchant.displayName,
+          accountType: merchant.accountType || 'merchant'
+        }));
+        
+        // Only fetch users if we don't have enough merchant results
+        if (merchantSuggestions.length < 5) {
+          const userEndpoint = `/api/users/search?q=${encodeURIComponent(query)}`;
+          const userResponse = await fetch(userEndpoint);
+          
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            
+            // Map user data to a consistent format
+            const userSuggestions = userData.users.map((user: any) => ({
+              username: user.username,
+              displayName: user.displayName,
+              profileImage: user.profileImage,
+              accountType: 'user'
+            }));
+            
+            // Combine merchants and users, but prioritize merchants
+            setMentionSuggestions([...merchantSuggestions, ...userSuggestions].slice(0, 5));
+          } else {
+            setMentionSuggestions(merchantSuggestions);
+          }
+        } else {
+          setMentionSuggestions(merchantSuggestions.slice(0, 5));
+        }
+      }
+    } catch (error) {
+      console.error('Error searching for mentions:', error);
+    }
+  };
+  
+  // Insert mention into description
+  const insertMention = (username: string) => {
+    if (!descriptionRef.current || descriptionSelectionStart === null) return;
+    
+    const text = description;
+    const cursorPosition = descriptionSelectionStart;
+    
+    // Find the position of the @ symbol that started this mention
+    const textBeforeCursor = text.substring(0, cursorPosition);
+    const lastAtSymbol = textBeforeCursor.lastIndexOf('@');
+    
+    if (lastAtSymbol >= 0) {
+      // Replace the @query with @username
+      const newText = 
+        text.substring(0, lastAtSymbol) + 
+        '@' + username + ' ' + 
+        text.substring(cursorPosition);
+      
+      setDescription(newText);
+      
+      // Calculate new cursor position (after the inserted username and space)
+      const newPosition = lastAtSymbol + username.length + 2; // +2 for @ and space
+      
+      // Focus and set cursor position after render
+      setTimeout(() => {
+        if (descriptionRef.current) {
+          descriptionRef.current.focus();
+          descriptionRef.current.setSelectionRange(newPosition, newPosition);
+        }
+      }, 0);
+    }
+    
+    // Exit mention mode
+    setMentionMode(false);
+    setMentionQuery('');
+    setMentionSuggestions([]);
+  };
+  
+  // Handle description key events
+  const handleDescriptionKeyDown = (e: React.KeyboardEvent) => {
+    // If in mention mode and pressing escape, exit mention mode
+    if (mentionMode && e.key === 'Escape') {
+      e.preventDefault();
+      setMentionMode(false);
+      setMentionQuery('');
+      setMentionSuggestions([]);
+      return;
+    }
+    
+    // If in mention mode and pressing enter or tab with suggestions, select first suggestion
+    if (mentionMode && (e.key === 'Enter' || e.key === 'Tab') && mentionSuggestions.length > 0) {
+      e.preventDefault();
+      insertMention(mentionSuggestions[0].username);
+      return;
+    }
+    
+    // If in mention mode and pressing space with a valid mention query, commit the mention
+    if (mentionMode && e.key === ' ' && mentionQuery.length > 0) {
+      // Only prevent default if we have suggestions to commit
+      if (mentionSuggestions.length > 0) {
+        e.preventDefault();
+        insertMention(mentionSuggestions[0].username);
+      } else {
+        // If no suggestions, just exit mention mode
+        setMentionMode(false);
+        setMentionQuery('');
+      }
+    }
+  };
+  
   // Handle hashtag input key press
   const handleHashtagKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ',') {
@@ -236,6 +425,10 @@ export default function CreatePost() {
       setIsPublishing(true);
     }
     
+    // Processing description to identify mentioned accounts
+    // These will be rendered as links when displayed in posts
+    const processedDescription = processMentionsInDescription(description);
+    
     // Extract media IDs from uploaded media
     const mediaItems = uploadedMedia.map((media, index) => ({
       mediaId: media.id,
@@ -250,7 +443,7 @@ export default function CreatePost() {
     const postData = {
       userId: selectedUserId,
       title: title.trim(),
-      description: description.trim(),
+      description: processedDescription,
       location: location.trim(),
       hashtags: hashtags,
       taggedAccounts: taggedAccounts,
@@ -310,7 +503,15 @@ export default function CreatePost() {
       }
     }
   };
-
+  
+  // Process mentions in description to mark them for rendering as links
+  const processMentionsInDescription = (text: string): string => {
+    // No special processing is needed because the post detail page
+    // already has a renderDescriptionWithMentions function that looks for @username patterns
+    // and renders them as clickable links to merchant profiles
+    return text.trim();
+  };
+  
   // Handle back button/navigation
   const handleBack = () => {
     if (currentStep === 'media') {
@@ -635,17 +836,55 @@ export default function CreatePost() {
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
                   Description
                 </label>
-                <textarea
-                  id="description"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                  placeholder="Write a description for your post"
-                  rows={4}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  disabled={isProcessing || isPublishing || isSavingDraft}
-                />
+                <div className="relative">
+                  <textarea
+                    id="description"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    placeholder="Write a description for your post"
+                    rows={4}
+                    value={description}
+                    onChange={handleDescriptionChange}
+                    onKeyDown={handleDescriptionKeyDown}
+                    disabled={isProcessing || isPublishing || isSavingDraft}
+                    ref={descriptionRef}
+                  />
+                  
+                  {/* Mention suggestions */}
+                  {mentionMode && mentionSuggestions.length > 0 && (
+                    <div className="absolute z-10 mt-2 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden max-h-48 overflow-y-auto w-64">
+                      {mentionSuggestions.map(account => (
+                        <div
+                          key={account.username}
+                          className="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center"
+                          onClick={() => insertMention(account.username)}
+                        >
+                          <div className="w-8 h-8 bg-gray-200 rounded-full flex-shrink-0 mr-2 overflow-hidden">
+                            {account.profileImage ? (
+                              <img 
+                                src={account.profileImage} 
+                                alt={account.displayName || account.username}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600">
+                                {account.username.charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">{account.displayName || account.username}</p>
+                            <p className="text-xs text-gray-500">@{account.username}</p>
+                          </div>
+                          <div className="ml-auto px-2 py-0.5 bg-gray-100 rounded-full text-xs text-gray-600">
+                            {account.accountType || 'User'}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  Tip: Use @username to tag accounts in your description
+                  Tip: Type @ to mention users or merchants in your description
                 </p>
               </div>
               

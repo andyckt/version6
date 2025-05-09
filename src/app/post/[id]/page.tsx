@@ -462,6 +462,9 @@ export default function PostDetail({ params }: { params: { id: string } }) {
 
   // Function to render description with highlighted @mentions - all mentions are clickable
   // regardless of whether they're in taggedAccounts
+  // This works with the @mention feature in the post creation form where users can type @ to trigger 
+  // a dropdown of accounts to mention in their description. When users type @ followed by a username 
+  // and a space, the mention is confirmed and will be rendered as a clickable link by this function.
   const renderDescriptionWithMentions = (description: string) => {
     if (!description) return null;
     

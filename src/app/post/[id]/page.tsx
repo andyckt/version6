@@ -15,21 +15,6 @@ import ShareDialog from '@/components/ShareDialog'
 import { MerchantDataProvider } from '@/components/providers/MerchantDataProvider'
 import TaggedAccountCard from '@/components/TaggedAccountCard'
 
-// Define custom animations for the hashtags
-const animationStyles = `
-  @keyframes pulse-slow {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.8;
-    }
-  }
-  .animate-pulse-slow {
-    animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-`;
-
 // Define MediaVariant interface for extended media items
 interface MediaVariant {
   url: string;
@@ -475,17 +460,21 @@ export default function PostDetail({ params }: { params: { id: string } }) {
     });
   };
 
-  // Function to render description with highlighted @mentions and #hashtags
-  // This renders both mentions and hashtags in a visually appealing way
+  // Function to render description with highlighted @mentions
+  // This works with the @mention feature in the post creation form where users can type @ to trigger 
+  // a dropdown of accounts to mention in their description. When users type @ followed by a username 
+  // and a space, the mention is confirmed and will be rendered as a clickable link by this function.
   const renderDescriptionWithMentions = (description: string) => {
     if (!description) return null;
     
-    // First, handle @mentions
+    // Regular expression to find @mentions
     const mentionRegex = /@(\w+)/g;
-    let parts = description.split(mentionRegex);
     
-    // Process the parts to render @mentions as links
-    const mentionProcessedParts = parts.map((part, index) => {
+    // Split the description by @mentions
+    const parts = description.split(mentionRegex);
+    
+    // Render each part, with links for mentions
+    return parts.map((part, index) => {
       // Even indices are normal text, odd indices are potential usernames
       if (index % 2 === 0) {
         return part;
@@ -502,50 +491,11 @@ export default function PostDetail({ params }: { params: { id: string } }) {
         );
       }
     });
-    
-    // Now combine the processed parts back into a single string-like array
-    const combinedContent: React.ReactNode[] = [];
-    
-    // Process each part for hashtags
-    mentionProcessedParts.forEach((part, index) => {
-      if (typeof part === 'string') {
-        // Process hashtags in text parts
-        const hashtagRegex = /#(\w+)/g;
-        const textParts = part.split(hashtagRegex);
-        
-        textParts.forEach((textPart, textIndex) => {
-          if (textIndex % 2 === 0) {
-            // Regular text
-            combinedContent.push(textPart);
-          } else {
-            // This is a hashtag - make it interactive
-            combinedContent.push(
-              <span 
-                key={`hashtag-${index}-${textIndex}`}
-                className="inline-block animate-pulse-slow bg-gradient-to-r from-purple-500 to-blue-500 text-white px-2 py-0.5 rounded-full text-sm font-medium mx-0.5 cursor-pointer hover:scale-110 transition-transform"
-                onClick={() => alert(`Search for #${textPart}`)}
-                title={`See posts with #${textPart}`}
-              >
-                #{textPart}
-              </span>
-            );
-          }
-        });
-      } else {
-        // This is a React element (mention), add it directly
-        combinedContent.push(part);
-      }
-    });
-    
-    return combinedContent;
   };
 
   return (
     <MerchantDataProvider>
       <main className="pb-12 bg-white min-h-screen">
-        {/* Custom animation styles */}
-        <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
-        
         {/* Header */}
         <header 
           className={`sticky top-0 z-20 border-b border-gray-100 transition-all duration-200 

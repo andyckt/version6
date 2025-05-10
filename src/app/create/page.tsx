@@ -777,6 +777,43 @@ export default function CreatePost() {
     };
   }, [uploadedMedia, title, description]);
   
+  // Define predefined hashtags
+  const predefinedHashtags = [
+    'superpicture',
+    'food',
+    'attraction',
+    'luxury',
+    'getdrunk',
+    'accommodation',
+    'treasurehunt',
+    'korea'
+  ];
+
+  // Handle adding or removing a predefined hashtag
+  const addPredefinedHashtag = (tag: string) => {
+    if (hashtags.includes(tag)) {
+      // Remove hashtag if already selected
+      setHashtags(hashtags.filter(t => t !== tag));
+      
+      // Remove hashtag from description if it exists
+      const hashtagPattern = new RegExp(`\\s?#${tag}\\s?`, 'g');
+      setDescription(description.replace(hashtagPattern, ' ').replace(/\s+/g, ' ').trim());
+    } else {
+      // Add hashtag if not already selected
+      setHashtags([...hashtags, tag]);
+      
+      // Also append to description if not already there
+      if (!description.includes(`#${tag}`)) {
+        // Add a space before the hashtag if description doesn't end with space or newline
+        const spacer = description.length > 0 && 
+                      !description.endsWith(' ') && 
+                      !description.endsWith('\n') ? ' ' : '';
+        
+        setDescription(description + spacer + `#${tag} `);
+      }
+    }
+  };
+
   return (
     <main className="min-h-screen bg-white">
       {/* Header */}
@@ -1080,6 +1117,50 @@ export default function CreatePost() {
                     disabled={isProcessing || isPublishing || isSavingDraft}
                     ref={descriptionRef}
                   />
+                  
+                  {/* Predefined Hashtags */}
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500 mb-2">Select from popular hashtags:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {/* First row - 4 hashtags */}
+                      <div className="flex flex-wrap gap-2 mb-2 w-full">
+                        {predefinedHashtags.slice(0, 4).map(tag => (
+                          <button
+                            key={tag}
+                            type="button"
+                            onClick={() => addPredefinedHashtag(tag)}
+                            disabled={isProcessing || isPublishing || isSavingDraft}
+                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                              hashtags.includes(tag)
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                            }`}
+                          >
+                            #{tag}
+                          </button>
+                        ))}
+                      </div>
+                      
+                      {/* Second row - 3 hashtags */}
+                      <div className="flex flex-wrap gap-2 w-full">
+                        {predefinedHashtags.slice(4).map(tag => (
+                          <button
+                            key={tag}
+                            type="button"
+                            onClick={() => addPredefinedHashtag(tag)}
+                            disabled={isProcessing || isPublishing || isSavingDraft}
+                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                              hashtags.includes(tag)
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                            }`}
+                          >
+                            #{tag}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                   
                   {/* Mention suggestions */}
                   {mentionMode && mentionSuggestions.length > 0 && (

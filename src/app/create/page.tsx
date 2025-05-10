@@ -28,9 +28,14 @@ export default function CreatePost() {
   const [uploadStatus, setUploadStatus] = useState('');
   
   // User selection
-  const [users, setUsers] = useState<{_id: string, username: string, displayName: string, profileImage?: string}[]>([]);
-  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [users, setUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState('');
+  const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+  const userSearchTimeout = useRef<NodeJS.Timeout | null>(null);
   
   // Form data state
   const [title, setTitle] = useState('');
@@ -657,6 +662,7 @@ export default function CreatePost() {
         if (response.ok) {
           const data = await response.json();
           setUsers(data.users);
+          setFilteredUsers(data.users);
           // Set the first user as default if available
           if (data.users.length > 0) {
             setSelectedUserId(data.users[0]._id);
@@ -674,6 +680,85 @@ export default function CreatePost() {
     fetchUsers();
   }, []);
 
+  // Filter users based on search query with debouncing
+  useEffect(() => {
+    if (userSearchTimeout.current) {
+      clearTimeout(userSearchTimeout.current);
+    }
+    
+    userSearchTimeout.current = setTimeout(async () => {
+      if (!userSearchQuery.trim()) {
+        // If query is empty, restore original users
+        setFilteredUsers(users);
+        return;
+      }
+      
+      // If query is very short, filter locally
+      if (userSearchQuery.length < 2) {
+        const query = userSearchQuery.toLowerCase();
+        const filtered = users.filter(user => 
+          user.username.toLowerCase().includes(query) || 
+          user.displayName.toLowerCase().includes(query)
+        );
+        setFilteredUsers(filtered);
+        return;
+      }
+      
+      // For longer queries, search from API
+      try {
+        setLoadingUsers(true);
+        const response = await fetch(`/api/users/search?q=${encodeURIComponent(userSearchQuery)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setFilteredUsers(data.users || []);
+        } else {
+          console.error('Error searching users');
+          // Fall back to local filtering on error
+          const query = userSearchQuery.toLowerCase();
+          const filtered = users.filter(user => 
+            user.username.toLowerCase().includes(query) || 
+            user.displayName.toLowerCase().includes(query)
+          );
+          setFilteredUsers(filtered);
+        }
+      } catch (error) {
+        console.error('Error searching users:', error);
+        // Fall back to local filtering on error
+        const query = userSearchQuery.toLowerCase();
+        const filtered = users.filter(user => 
+          user.username.toLowerCase().includes(query) || 
+          user.displayName.toLowerCase().includes(query)
+        );
+        setFilteredUsers(filtered);
+      } finally {
+        setLoadingUsers(false);
+      }
+    }, 300);
+    
+    return () => {
+      if (userSearchTimeout.current) {
+        clearTimeout(userSearchTimeout.current);
+      }
+    };
+  }, [userSearchQuery, users]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Get selected user details
+  const selectedUser = users.find(user => user._id === selectedUserId);
+  
   // Handle browser back button
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -828,34 +913,112 @@ export default function CreatePost() {
                 </div>
               )}
               
-              {/* User selection */}
-              <div className="mb-6">
-                <label htmlFor="userSelect" className="block text-sm font-medium text-gray-700 mb-1">
+              {/* User selection - Searchable dropdown */}
+              <div className="mb-6" ref={userDropdownRef}>
+                <label htmlFor="userSearch" className="block text-sm font-medium text-gray-700 mb-1">
                   Post as *
                 </label>
-                <select
-                  id="userSelect"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                  value={selectedUserId}
-                  onChange={(e) => setSelectedUserId(e.target.value)}
-                  disabled={loadingUsers || isProcessing || isPublishing || isSavingDraft}
-                  required
-                >
-                  {loadingUsers ? (
-                    <option value="">Loading users...</option>
-                  ) : users.length === 0 ? (
-                    <option value="">No users available</option>
-                  ) : (
-                    <>
-                      <option value="">Select a user</option>
-                      {users.map(user => (
-                        <option key={user._id} value={user._id}>
-                          {user.displayName} (@{user.username})
-                        </option>
-                      ))}
-                    </>
+                <div className="relative">
+                  {/* Display selected user or placeholder */}
+                  <div 
+                    className="w-full p-3 border border-gray-300 rounded-lg flex items-center justify-between cursor-pointer bg-white"
+                    onClick={() => !loadingUsers && !isProcessing && !isPublishing && !isSavingDraft && setIsUserDropdownOpen(!isUserDropdownOpen)}
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      {selectedUser ? (
+                        <>
+                          {selectedUser.profileImage && (
+                            <img 
+                              src={selectedUser.profileImage} 
+                              alt={selectedUser.displayName} 
+                              className="w-6 h-6 rounded-full object-cover"
+                            />
+                          )}
+                          <span>
+                            {selectedUser.displayName} (@{selectedUser.username})
+                          </span>
+                        </>
+                      ) : loadingUsers ? (
+                        <span className="text-gray-500">Loading users...</span>
+                      ) : (
+                        <span className="text-gray-500">Select a user</span>
+                      )}
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  
+                  {/* Dropdown menu */}
+                  {isUserDropdownOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                      {/* Search input */}
+                      <div className="p-2 border-b border-gray-200">
+                        <div className="relative">
+                          <input
+                            type="text"
+                            className="w-full p-2 pl-8 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                            placeholder="Search users..."
+                            value={userSearchQuery}
+                            onChange={(e) => setUserSearchQuery(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                            autoFocus
+                          />
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 absolute left-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
+                          {loadingUsers && userSearchQuery.length >= 2 && (
+                            <svg className="animate-spin h-4 w-4 text-blue-500 absolute right-3 top-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* User list */}
+                      <div className="py-1">
+                        {loadingUsers ? (
+                          <div className="px-4 py-2 text-gray-500">Loading users...</div>
+                        ) : filteredUsers.length === 0 ? (
+                          <div className="px-4 py-2 text-gray-500">No users found</div>
+                        ) : (
+                          filteredUsers.map((user) => (
+                            <div
+                              key={user._id}
+                              className={`px-4 py-2 cursor-pointer flex items-center gap-2 hover:bg-gray-100 ${user._id === selectedUserId ? 'bg-blue-50' : ''}`}
+                              onClick={() => {
+                                setSelectedUserId(user._id);
+                                setIsUserDropdownOpen(false);
+                                setUserSearchQuery('');
+                              }}
+                            >
+                              {user.profileImage && (
+                                <img 
+                                  src={user.profileImage} 
+                                  alt={user.displayName} 
+                                  className="w-6 h-6 rounded-full object-cover"
+                                />
+                              )}
+                              <div>
+                                <div className="font-medium">{user.displayName}</div>
+                                <div className="text-xs text-gray-500">@{user.username}</div>
+                              </div>
+                              {user.verified && (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
                   )}
-                </select>
+                </div>
+                {!selectedUserId && (
+                  <p className="mt-1 text-sm text-red-600">Please select a user to post as</p>
+                )}
               </div>
 
               {/* Media preview if available */}

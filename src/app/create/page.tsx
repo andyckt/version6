@@ -837,14 +837,14 @@ export default function CreatePost() {
                 <button
                   className="px-4 py-1.5 bg-gray-200 text-gray-800 rounded-full text-sm font-medium transition-colors hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={(e) => handleSubmit(e, true)}
-                  disabled={!title.trim() || !selectedUserId || !uploadedMedia.length || isProcessing || isExiting || isSavingDraft || isPublishing}
+                  disabled={!title.trim() || !selectedUserId || !uploadedMedia.length || isExiting || isSavingDraft || isPublishing}
                 >
                   {isSavingDraft ? 'Saving...' : 'Save Draft'}
                 </button>
                 <button
                   className="px-4 py-1.5 bg-blue-600 text-white rounded-full text-sm font-medium transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={(e) => handleSubmit(e, false)}
-                  disabled={!title.trim() || !selectedUserId || !uploadedMedia.length || isProcessing || isExiting || isSavingDraft || isPublishing}
+                  disabled={!title.trim() || !selectedUserId || !uploadedMedia.length || isExiting || isSavingDraft || isPublishing}
                 >
                   {isPublishing ? 'Publishing...' : 'Publish Post'}
                 </button>
@@ -959,7 +959,7 @@ export default function CreatePost() {
                   {/* Display selected user or placeholder */}
                   <div 
                     className="w-full p-3 border border-gray-300 rounded-lg flex items-center justify-between cursor-pointer bg-white"
-                    onClick={() => !loadingUsers && !isProcessing && !isPublishing && !isSavingDraft && setIsUserDropdownOpen(!isUserDropdownOpen)}
+                    onClick={() => !loadingUsers && !isPublishing && !isSavingDraft && setIsUserDropdownOpen(!isUserDropdownOpen)}
                   >
                     <div className="flex items-center gap-2 overflow-hidden">
                       {selectedUser ? (
@@ -1092,10 +1092,10 @@ export default function CreatePost() {
                   type="text"
                   id="title"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                  placeholder="Add a title for your post"
+                  placeholder="Add a title to your post"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  disabled={isProcessing || isPublishing || isSavingDraft}
+                  disabled={isPublishing || isSavingDraft}
                   required
                 />
               </div>
@@ -1114,7 +1114,7 @@ export default function CreatePost() {
                     value={description}
                     onChange={handleDescriptionChange}
                     onKeyDown={handleDescriptionKeyDown}
-                    disabled={isProcessing || isPublishing || isSavingDraft}
+                    disabled={isPublishing || isSavingDraft}
                     ref={descriptionRef}
                   />
                   
@@ -1129,7 +1129,7 @@ export default function CreatePost() {
                             key={tag}
                             type="button"
                             onClick={() => addPredefinedHashtag(tag)}
-                            disabled={isProcessing || isPublishing || isSavingDraft}
+                            disabled={isPublishing || isSavingDraft}
                             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                               hashtags.includes(tag)
                                 ? 'bg-blue-500 text-white'
@@ -1148,7 +1148,7 @@ export default function CreatePost() {
                             key={tag}
                             type="button"
                             onClick={() => addPredefinedHashtag(tag)}
-                            disabled={isProcessing || isPublishing || isSavingDraft}
+                            disabled={isPublishing || isSavingDraft}
                             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                               hashtags.includes(tag)
                                 ? 'bg-blue-500 text-white'
@@ -1225,7 +1225,7 @@ export default function CreatePost() {
                   placeholder="Add a location"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  disabled={isProcessing || isPublishing || isSavingDraft}
+                  disabled={isPublishing || isSavingDraft}
                 />
               </div>
               
@@ -1243,7 +1243,7 @@ export default function CreatePost() {
                           type="button"
                           className="ml-1 text-blue-600 hover:text-blue-800"
                           onClick={() => removeHashtag(index)}
-                          disabled={isProcessing || isPublishing || isSavingDraft}
+                          disabled={isPublishing || isSavingDraft}
                         >
                           &times;
                         </button>
@@ -1295,7 +1295,7 @@ export default function CreatePost() {
                         className="flex-grow border-none focus:outline-none focus:ring-0 p-1"
                         value={accountInput}
                         onChange={(e) => setAccountInput(e.target.value)}
-                        disabled={isProcessing || isPublishing || isSavingDraft}
+                        disabled={isPublishing || isSavingDraft}
                       />
                     </div>
                   </div>
@@ -1306,7 +1306,7 @@ export default function CreatePost() {
                       type="button"
                       className="ml-2 px-4 py-1.5 bg-gray-200 text-gray-800 rounded-full text-sm font-medium transition-colors hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={() => searchAccounts(accountInput)}
-                      disabled={!accountInput || isProcessing || isPublishing || isSavingDraft}
+                      disabled={!accountInput || isPublishing || isSavingDraft}
                     >
                       Search
                     </button>
@@ -1357,7 +1357,7 @@ export default function CreatePost() {
                           type="button"
                           className="ml-1 text-blue-600 hover:text-blue-800"
                           onClick={() => removeTaggedAccount(account.username)}
-                          disabled={isProcessing || isPublishing || isSavingDraft}
+                          disabled={isPublishing || isSavingDraft}
                         >
                           &times;
                         </button>

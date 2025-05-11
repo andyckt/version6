@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FiArrowLeft, FiLoader, FiCheck } from 'react-icons/fi';
+import { FiArrowLeft, FiLoader, FiCheck, FiX } from 'react-icons/fi';
 import MediaUploader, { UploadedMedia } from '@/components/MediaUploader';
 
 // Define step types
@@ -109,6 +109,36 @@ export default function CreatePost() {
   // Handle when media upload starts
   const handleMediaUploadStart = () => {
     setIsUploading(true);
+  };
+  
+  // Handle removing an uploaded media item
+  const handleRemoveMedia = async (index: number) => {
+    // Get the media item to be removed
+    const mediaToRemove = uploadedMedia[index];
+    
+    // Remove from state first for immediate UI update
+    const updatedMedia = [...uploadedMedia];
+    updatedMedia.splice(index, 1);
+    setUploadedMedia(updatedMedia);
+    
+    // Delete the media from the server
+    try {
+      const response = await fetch('/api/media/cleanup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          mediaIds: [mediaToRemove.id]
+        })
+      });
+      
+      if (!response.ok) {
+        console.warn('Failed to delete media from server:', mediaToRemove.id);
+      }
+    } catch (error) {
+      console.error('Error deleting media:', error);
+    }
   };
   
   // Simulate background processing of media while user fills out form
@@ -1077,6 +1107,16 @@ export default function CreatePost() {
                             Cover
                           </div>
                         )}
+                        {/* Add delete button */}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveMedia(index)}
+                          disabled={isPublishing || isSavingDraft}
+                          className="absolute top-1 right-1 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-1 text-white transition-opacity"
+                          aria-label="Remove media"
+                        >
+                          <FiX className="w-4 h-4" />
+                        </button>
                       </div>
                     ))}
                   </div>

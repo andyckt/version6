@@ -468,37 +468,73 @@ export default function PostDetail({ params }: { params: { id: string } }) {
   const renderDescriptionWithMentions = (description: string) => {
     if (!description) return null;
     
-    // First, remove all hashtags from the text
-    // This regex looks for hashtags and replaces them with empty string
-    const withoutHashtags = description.replace(/#\w+/g, '');
+    // Process the hashtags but keep them in the text
+    // We'll just highlight them rather than removing them
     
-    // Then trim any extra spaces that might have been created
-    const cleanedDesc = withoutHashtags.replace(/\s+/g, ' ').trim();
+    // Split by line breaks to preserve paragraphs
+    const paragraphs = description.split(/\n+/);
     
-    // Regular expression to find @mentions
-    const mentionRegex = /@(\w+)/g;
-    
-    // Split the description by @mentions
-    const parts = cleanedDesc.split(mentionRegex);
-    
-    // Render each part, with links for mentions
-    return parts.map((part, index) => {
-      // Even indices are normal text, odd indices are potential usernames
-      if (index % 2 === 0) {
-        return part;
-      } else {
-        // All @mentions are clickable
-        return (
-          <Link 
-            key={`mention-${index}`}
-            href={`/merchant/${part}`}
-            className="font-medium text-primary hover:underline"
-          >
-            @{part}
-          </Link>
-        );
-      }
-    });
+    return (
+      <>
+        {paragraphs.map((paragraph, paragraphIndex) => {
+          // Skip empty paragraphs
+          if (!paragraph.trim()) return <br key={`p-${paragraphIndex}`} />;
+          
+          // Regular expression to find @mentions
+          const mentionRegex = /@(\w+)/g;
+          
+          // Regular expression to find #hashtags
+          const hashtagRegex = /#(\w+)/g;
+          
+          // First process mentions
+          let parts = paragraph.split(mentionRegex);
+          
+          const processedParts = parts.map((part, index) => {
+            // Even indices are normal text, odd indices are potential usernames
+            if (index % 2 === 0) {
+              // Process hashtags in regular text
+              if (part.includes('#')) {
+                const hashtagParts = part.split(hashtagRegex);
+                return hashtagParts.map((hashtagPart, hIndex) => {
+                  if (hIndex % 2 === 0) {
+                    return hashtagPart;
+                  } else {
+                    // This is a hashtag
+                    return (
+                      <span 
+                        key={`hashtag-${paragraphIndex}-${index}-${hIndex}`}
+                        className="text-primary font-medium"
+                      >
+                        #{hashtagPart}
+                      </span>
+                    );
+                  }
+                });
+              }
+              return part;
+            } else {
+              // This is a mention
+              return (
+                <Link 
+                  key={`mention-${paragraphIndex}-${index}`}
+                  href={`/merchant/${part}`}
+                  className="font-medium text-primary hover:underline"
+                >
+                  @{part}
+                </Link>
+              );
+            }
+          });
+          
+          // Return paragraph with processed content and add proper margin between paragraphs
+          return (
+            <p key={`paragraph-${paragraphIndex}`} className={paragraphIndex > 0 ? 'mt-4' : ''}>
+              {processedParts}
+            </p>
+          );
+        })}
+      </>
+    );
   };
 
   return (

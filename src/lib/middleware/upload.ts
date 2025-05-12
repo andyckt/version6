@@ -128,7 +128,14 @@ async function parseForm(req: NextRequest, uploadDir: string) {
     if (value instanceof File) {
       // Handle file entry
       const buffer = Buffer.from(await value.arrayBuffer());
-      const filename = `${Date.now()}-${value.name}`;
+      
+      // Use a more deterministic filename to avoid conflicts
+      // Format: timestamp-originalName-randomId
+      const timestamp = Date.now();
+      const randomId = Math.random().toString(36).substring(2, 10);
+      const safeOriginalName = value.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const filename = `${timestamp}-${safeOriginalName}-${randomId}`;
+      
       const filepath = join(uploadDir, filename);
       
       // Write the file to disk
@@ -153,6 +160,8 @@ async function parseForm(req: NextRequest, uploadDir: string) {
       } else {
         files[key] = [file];
       }
+      
+      console.log(`Uploaded file ${value.name} → ${filename} (${value.size} bytes)`);
     } else {
       // Handle regular field
       fields[key] = value.toString();

@@ -111,14 +111,25 @@ export default function MediaUploader({
         return file;
       }
       
-      return compressedFile;
+      // Create a new File object with the original filename to ensure filename is preserved
+      const renamedFile = new File(
+        [compressedFile], 
+        fileName, 
+        { 
+          type: compressedFile.type,
+          lastModified: file.lastModified 
+        }
+      );
+      
+      console.log(`Successfully compressed and renamed: ${fileName}`);
+      return renamedFile;
     } catch (error) {
       console.error('Image compression error:', error);
       return file; // Return original file if compression fails
     }
   };
   
-  // Process multiple files with compression
+  // Process multiple files with compression - MODIFIED to be sequential instead of parallel
   const processFiles = async (fileList: FileList): Promise<File[]> => {
     // Take up to maxFiles from the input
     const allFilesToProcess = Array.from(fileList).slice(0, maxFiles);
@@ -133,31 +144,55 @@ export default function MediaUploader({
     setTotalBatches(batches);
     setCurrentBatch(1);
     
-    // Process all files in parallel for compression
-    const processPromises = allFilesToProcess.map(async (file, index) => {
-      if (file.type.startsWith('image/')) {
+    // Process files SEQUENTIALLY to avoid race conditions
+    const processedFiles: File[] = [];
+    
+    // We'll process in batches to show progress but avoid race conditions
+    for (let batchIndex = 0; batchIndex < batches; batchIndex++) {
+      setCurrentBatch(batchIndex + 1);
+      
+      // Get files for this batch
+      const batchStart = batchIndex * BATCH_SIZE;
+      const batchEnd = Math.min(batchStart + BATCH_SIZE, allFilesToProcess.length);
+      const batchFiles = allFilesToProcess.slice(batchStart, batchEnd);
+      
+      console.log(`Processing batch ${batchIndex + 1}/${batches} with ${batchFiles.length} files`);
+      
+      // Process each file in this batch
+      for (let i = 0; i < batchFiles.length; i++) {
+        const file = batchFiles[i];
+        const overallIndex = batchStart + i;
+        
         try {
-          const result = await compressImage(file);
-          // Increment processed count
-          setFilesProcessed(prev => prev + 1);
-          return result;
+          console.log(`Processing file ${overallIndex + 1}/${allFilesToProcess.length}: ${file.name}`);
+          
+          if (file.type.startsWith('image/')) {
+            // Compress the image
+            const compressedFile = await compressImage(file);
+            processedFiles.push(compressedFile);
+            
+            // Track file metadata to verify integrity
+            console.log(`Added processed file to queue: ${compressedFile.name}, size: ${compressedFile.size}`);
+          } else {
+            // Non-image files pass through unchanged
+            processedFiles.push(file);
+            console.log(`Added non-image file to queue: ${file.name}`);
+          }
         } catch (error) {
-          console.error('Error compressing file:', file.name, error);
-          // Still count as processed even if error
-          setFilesProcessed(prev => prev + 1);
-          return file; // Use original if compression fails
+          console.error(`Error processing file ${file.name}:`, error);
+          // If there's an error, use the original file
+          processedFiles.push(file);
         }
-      } else {
-        // Non-image files pass through unchanged
-        setFilesProcessed(prev => prev + 1);
-        return file;
+        
+        // Update progress
+        setFilesProcessed(overallIndex + 1);
       }
-    });
+    }
     
-    // Wait for all files to be processed in parallel
-    const processedFiles = await Promise.all(processPromises);
+    console.log(`All files processed. Result: ${processedFiles.length} files`);
+    console.log(`File names:`, processedFiles.map(f => f.name));
+    
     setIsCompressing(false);
-    
     return processedFiles;
   };
 
@@ -192,78 +227,64 @@ export default function MediaUploader({
     }
     
     try {
-      // Split files into batches of BATCH_SIZE
-      const fileBatches = [];
-      for (let i = 0; i < files.length; i += BATCH_SIZE) {
-        fileBatches.push(files.slice(i, i + BATCH_SIZE));
+      const formData = new FormData();
+      
+      // Log all files being sent in this request for debugging
+      console.log(`Uploading ${files.length} files to server:`);
+      files.forEach((file, index) => {
+        console.log(`${index + 1}. ${file.name} (${file.size} bytes, type: ${file.type})`);
+        formData.append('media', file, file.name);
+      });
+      
+      // Add user ID if available
+      const userId = localStorage.getItem('userId');
+      if (userId) {
+        formData.append('userId', userId);
       }
       
-      let allUploadedMedia: UploadedMedia[] = [];
+      setUploadProgress(0);
+      setUploadError(null);
       
-      // Process each batch sequentially
-      for (let batchIndex = 0; batchIndex < fileBatches.length; batchIndex++) {
-        const batch = fileBatches[batchIndex];
-        setCurrentBatch(batchIndex + 1);
-        
-        // Create a FormData object for this batch
-        const formData = new FormData();
-        
-        // Append each file in the batch to formData
-        batch.forEach(file => {
-          formData.append('media', file);
-        });
-        
-        // Upload the batch with progress monitoring
-        const xhr = new XMLHttpRequest();
-        
-        xhr.upload.addEventListener('progress', (event) => {
-          if (event.lengthComputable) {
-            // Calculate overall progress across batches
-            const batchProgress = Math.round((event.loaded / event.total) * 100);
-            const overallProgress = Math.round(
-              ((batchIndex * 100) + batchProgress) / fileBatches.length
-            );
-            setUploadProgress(overallProgress);
-          }
-        });
-        
-        // Create a promise to handle the XHR response for this batch
-        const uploadBatchPromise = new Promise<UploadedMedia[]>((resolve, reject) => {
-          xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4) {
-              if (xhr.status >= 200 && xhr.status < 300) {
-                const response = JSON.parse(xhr.responseText);
-                if (response.success) {
-                  resolve(response.files);
-                } else {
-                  reject(new Error(response.error || 'Upload failed'));
-                }
-              } else {
-                reject(new Error(`Upload failed with status ${xhr.status}`));
-              }
-            }
-          };
-        });
-        
-        // Send the request for this batch
-        xhr.open('POST', '/api/media/upload');
-        xhr.send(formData);
-        
-        // Wait for this batch to complete before proceeding to the next
-        const batchUploadedMedia = await uploadBatchPromise;
-        allUploadedMedia = [...allUploadedMedia, ...batchUploadedMedia];
-      }
+      // Send the upload request
+      const response = await fetch('/api/media/upload', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          // Set custom header for user ID if available
+          ...(userId && { 'x-user-id': userId })
+        }
+      });
       
-      // Update state with all the uploaded files
-      setUploadedFiles(prev => [...prev, ...allUploadedMedia]);
-      
-      // Call the callback if provided
-      if (onMediaUpload) {
-        onMediaUpload(allUploadedMedia);
+      // Handle the response
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Upload successful:', result);
+        
+        if (Array.isArray(result.media)) {
+          // Log the received media to verify it matches what we sent
+          console.log('Server returned media objects:', result.media.map((m: any) => 
+            `ID: ${m.id}, Filename: ${m.originalFilename}`
+          ));
+          setUploadedFiles(prevFiles => [...prevFiles, ...result.media]);
+          onMediaUpload(result.media);
+        } else {
+          console.error('Unexpected response format:', result);
+        }
+      } else {
+        // Parse error details if available
+        let errorMessage;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || `Server error: ${response.status}`;
+        } catch (e) {
+          errorMessage = `Upload failed with status: ${response.status}`;
+        }
+        console.error('Upload error:', errorMessage);
+        setUploadError(errorMessage);
       }
     } catch (error) {
-      console.error('Upload error:', error);
-      setUploadError((error as Error).message || 'Failed to upload files');
+      console.error('Upload exception:', error);
+      setUploadError(error instanceof Error ? error.message : String(error));
     } finally {
       setIsUploading(false);
       setUploadProgress(0);

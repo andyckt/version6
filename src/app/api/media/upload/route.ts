@@ -5,6 +5,12 @@ import { createMediaItem, MediaType } from '@/lib/db/models/media';
 import fs from 'fs';
 import { ObjectId } from 'mongodb';
 
+interface FileMetadata {
+  originalname: string;
+  filename: string;
+  mediaId: string;
+}
+
 /**
  * API endpoint for uploading media (images)
  * POST /api/media/upload
@@ -25,9 +31,10 @@ export async function POST(request: NextRequest) {
     }
     
     // Use the upload middleware to handle the file upload
-    const { files, error } = await withUpload('media', 5)(request);
+    const { files, error } = await withUpload('media', 10)(request);
     
     if (error) {
+      console.error('Upload error from middleware:', error);
       return NextResponse.json(
         { error },
         { status: 400 }
@@ -41,6 +48,15 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Log received files for debugging
+    console.log(`Received ${files.length} files for processing:`);
+    files.forEach((file, index) => {
+      console.log(`[${index + 1}] ${file.originalname} (${file.size} bytes)`);
+    });
+    
+    // Track file metadata to ensure we don't lose original filenames
+    const fileMetadata: FileMetadata[] = [];
+    
     // Process each uploaded file
     const results = [];
     let totalQualityScores = {
@@ -52,14 +68,23 @@ export async function POST(request: NextRequest) {
     let totalProcessed = 0;
     
     try {
-      // Process all files in parallel
-      console.log(`Starting parallel processing of ${files.length} files at ${new Date().toISOString()}`);
+      // Process files in sequence to avoid issues
+      console.log(`Starting sequential processing of ${files.length} files at ${new Date().toISOString()}`);
       
-      const processingPromises = files.map(async (file, index) => {
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index];
         const startTime = Date.now();
         const fileId = `file-${index+1}`;
+        
         try {
           console.log(`[${fileId}] Starting processing for ${file.originalname} at ${new Date().toISOString()}`);
+          
+          // Store metadata about this file
+          const metadata: FileMetadata = {
+            originalname: file.originalname,
+            filename: file.filename,
+            mediaId: ''
+          };
           
           // Process the image (resize, optimize, etc.)
           console.log(`[${fileId}] Calling Sharp processing for ${file.originalname}`);
@@ -87,101 +112,14 @@ export async function POST(request: NextRequest) {
           
           let mediaItem;
           
-          try {
-            // Save to database
-            console.log(`[${fileId}] Saving to MongoDB...`);
-            const dbStartTime = Date.now();
-            mediaItem = await createMediaItem(
-              processedImages,
-              userId,
-              MediaType.IMAGE
-            );
-            console.log(`[${fileId}] Successfully saved to MongoDB with ID: ${mediaItem._id} in ${Date.now() - dbStartTime}ms`);
-          } catch (dbError) {
-            console.error(`[${fileId}] MongoDB Error:`, dbError);
-            
-            // For production, create better error handling
-            if (process.env.NODE_ENV === 'development') {
-              console.log('Using mock database response for development');
-              mediaItem = {
-                _id: 'mock-id-' + Date.now(),
-                userId,
-                type: MediaType.IMAGE,
-                originalFilename: processedImages.metadata.originalFilename,
-                mimeType: processedImages.metadata.mimeType,
-                created: new Date(),
-                status: 'active',
-                width: processedImages.variants.large.width,
-                height: processedImages.variants.large.height,
-                aspectRatio: processedImages.variants.large.aspectRatio,
-                variants: {
-                  thumbnail: {
-                    url: processedImages.variants.thumbnail.url,
-                    width: processedImages.variants.thumbnail.width,
-                    height: processedImages.variants.thumbnail.height,
-                    size: processedImages.variants.thumbnail.size,
-                    cloudinaryId: processedImages.variants.thumbnail.cloudinaryId,
-                  },
-                  medium: {
-                    url: processedImages.variants.medium.url,
-                    width: processedImages.variants.medium.width,
-                    height: processedImages.variants.medium.height,
-                    size: processedImages.variants.medium.size,
-                    cloudinaryId: processedImages.variants.medium.cloudinaryId,
-                  },
-                  large: {
-                    url: processedImages.variants.large.url,
-                    width: processedImages.variants.large.width,
-                    height: processedImages.variants.large.height,
-                    size: processedImages.variants.large.size,
-                    cloudinaryId: processedImages.variants.large.cloudinaryId,
-                  }
-                },
-                metadata: processedImages.metadata
-              };
-            } else {
-              // In production, if MongoDB fails but Cloudinary succeeded,
-              // still return the media info but log the error
-              console.error('PRODUCTION DATABASE ERROR - FIX IMMEDIATELY:', dbError);
-              
-              // Create a response with the processed images but mark it as not persisted
-              mediaItem = {
-                _id: new ObjectId().toString(), // Generate valid ID
-                userId,
-                type: MediaType.IMAGE,
-                originalFilename: processedImages.metadata.originalFilename,
-                mimeType: processedImages.metadata.mimeType,
-                created: new Date(),
-                status: 'active',
-                width: processedImages.variants.large.width,
-                height: processedImages.variants.large.height,
-                aspectRatio: processedImages.variants.large.aspectRatio,
-                variants: {
-                  thumbnail: {
-                    url: processedImages.variants.thumbnail.url,
-                    width: processedImages.variants.thumbnail.width,
-                    height: processedImages.variants.thumbnail.height,
-                    size: processedImages.variants.thumbnail.size,
-                    cloudinaryId: processedImages.variants.thumbnail.cloudinaryId,
-                  },
-                  medium: {
-                    url: processedImages.variants.medium.url,
-                    width: processedImages.variants.medium.width,
-                    height: processedImages.variants.medium.height,
-                    size: processedImages.variants.medium.size,
-                    cloudinaryId: processedImages.variants.medium.cloudinaryId,
-                  },
-                  large: {
-                    url: processedImages.variants.large.url,
-                    width: processedImages.variants.large.width,
-                    height: processedImages.variants.large.height,
-                    size: processedImages.variants.large.size,
-                    cloudinaryId: processedImages.variants.large.cloudinaryId,
-                  }
-                },
-                metadata: processedImages.metadata
-              };
-            }
+          // Create a media entry in the database
+          mediaItem = await createMediaItem(processedImages, userId, MediaType.IMAGE);
+          
+          // Store the media ID in our metadata tracking
+          if (mediaItem && mediaItem._id) {
+            metadata.mediaId = mediaItem._id.toString();
+            fileMetadata.push(metadata);
+            console.log(`[${fileId}] Media item created in database with ID: ${metadata.mediaId}`);
           }
           
           // Return the processed result
@@ -194,134 +132,72 @@ export async function POST(request: NextRequest) {
             width: processedImages.variants.large.width,
             height: processedImages.variants.large.height,
             aspectRatio: processedImages.variants.large.aspectRatio,
-            originalFilename: processedImages.metadata.originalFilename
+            originalFilename: file.originalname
           };
           
-          // Clean up the temp file with error handling
+          results.push(result);
+          console.log(`[${fileId}] Successfully added result for ${file.originalname}`);
+          
+        } catch (error) {
+          console.error(`[${fileId}] Error processing file ${file.originalname}:`, error);
+        } finally {
+          // Clean up temporary files
           try {
             if (fs.existsSync(file.path)) {
               fs.unlinkSync(file.path);
+              console.log(`[${fileId}] Cleaned up temporary file: ${file.path}`);
             }
-          } catch (cleanupError: unknown) {
-            const errorMessage = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
-            console.warn(`[${fileId}] Warning: Could not delete temporary file: ${errorMessage}`);
-            // Non-critical error, continue with the upload
+          } catch (e) {
+            console.error(`[${fileId}] Error cleaning up temp file: ${file.path}`, e);
           }
-          
-          return result;
-        } catch (fileError) {
-          console.error('Error processing file:', file.originalname, fileError);
-          
-          // Clean up the temp file if it exists
-          try {
-            if (fs.existsSync(file.path)) {
-              fs.unlinkSync(file.path);
-            }
-          } catch (cleanupError: unknown) {
-            const errorMessage = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
-            console.warn(`Warning: Could not delete temporary file during error handling: ${errorMessage}`);
-            // Non-critical error, continue with the upload
-          }
-          
-          // Return error result
-          return {
-            originalFilename: file.originalname,
-            error: 'Failed to process file',
-          };
+        }
+      }
+      
+      // Log final results for debugging
+      console.log(`Upload complete. Processed ${results.length} files.`);
+      console.log(`File metadata tracking:`, fileMetadata);
+      console.log(`Result media IDs:`, results.map(r => r.id));
+      
+      // Check for any integrity issues
+      const filenameCheck = new Set<string>();
+      const duplicateFilenames: string[] = [];
+      
+      fileMetadata.forEach(meta => {
+        if (filenameCheck.has(meta.originalname)) {
+          duplicateFilenames.push(meta.originalname);
+        } else {
+          filenameCheck.add(meta.originalname);
         }
       });
       
-      // Wait for all processing to complete
-      const allStartTime = Date.now();
-      console.log(`Waiting for all ${processingPromises.length} files to complete processing...`);
-      results.push(...(await Promise.all(processingPromises)));
-      console.log(`All files processed in ${Date.now() - allStartTime}ms`);
+      if (duplicateFilenames.length > 0) {
+        console.warn(`⚠️ Detected duplicate filenames: ${duplicateFilenames.join(', ')}`);
+      }
+      
+      return NextResponse.json({
+        success: true,
+        media: results,
+        processingStats: {
+          totalProcessed,
+          thumbnailQuality: totalQualityScores.thumbnail / totalProcessed,
+          mediumQuality: totalQualityScores.medium / totalProcessed,
+          largeQuality: totalQualityScores.large / totalProcessed,
+          belowThresholdCount
+        },
+        metadata: fileMetadata
+      });
       
     } catch (error) {
-      console.error('Batch processing error:', error);
-      
-      // Clean up any remaining temp files
-      for (const file of files) {
-        try {
-          if (fs.existsSync(file.path)) {
-            fs.unlinkSync(file.path);
-          }
-        } catch (cleanupError: unknown) {
-          const errorMessage = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
-          console.warn(`Warning: Could not delete temporary file in batch cleanup: ${errorMessage}`);
-          // Non-critical error, continue with the cleanup
-        }
-      }
+      console.error('Processing error:', error);
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Failed to process images' },
+        { status: 500 }
+      );
     }
-    
-    // Update analytics with quality metrics
-    try {
-      // Get existing analytics from localStorage (or create new)
-      const analyticsData = typeof localStorage !== 'undefined' && localStorage.getItem('mediaAnalytics')
-        ? JSON.parse(localStorage.getItem('mediaAnalytics') || '{}')
-        : { 
-            highResViews: 0, 
-            totalViews: 0, 
-            uploadQualityChoices: { standard: 0, high: 0 },
-            qualityMetrics: {
-              averageSSIM: {
-                thumbnail: 0,
-                medium: 0,
-                large: 0
-              },
-              belowThresholdCount: 0,
-              totalProcessed: 0
-            }
-          };
-      
-      // Initialize quality metrics if not present
-      if (!analyticsData.qualityMetrics) {
-        analyticsData.qualityMetrics = {
-          averageSSIM: {
-            thumbnail: 0,
-            medium: 0,
-            large: 0
-          },
-          belowThresholdCount: 0,
-          totalProcessed: 0
-        };
-      }
-      
-      // Update metrics
-      analyticsData.qualityMetrics.totalProcessed += totalProcessed;
-      analyticsData.qualityMetrics.belowThresholdCount += belowThresholdCount;
-      
-      if (totalProcessed > 0) {
-        // Update average SSIM scores - now using estimated values for Cloudinary
-        analyticsData.qualityMetrics.averageSSIM.thumbnail = 
-          (analyticsData.qualityMetrics.averageSSIM.thumbnail + (totalQualityScores.thumbnail / totalProcessed)) / 2;
-        analyticsData.qualityMetrics.averageSSIM.medium = 
-          (analyticsData.qualityMetrics.averageSSIM.medium + (totalQualityScores.medium / totalProcessed)) / 2;
-        analyticsData.qualityMetrics.averageSSIM.large = 
-          (analyticsData.qualityMetrics.averageSSIM.large + (totalQualityScores.large / totalProcessed)) / 2;
-      }
-      
-      // Save updated analytics
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('mediaAnalytics', JSON.stringify(analyticsData));
-      }
-    } catch (analyticsError) {
-      // Non-critical error, just log it
-      console.warn('Failed to update media analytics:', analyticsError);
-    }
-    
-    // Return the processed images
-    return NextResponse.json({ 
-      success: true,
-      message: `Successfully uploaded ${results.length} files`,
-      files: results
-    });
-    
   } catch (error) {
-    console.error('Upload API error:', error);
-    
+    console.error('Upload route error:', error);
     return NextResponse.json(
-      { error: 'Failed to process uploads' },
+      { error: error instanceof Error ? error.message : 'Failed to upload images' },
       { status: 500 }
     );
   }

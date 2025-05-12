@@ -1,0 +1,119 @@
+Compressing: 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png, Size: 6.26MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.2, maxWidthOrHeight: 1600, initialQuality: 0.5, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressing: 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png, Size: 6.51MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.2, maxWidthOrHeight: 1600, initialQuality: 0.5, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressing: 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png, Size: 6.35MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.2, maxWidthOrHeight: 1600, initialQuality: 0.5, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressing: 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png, Size: 7.50MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.2, maxWidthOrHeight: 1600, initialQuality: 0.5, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressing: 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png, Size: 7.77MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.2, maxWidthOrHeight: 1600, initialQuality: 0.5, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.18MB, Reduction: 97.2%
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '6.5 MB', compressed: '188.6 KB', saved: '6.3 MB', percent: 97, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.16MB, Reduction: 97.5%
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '12.8 MB', compressed: '350.2 KB', saved: '12.4 MB', percent: 97, pngCount: 2}
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.18MB, Reduction: 97.2%
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '19.1 MB', compressed: '531.2 KB', saved: '18.6 MB', percent: 97, pngCount: 3}
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.17MB, Reduction: 97.8%
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '26.6 MB', compressed: '700.5 KB', saved: '25.9 MB', percent: 97, pngCount: 4}
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.19MB, Reduction: 97.5%
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+
+Creating post with media items: [{"mediaId":"68218cc74c39a8916fff628f","position":0,"isPrimary":true},{"mediaId":"68218cc84c39a8916fff6292","position":1,"isPrimary":false},{"mediaId":"68218cc74c39a8916fff6291","position":2,"isPrimary":false},{"mediaId":"68218cc74c39a8916fff6290","position":3,"isPrimary":false},{"mediaId":"68218cc74c39a8916fff628e","position":4,"isPrimary":false}]
+page-b736a43452d63013.js:1 First few media IDs: (3) ['68218cc74c39a8916fff628f', '68218cc84c39a8916fff6292', '68218cc74c39a8916fff6291']
+page-b736a43452d63013.js:1 Sending POST request to create post...
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}
+page-b736a43452d63013.js:1 Post creation response status: 200
+page-b736a43452d63013.js:1 Post creation response: {success: true, _id: '68218cf84c39a8916fff6293', post: {…}}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_2.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_1.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_3.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_4.png: {…}, 2024-01-18_19.38.53_咪咪猫啊猫_上海耐克001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '34.4 MB', compressed: '896.2 KB', saved: '33.5 MB', percent: 97, pngCount: 5}

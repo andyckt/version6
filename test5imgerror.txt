@@ -1,0 +1,93 @@
+Compressing: 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png, Size: 7.01MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.2, maxWidthOrHeight: 1600, initialQuality: 0.5, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressing: 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png, Size: 6.76MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.2, maxWidthOrHeight: 1600, initialQuality: 0.5, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressing: 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png, Size: 11.47MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.2, maxWidthOrHeight: 1600, initialQuality: 0.5, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressing: 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png, Size: 6.54MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.2, maxWidthOrHeight: 1600, initialQuality: 0.5, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressing: 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png, Size: 7.20MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.2, maxWidthOrHeight: 1600, initialQuality: 0.5, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.13MB, Reduction: 98.1%
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '6.5 MB', compressed: '129.6 KB', saved: '6.4 MB', percent: 98, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.13MB, Reduction: 98.2%
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '13.5 MB', compressed: '258.2 KB', saved: '13.3 MB', percent: 98, pngCount: 2}
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.15MB, Reduction: 97.9%
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.19MB, Reduction: 98.4%
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.10MB, Reduction: 98.6%
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+
+               
+         
+         
+         
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {2024-07-18_14.33.15_马渚没有马_Nike_上海_001_8.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_3.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_1.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_9.png: {…}, 2024-07-18_14.33.15_马渚没有马_Nike_上海_001_10.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '39.0 MB', compressed: '709.8 KB', saved: '38.3 MB', percent: 98, pngCount: 5}

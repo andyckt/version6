@@ -1,0 +1,89 @@
+Compressing: Q5b_1st.png, Size: 0.07MB, Type: image/png
+8521-dcc29ce59fb4118b.js:1 Starting compression with options: {maxSizeMB: 0.3, maxWidthOrHeight: 2048, initialQuality: 0.6, useWebWorker: true, preserveExif: false, …}
+8521-dcc29ce59fb4118b.js:1 Compressed size: 0.07MB, Reduction: 1.7%
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+
+Creating post with media items: [{"mediaId":"68218c2f747ff36cf55fa833","position":0,"isPrimary":true}]
+page-b736a43452d63013.js:1 First few media IDs: ['68218c2f747ff36cf55fa833']
+page-b736a43452d63013.js:1 Sending POST request to create post...
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}
+page-b736a43452d63013.js:1 Post creation response status: 200
+page-b736a43452d63013.js:1 Post creation response: {success: true, _id: '68218c714c39a8916fff628c', post: {…}}
+8521-dcc29ce59fb4118b.js:1 Current compression stats: {Q5b_1st.png: {…}}
+8521-dcc29ce59fb4118b.js:1 Calculated savings: {original: '68.7 KB', compressed: '67.5 KB', saved: '1.2 KB', percent: 2, pngCount: 1}

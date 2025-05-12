@@ -468,23 +468,21 @@ export default function PostDetail({ params }: { params: { id: string } }) {
   const renderDescriptionWithMentions = (description: string) => {
     if (!description) return null;
     
-    // Process the hashtags but keep them in the text
-    // We'll just highlight them rather than removing them
+    // First, remove all hashtags from the text
+    // This regex looks for hashtags and replaces them with empty string
+    const withoutHashtags = description.replace(/#\w+/g, '');
     
     // Split by line breaks to preserve paragraphs
-    const paragraphs = description.split(/\n+/);
+    const paragraphs = withoutHashtags.split(/\n+/);
     
     return (
       <>
         {paragraphs.map((paragraph, paragraphIndex) => {
-          // Skip empty paragraphs
+          // Skip empty paragraphs, but render a break for spacing
           if (!paragraph.trim()) return <br key={`p-${paragraphIndex}`} />;
           
           // Regular expression to find @mentions
           const mentionRegex = /@(\w+)/g;
-          
-          // Regular expression to find #hashtags
-          const hashtagRegex = /#(\w+)/g;
           
           // First process mentions
           let parts = paragraph.split(mentionRegex);
@@ -492,25 +490,6 @@ export default function PostDetail({ params }: { params: { id: string } }) {
           const processedParts = parts.map((part, index) => {
             // Even indices are normal text, odd indices are potential usernames
             if (index % 2 === 0) {
-              // Process hashtags in regular text
-              if (part.includes('#')) {
-                const hashtagParts = part.split(hashtagRegex);
-                return hashtagParts.map((hashtagPart, hIndex) => {
-                  if (hIndex % 2 === 0) {
-                    return hashtagPart;
-                  } else {
-                    // This is a hashtag
-                    return (
-                      <span 
-                        key={`hashtag-${paragraphIndex}-${index}-${hIndex}`}
-                        className="text-primary font-medium"
-                      >
-                        #{hashtagPart}
-                      </span>
-                    );
-                  }
-                });
-              }
               return part;
             } else {
               // This is a mention

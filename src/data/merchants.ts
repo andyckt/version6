@@ -428,6 +428,530 @@ export const merchants: BaseMerchant[] = [
     languagesSpoken: ['Chinese', 'English', 'French', 'German', 'Japanese', 'Russian'],
     michelinStars: 3
   } as HotelMerchant,
+  
+  // Z Hotel Somekh
+  {
+    id: 627,
+    accountType: 'hotel',
+    username: 'zhotelsomekh',
+    displayName: 'Z Hotel Somekh',
+    verified: true,
+    joinDate: 'January 2024',
+    recommended: true,
+    hashtags: ['#boutique', '#historic', '#thebund', '#design', '#luxury'],
+    district: ['Huangpu'],
+    merchantType: 'Boutique Hotel',
+    url: 'https://www.z-shanghai.com/',
+    stats: {
+      mentionedPosts: 56,
+      followers: 3800,
+      following: 42
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市黄浦区北京东路190号',
+      englishAddress: '190 East Beijing Road, Huangpu District, Shanghai',
+      nearestSubway: 'Line 2/10 East Nanjing Road Station, Exit 6 - 350m',
+      telephone: ['021-63360090'],
+      branchDistrict: 'Huangpu'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 1600,
+    amenities: ['Free WiFi', 'Restaurant', 'Bar', 'Room Service', 'Concierge'],
+    stars: 4,
+    languagesSpoken: ['Chinese', 'English']
+  } as HotelMerchant,
+  
+  // Artyzen 31 Shanghai
+  {
+    id: 628,
+    accountType: 'hotel',
+    username: 'artyzen31',
+    displayName: 'Artyzen 31 Shanghai Central',
+    verified: true,
+    joinDate: 'February 2024',
+    recommended: true,
+    hashtags: ['#newhotel', '#chic', '#central', '#moderate', '#convenient'],
+    district: ['Jing\'an'],
+    merchantType: 'Business Hotel',
+    url: 'https://www.artyzen.com/artyzen31-shanghaicentral',
+    stats: {
+      mentionedPosts: 34,
+      followers: 2600,
+      following: 120
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市静安区南京西路31号',
+      englishAddress: '31 West Nanjing Road, Jing\'an District, Shanghai',
+      nearestSubway: 'Line 2/12 Nanjing West Road Station, Exit 4 - 150m',
+      telephone: ['021-52996888'],
+      branchDistrict: 'Jing\'an'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 980,
+    amenities: ['Free WiFi', 'Fitness Center', 'Restaurant', 'Meeting Rooms', 'Business Center'],
+    stars: 4,
+    languagesSpoken: ['Chinese', 'English']
+  } as HotelMerchant,
+  
+  // Blossom House
+  {
+    id: 629,
+    accountType: 'hotel',
+    username: 'blossomhousesh',
+    displayName: 'Blossom House Shanghai',
+    verified: true,
+    joinDate: 'March 2024',
+    recommended: true,
+    hashtags: ['#boutique', '#artistic', '#cozy', '#affordable', '#frenchconcession'],
+    district: ['Xuhui'],
+    merchantType: 'Boutique Hotel',
+    stats: {
+      mentionedPosts: 42,
+      followers: 3200,
+      following: 88
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市徐汇区武康路168号',
+      englishAddress: '168 Wukang Road, Xuhui District, Shanghai',
+      nearestSubway: 'Line 10 Shanghai Library Station, Exit 2 - 600m',
+      telephone: ['021-64331234'],
+      branchDistrict: 'Xuhui'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 780,
+    amenities: ['Free WiFi', 'Cafe', 'Garden', 'Bicycle Rental', 'Library'],
+    stars: 4,
+    languagesSpoken: ['Chinese', 'English', 'French']
+  } as HotelMerchant,
+  
+  // W Shanghai - The Bund
+  {
+    id: 630,
+    accountType: 'hotel',
+    username: 'wshanghai',
+    displayName: 'W Shanghai - The Bund',
+    verified: true,
+    joinDate: 'January 2023',
+    recommended: true,
+    hashtags: ['#luxury', '#modern', '#designhotel', '#riverfront', '#nightlife'],
+    district: ['Hongkou'],
+    merchantType: 'Luxury Hotel',
+    url: 'https://www.marriott.com/hotels/travel/shawh-w-shanghai-the-bund/',
+    stats: {
+      mentionedPosts: 89,
+      followers: 7200,
+      following: 52
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市虹口区黄浦路66号',
+      englishAddress: '66 Huangpu Road, Hongkou District, Shanghai',
+      nearestSubway: 'Line 12 International Cruise Terminal Station, Exit 4 - 800m',
+      telephone: ['021-22868888'],
+      branchDistrict: 'Hongkou'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 2200,
+    amenities: ['Free WiFi', 'Swimming Pool', 'Spa', 'Fitness Center', 'Multiple Restaurants', 'Bar', 'Club'],
+    stars: 5,
+    languagesSpoken: ['Chinese', 'English', 'French', 'Japanese', 'Korean']
+  } as HotelMerchant,
+  
+  // Banyan Tree Shanghai
+  {
+    id: 631,
+    accountType: 'hotel',
+    username: 'banyantreesh',
+    displayName: 'Banyan Tree Shanghai On The Bund',
+    verified: true,
+    joinDate: 'February 2023',
+    recommended: true,
+    hashtags: ['#spa', '#luxury', '#views', '#romantic', '#riverside'],
+    district: ['Hongkou'],
+    merchantType: 'Luxury Resort',
+    url: 'https://www.banyantree.com/en/china/shanghai/',
+    stats: {
+      mentionedPosts: 78,
+      followers: 5800,
+      following: 26
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市虹口区公平路19号',
+      englishAddress: '19 Gongping Road, Hongkou District, Shanghai',
+      nearestSubway: 'Line 12 International Cruise Terminal Station, Exit 4 - 900m',
+      telephone: ['021-25091188'],
+      branchDistrict: 'Hongkou'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 2400,
+    amenities: ['Free WiFi', 'Swimming Pool', 'Award-winning Spa', 'Fitness Center', 'Multiple Restaurants', 'Rooftop Bar'],
+    stars: 5,
+    languagesSpoken: ['Chinese', 'English', 'Thai', 'Japanese']
+  } as HotelMerchant,
+  
+  // The Ritz-Carlton Shanghai, Pudong
+  {
+    id: 632,
+    accountType: 'hotel',
+    username: 'ritzcarltonsh',
+    displayName: 'The Ritz-Carlton Shanghai, Pudong',
+    verified: true,
+    joinDate: 'January 2022',
+    recommended: true,
+    hashtags: ['#luxury', '#financialdistrict', '#views', '#finedining', '#landmark'],
+    district: ['Pudong'],
+    merchantType: 'Luxury Hotel',
+    url: 'https://www.ritzcarlton.com/en/hotels/china/shanghai-pudong/',
+    stats: {
+      mentionedPosts: 102,
+      followers: 9800,
+      following: 35
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市浦东新区世纪大道8号上海国金中心',
+      englishAddress: 'Shanghai IFC, 8 Century Avenue, Pudong New Area, Shanghai',
+      nearestSubway: 'Line 2 Lujiazui Station, Exit 1 - 150m',
+      telephone: ['021-20201888'],
+      branchDistrict: 'Pudong'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 2800,
+    amenities: ['Free WiFi', 'Indoor Swimming Pool', 'Spa', 'Fitness Center', 'Multiple Restaurants', 'Bar', 'Club Lounge'],
+    stars: 5,
+    languagesSpoken: ['Chinese', 'English', 'French', 'German', 'Japanese', 'Russian', 'Spanish']
+  } as HotelMerchant,
+  
+  // Grand Hyatt Shanghai
+  {
+    id: 633,
+    accountType: 'hotel',
+    username: 'grandhyattsh',
+    displayName: 'Grand Hyatt Shanghai',
+    verified: true,
+    joinDate: 'March 2022',
+    recommended: true,
+    hashtags: ['#skyscraper', '#luxury', '#business', '#views', '#jinmao'],
+    district: ['Pudong'],
+    merchantType: 'Luxury Hotel',
+    url: 'https://www.hyatt.com/en-US/hotel/china/grand-hyatt-shanghai/shagh',
+    stats: {
+      mentionedPosts: 95,
+      followers: 8500,
+      following: 42
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市浦东新区世纪大道88号金茂大厦',
+      englishAddress: 'Jin Mao Tower, 88 Century Avenue, Pudong New Area, Shanghai',
+      nearestSubway: 'Line 2 Lujiazui Station, Exit 1 - 250m',
+      telephone: ['021-50491234'],
+      branchDistrict: 'Pudong'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 2100,
+    amenities: ['Free WiFi', 'Indoor Swimming Pool', 'Spa', 'Fitness Center', 'Multiple Restaurants', 'Bar'],
+    stars: 5,
+    languagesSpoken: ['Chinese', 'English', 'Japanese', 'Korean']
+  } as HotelMerchant,
+  
+  // Bellagio Shanghai
+  {
+    id: 634,
+    accountType: 'hotel',
+    username: 'bellagiosh',
+    displayName: 'Bellagio Shanghai',
+    verified: true,
+    joinDate: 'April 2023',
+    recommended: true,
+    hashtags: ['#luxury', '#river', '#artdeco', '#finedining', '#thebund'],
+    district: ['Hongkou'],
+    merchantType: 'Luxury Hotel',
+    url: 'https://www.bellagioshanghai.com/',
+    stats: {
+      mentionedPosts: 76,
+      followers: 6200,
+      following: 38
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市虹口区苏州河畔公平路5号',
+      englishAddress: '5 Gongping Road, Hongkou District, Shanghai',
+      nearestSubway: 'Line 12 International Cruise Terminal Station, Exit 5 - 800m',
+      telephone: ['021-35013777'],
+      branchDistrict: 'Hongkou'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 2000,
+    amenities: ['Free WiFi', 'Indoor Swimming Pool', 'Spa', 'Fitness Center', 'Italian Restaurant', 'Chinese Restaurant', 'Bar'],
+    stars: 5,
+    languagesSpoken: ['Chinese', 'English', 'Italian']
+  } as HotelMerchant,
+  
+  // Waldorf Astoria Shanghai
+  {
+    id: 635,
+    accountType: 'hotel',
+    username: 'waldorfastoriash',
+    displayName: 'Waldorf Astoria Shanghai on the Bund',
+    verified: true,
+    joinDate: 'February 2022',
+    recommended: true,
+    hashtags: ['#historic', '#luxury', '#heritage', '#classic', '#thebund'],
+    district: ['Huangpu'],
+    merchantType: 'Luxury Heritage Hotel',
+    url: 'https://www.hilton.com/en/hotels/shawtwa-waldorf-astoria-shanghai-on-the-bund/',
+    stats: {
+      mentionedPosts: 98,
+      followers: 9100,
+      following: 31
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市黄浦区中山东一路2号',
+      englishAddress: '2 Zhongshan Dong Yi Road, Huangpu District, Shanghai',
+      nearestSubway: 'Line 10 Yuyuan Garden Station, Exit 3 - 800m',
+      telephone: ['021-63229988'],
+      branchDistrict: 'Huangpu'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 2600,
+    amenities: ['Free WiFi', 'Indoor Swimming Pool', 'Spa', 'Fitness Center', 'Multiple Restaurants', 'Long Bar', 'Heritage Tour'],
+    stars: 5,
+    languagesSpoken: ['Chinese', 'English', 'French', 'German', 'Spanish']
+  } as HotelMerchant,
+  
+  // The Shanghai EDITION
+  {
+    id: 636,
+    accountType: 'hotel',
+    username: 'editionsh',
+    displayName: 'The Shanghai EDITION',
+    verified: true,
+    joinDate: 'May 2023',
+    recommended: true,
+    hashtags: ['#design', '#luxury', '#nightlife', '#trendy', '#foodie'],
+    district: ['Jing\'an'],
+    merchantType: 'Luxury Lifestyle Hotel',
+    url: 'https://www.editionhotels.com/shanghai/',
+    stats: {
+      mentionedPosts: 87,
+      followers: 7800,
+      following: 45
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市静安区南京西路199号',
+      englishAddress: '199 Nanjing Road East, Jing\'an District, Shanghai',
+      nearestSubway: 'Line 2/12 Nanjing West Road Station, Exit 2 - 300m',
+      telephone: ['021-53681999'],
+      branchDistrict: 'Jing\'an'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 2400,
+    amenities: ['Free WiFi', 'Indoor Swimming Pool', 'Spa', 'Fitness Center', 'Multiple Restaurants', 'Bars', 'Club', 'Rooftop Garden'],
+    stars: 5,
+    languagesSpoken: ['Chinese', 'English', 'French', 'Russian']
+  } as HotelMerchant,
+  
+  // The Regent Shanghai
+  {
+    id: 637,
+    accountType: 'hotel',
+    username: 'regentsh',
+    displayName: 'The Regent Shanghai Pudong',
+    verified: true,
+    joinDate: 'June 2023',
+    recommended: true,
+    hashtags: ['#luxury', '#business', '#finedining', '#financialdistrict', '#Pudong'],
+    district: ['Pudong'],
+    merchantType: 'Luxury Hotel',
+    url: 'https://www.ihg.com/regent/hotels/cn/zh/shanghai/sharz/hoteldetail',
+    stats: {
+      mentionedPosts: 73,
+      followers: 5600,
+      following: 28
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市浦东新区陆家嘴世纪大道210号',
+      englishAddress: '210 Century Avenue, Lujiazui, Pudong New Area, Shanghai',
+      nearestSubway: 'Line 2 Lujiazui Station, Exit 1 - 500m',
+      telephone: ['021-20201888'],
+      branchDistrict: 'Pudong'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 2300,
+    amenities: ['Free WiFi', 'Indoor Swimming Pool', 'Spa', 'Fitness Center', 'Multiple Restaurants', 'Bar', 'Executive Lounge'],
+    stars: 5,
+    languagesSpoken: ['Chinese', 'English', 'Japanese', 'Korean']
+  } as HotelMerchant,
+  
+  // Golden Tulip Bund New Asia
+  {
+    id: 638,
+    accountType: 'hotel',
+    username: 'goldentulipbund',
+    displayName: 'Golden Tulip Bund New Asia',
+    verified: true,
+    joinDate: 'July 2023',
+    recommended: true,
+    hashtags: ['#affordable', '#convenient', '#business', '#bund', '#value'],
+    district: ['Hongkou'],
+    merchantType: 'Business Hotel',
+    url: 'https://www.goldentulip.com/en-us/hotels/golden-tulip-bund-new-asia/',
+    stats: {
+      mentionedPosts: 42,
+      followers: 3200,
+      following: 65
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市虹口区提篮桥北路422号',
+      englishAddress: '422 North Tilanqiao Road, Hongkou District, Shanghai',
+      nearestSubway: 'Line 4 Linping Road Station, Exit 4 - 500m',
+      telephone: ['021-65471133'],
+      branchDistrict: 'Hongkou'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 650,
+    amenities: ['Free WiFi', 'Restaurant', 'Business Center', 'Meeting Rooms', 'Fitness Center'],
+    stars: 4,
+    languagesSpoken: ['Chinese', 'English']
+  } as HotelMerchant,
+  
+  // Echarm Xuhui
+  {
+    id: 639,
+    accountType: 'hotel',
+    username: 'echarmxuhui',
+    displayName: 'Echarm Hotel Shanghai Xuhui',
+    verified: true,
+    joinDate: 'August 2023',
+    recommended: false,
+    hashtags: ['#budget', '#convenient', '#clean', '#valueforMoney', '#Xuhui'],
+    district: ['Xuhui'],
+    merchantType: 'Budget Hotel',
+    stats: {
+      mentionedPosts: 26,
+      followers: 1800,
+      following: 72
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市徐汇区漕溪路123号',
+      englishAddress: '123 Caoxi Road, Xuhui District, Shanghai',
+      nearestSubway: 'Line 1 Shanghai Indoor Stadium Station, Exit 2 - 400m',
+      telephone: ['021-64780092'],
+      branchDistrict: 'Xuhui'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 350,
+    amenities: ['Free WiFi', 'Convenience Store', '24h Front Desk'],
+    stars: 3,
+    languagesSpoken: ['Chinese', 'English']
+  } as HotelMerchant,
+  
+  // Hyatt Centric Urcove Shanghai
+  {
+    id: 640,
+    accountType: 'hotel',
+    username: 'urcovehyattsh',
+    displayName: 'Hyatt Centric Urcove Shanghai Songjiang',
+    verified: true,
+    joinDate: 'September 2023',
+    recommended: true,
+    hashtags: ['#modern', '#business', '#suburban', '#newhotel', '#Songjiang'],
+    district: ['Songjiang'],
+    merchantType: 'Business Hotel',
+    url: 'https://www.hyatt.com/en-US/hotel/china/hyatt-centric-urcove-shanghai-songjiang/shact',
+    stats: {
+      mentionedPosts: 38,
+      followers: 2600,
+      following: 54
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市松江区广富林路699号',
+      englishAddress: '699 Guangfulin Road, Songjiang District, Shanghai',
+      nearestSubway: 'Line 9 Songjiang University Town Station, Exit 3 - 800m',
+      telephone: ['021-67792222'],
+      branchDistrict: 'Songjiang'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 780,
+    amenities: ['Free WiFi', 'Restaurant', 'Fitness Center', 'Meeting Rooms', 'Business Center'],
+    stars: 4,
+    languagesSpoken: ['Chinese', 'English']
+  } as HotelMerchant,
+  
+  // Ji Hotel People's Square
+  {
+    id: 641,
+    accountType: 'hotel',
+    username: 'jihotelpeoplesquare',
+    displayName: 'Ji Hotel Shanghai People\'s Square',
+    verified: true,
+    joinDate: 'October 2023',
+    recommended: false,
+    hashtags: ['#budget', '#central', '#convenient', '#value', '#business'],
+    district: ['Huangpu'],
+    merchantType: 'Budget Hotel',
+    stats: {
+      mentionedPosts: 32,
+      followers: 2200,
+      following: 48
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市黄浦区西藏中路300号',
+      englishAddress: '300 Middle Xizang Road, Huangpu District, Shanghai',
+      nearestSubway: 'Line 1/8 People\'s Square Station, Exit 4 - 250m',
+      telephone: ['021-63259999'],
+      branchDistrict: 'Huangpu'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 420,
+    amenities: ['Free WiFi', 'Restaurant', 'Meeting Room', '24h Front Desk'],
+    stars: 3,
+    languagesSpoken: ['Chinese', 'English']
+  } as HotelMerchant,
+  
+  // Urside Hotel Shanghai
+  {
+    id: 642,
+    accountType: 'hotel',
+    username: 'ursidehotelsh',
+    displayName: 'Urside Hotel Shanghai Jing\'an',
+    verified: true,
+    joinDate: 'November 2023',
+    recommended: true,
+    hashtags: ['#boutique', '#design', '#hipster', '#moderate', '#Jingan'],
+    district: ['Jing\'an'],
+    merchantType: 'Boutique Hotel',
+    stats: {
+      mentionedPosts: 48,
+      followers: 3800,
+      following: 76
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市静安区威海路245号',
+      englishAddress: '245 Weihai Road, Jing\'an District, Shanghai',
+      nearestSubway: 'Line 2/7 Jing\'an Temple Station, Exit 1 - 650m',
+      telephone: ['021-62170666'],
+      branchDistrict: 'Jing\'an'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 850,
+    amenities: ['Free WiFi', 'Cafe', 'Bar', 'Co-working Space', 'Bicycle Rental'],
+    stars: 4,
+    languagesSpoken: ['Chinese', 'English']
+  } as HotelMerchant,
     
   // Street sample
   {

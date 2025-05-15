@@ -952,6 +952,39 @@ export const merchants: BaseMerchant[] = [
     stars: 4,
     languagesSpoken: ['Chinese', 'English']
   } as HotelMerchant,
+  
+  // Neobridge Shanghai
+  {
+    id: 643,
+    accountType: 'hotel',
+    username: 'neobridgesh',
+    displayName: 'Neobridge Hotel Shanghai',
+    verified: true,
+    joinDate: 'December 2023',
+    recommended: true,
+    hashtags: ['#modern', '#design', '#business', '#contemporary', '#tech'],
+    district: ['Pudong'],
+    merchantType: 'Smart Hotel',
+    url: 'https://www.neobridgehotels.com/shanghai',
+    stats: {
+      mentionedPosts: 52,
+      followers: 4200,
+      following: 68
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '上海市浦东新区张杨路601号',
+      englishAddress: '601 Zhangyang Road, Pudong New Area, Shanghai',
+      nearestSubway: 'Line 4 Pudian Road Station, Exit 2 - 350m',
+      telephone: ['021-58353535'],
+      branchDistrict: 'Pudong'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 920,
+    amenities: ['Free WiFi', 'Smart Room Controls', 'Co-working Spaces', 'Tech Lounge', '24h Robot Service', 'Digital Concierge'],
+    stars: 4,
+    languagesSpoken: ['Chinese', 'English', 'Japanese']
+  } as HotelMerchant,
     
   // Street sample
   {

@@ -986,6 +986,48 @@ export const merchants: BaseMerchant[] = [
     languagesSpoken: ['Chinese', 'English', 'Japanese']
   } as HotelMerchant,
     
+  // Shui Guo Spa
+  {
+    id: 644,
+    accountType: 'hotel',
+    username: 'shuiguospa',
+    displayName: 'Shui Guo Spa',
+    verified: true,
+    joinDate: 'April 2024',
+    recommended: true,
+    hashtags: ['#overnightspa'],
+    district: ['Yangpu'],
+    merchantType: 'Overnight Spa',
+    stats: {
+      mentionedPosts: 0,
+      followers: 0,
+      following: 0
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '水裹·汤泉(五角场店) 杨浦区淞沪路111号3层3F-E,4层4F-E',
+      englishAddress: '3/F, 4/F, No. 111 Songhu Road, Yangpu District, Shanghai, China',
+      nearestSubway: 'Line 10 - Jiangwan Stadium, walk 272m',
+      branchDistrict: 'Yangpu'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 329,
+    amenities: [
+      'Ice Cream', 
+      'Fruits', 
+      'Cafe', 
+      'Beverages', 
+      'Restaurant', 
+      'Massage', 
+      'Card & Board Games Room', 
+      'Bar', 
+      'Free Movies', 
+      'Indoor Camping Area', 
+      'Gaming Area', 
+      'Arcade'
+    ]
+  } as HotelMerchant,
+    
   // Street sample
   {
     id: 506,

@@ -1027,8 +1027,92 @@ export const merchants: BaseMerchant[] = [
       'Arcade'
     ]
   } as HotelMerchant,
-    
+  
+  {
+    id: 645,
+    accountType: 'hotel',
+    username: 'youngspace',
+    displayName: 'Young·SPACE Hot Spring Hall',
+    verified: true,
+    joinDate: 'April 2024',
+    recommended: true,
+    hashtags: ['#overnightspa'],
+    district: ['Pudong'],
+    merchantType: 'Overnight Spa',
+    stats: {
+      mentionedPosts: 0,
+      followers: 0,
+      following: 0
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '漾·SPACE汤泉生活(陆家嘴店) 浦东新区浦电路57号',
+      englishAddress: '57 Pudian Road, Pudong New Area, Shanghai, China',
+      nearestSubway: 'Line 4 - Tangqiao Station - walk 872m',
+      branchDistrict: 'Pudong'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 325,
+    amenities: [
+      'Fruits - Free',
+      'Ice Cream - Free',
+      'Beverages - Free',
+      'PS5',
+      'Guest Room',
+      'Board Game Room',
+      'Bathing Assistance Room',
+      'Children’s Play Area - Free',
+      'Bar',
+      'Library',
+      'Leisure Area'
+    ]
+  } as HotelMerchant,
+
+  {
+    id: 646,
+    accountType: 'hotel',
+    username: 'qushuilanting',
+    displayName: 'Qushui Lanting Spa',
+    verified: true,
+    joinDate: 'April 2024',
+    recommended: true,
+    hashtags: ['#luxury', '#overnightspa'],
+    district: ['Minhang'],
+    merchantType: 'Overnight Spa',
+    stats: {
+      mentionedPosts: 0,
+      followers: 0,
+      following: 0
+    },
+    profileInterface: ProfileInterface.Hotel,
+    location: {
+      chineseAddress: '曲水兰亭(上海虹桥店) 闵行区虹桥镇虹梅路3337号申业中心',
+      englishAddress: 'Shenye Center, No. 3337 Hongmei Road, Hongqiao Town, Minhang District, Shanghai',
+      nearestSubway: 'Line 10 - Longxi Road Station - walk 615m',
+      branchDistrict: 'Minhang'
+    },
+    businessInfo: {}, // Using the predefined values from the HotelMerchant interface
+    pricePerNight: 1510,
+    amenities: [
+      'Fruits - Free',
+      'Beverages - Free',
+      'Dishes',
+      'Desserts - Free',
+      'Executive Bar',
+      'Ziwe Restaurant',
+      'Bar',
+      'Massage',
+      'Beauty and Body Treatments',
+      'Game Area',
+      'Outdoor Terrace',
+      'Guest Room Area',
+      'Comprehensive Package',
+      'Board Games',
+      'Public Lounge Area'
+    ]
+  } as HotelMerchant,
   // Street sample
+  
   {
     id: 506,
     accountType: 'attraction',

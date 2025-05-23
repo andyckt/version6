@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FiHeart, FiBookmark } from 'react-icons/fi';
+import { FiHeart, FiBookmark, FiLoader } from 'react-icons/fi';
 import { FaHeart, FaBookmark } from 'react-icons/fa';
 import Image from 'next/image';
 import { TravelPost } from '@/data/posts';
 import { getUserByUsername } from '@/data/users';
 import BlurImage from './BlurImage';
+import { MerchantPost } from '@/hooks/useMerchantPosts';
 
 // Helper function to check if localStorage is available
 const isLocalStorageAvailable = () => {
@@ -22,15 +23,27 @@ const isLocalStorageAvailable = () => {
 };
 
 interface MentionedGridProps {
-  posts: TravelPost[];
+  posts: MerchantPost[];
+  isLoading?: boolean;
+  isEmpty?: boolean;
+  hasMore?: boolean;
+  loadMore?: () => void;
+  isLoadingMore?: boolean;
+  updatePostEngagement?: (postId: string, type: 'likes' | 'bookmarks' | 'views', increment: boolean) => void;
 }
 
-export default function MentionedGrid({ posts }: MentionedGridProps) {
-  const [likedPosts, setLikedPosts] = useState<Record<number, boolean>>({});
-  const [postLikes, setPostLikes] = useState<Record<number, number>>({});
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<Record<number, boolean>>({});
-  const [postBookmarks, setPostBookmarks] = useState<Record<number, number>>({});
-  const [postViews, setPostViews] = useState<Record<number, number>>({});
+export default function MentionedGrid({ 
+  posts, 
+  isLoading = false, 
+  isEmpty = false,
+  hasMore = false,
+  loadMore,
+  isLoadingMore = false,
+  updatePostEngagement
+}: MentionedGridProps) {
+  const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<Record<string, boolean>>({});
+  const [postViews, setPostViews] = useState<Record<string, number>>({});
   const [storageAvailable, setStorageAvailable] = useState(false);
   
   // Check if localStorage is available
@@ -41,84 +54,30 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
   
   // Initialize like, bookmark, and view counts from localStorage
   useEffect(() => {
-    // Initialize base likes, bookmarks, and views from posts data
-    const initialLikes: Record<number, number> = {};
-    const initialBookmarks: Record<number, number> = {};
-    const initialViews: Record<number, number> = {};
-    
-    posts.forEach(post => {
-      initialLikes[post.id] = post.likes;
-      initialBookmarks[post.id] = post.bookmarks || 0;
-      initialViews[post.id] = post.views;
-    });
-    
-    // Try to load liked, bookmarked, and viewed posts from localStorage
     if (storageAvailable) {
       try {
         // Load liked posts
         const savedLikedPosts = localStorage.getItem('likedPosts');
         if (savedLikedPosts) {
-          const parsedLikedPosts = JSON.parse(savedLikedPosts);
-          setLikedPosts(parsedLikedPosts);
-          
-          // Adjust like counts based on liked status
-          Object.entries(parsedLikedPosts).forEach(([postId, isLiked]) => {
-            if (isLiked) {
-              const numericPostId = Number(postId);
-              initialLikes[numericPostId] = (initialLikes[numericPostId] || 0) + 1;
-            }
-          });
+          setLikedPosts(JSON.parse(savedLikedPosts));
         }
         
         // Load bookmarked posts
         const savedBookmarkedPosts = localStorage.getItem('bookmarkedPosts');
         if (savedBookmarkedPosts) {
-          const parsedBookmarkedPosts = JSON.parse(savedBookmarkedPosts);
-          setBookmarkedPosts(parsedBookmarkedPosts);
-          
-          // Adjust bookmark counts based on bookmarked status
-          Object.entries(parsedBookmarkedPosts).forEach(([postId, isBookmarked]) => {
-            if (isBookmarked) {
-              const numericPostId = Number(postId);
-              initialBookmarks[numericPostId] = (initialBookmarks[numericPostId] || 0) + 1;
-            }
-          });
+          setBookmarkedPosts(JSON.parse(savedBookmarkedPosts));
         }
         
         // Load view counts
         const savedPostViews = localStorage.getItem('postViews');
         if (savedPostViews) {
-          const parsedPostViews = JSON.parse(savedPostViews);
-          
-          posts.forEach(post => {
-            const postId = post.id;
-            initialViews[postId] = parsedPostViews[postId] !== undefined 
-              ? parsedPostViews[postId] 
-              : post.views;
-          });
+          setPostViews(JSON.parse(savedPostViews));
         }
       } catch (error) {
         console.error('Failed to load from localStorage:', error);
       }
     }
-    
-    // Set the final counts
-    setPostLikes(initialLikes);
-    setPostBookmarks(initialBookmarks);
-    setPostViews(initialViews);
-  }, [posts, storageAvailable]);
-  
-  // Save view counts to localStorage when changed
-  useEffect(() => {
-    if (storageAvailable && Object.keys(postViews).length > 0) {
-      try {
-        const dataToSave = JSON.stringify(postViews);
-        localStorage.setItem('postViews', dataToSave);
-      } catch (error) {
-        console.error('Failed to save post views to localStorage:', error);
-      }
-    }
-  }, [postViews, storageAvailable]);
+  }, [storageAvailable]);
   
   // Save liked posts to localStorage when changed
   useEffect(() => {
@@ -144,8 +103,20 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
     }
   }, [bookmarkedPosts, storageAvailable]);
   
+  // Save view counts to localStorage when changed
+  useEffect(() => {
+    if (storageAvailable && Object.keys(postViews).length > 0) {
+      try {
+        const dataToSave = JSON.stringify(postViews);
+        localStorage.setItem('postViews', dataToSave);
+      } catch (error) {
+        console.error('Failed to save post views to localStorage:', error);
+      }
+    }
+  }, [postViews, storageAvailable]);
+  
   // Handle liking a post
-  const handleLikePost = (e: React.MouseEvent, postId: number) => {
+  const handleLikePost = (e: React.MouseEvent, postId: string) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -156,17 +127,14 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
       [postId]: !isCurrentlyLiked
     }));
     
-    setPostLikes(prev => {
-      const currentLikes = prev[postId] || 0;
-      return {
-        ...prev,
-        [postId]: isCurrentlyLiked ? currentLikes - 1 : currentLikes + 1
-      };
-    });
+    // Update engagement count in SWR cache if available
+    if (updatePostEngagement) {
+      updatePostEngagement(postId, 'likes', !isCurrentlyLiked);
+    }
   };
   
   // Handle bookmarking a post
-  const handleBookmarkPost = (e: React.MouseEvent, postId: number) => {
+  const handleBookmarkPost = (e: React.MouseEvent, postId: string) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -177,17 +145,14 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
       [postId]: !isCurrentlyBookmarked
     }));
     
-    setPostBookmarks(prev => {
-      const currentBookmarks = prev[postId] || 0;
-      return {
-        ...prev,
-        [postId]: isCurrentlyBookmarked ? currentBookmarks - 1 : currentBookmarks + 1
-      };
-    });
+    // Update engagement count in SWR cache if available
+    if (updatePostEngagement) {
+      updatePostEngagement(postId, 'bookmarks', !isCurrentlyBookmarked);
+    }
   };
   
   // Handle viewing a post
-  const handleViewPost = (postId: number) => {
+  const handleViewPost = (postId: string) => {
     setPostViews(prev => {
       const currentViews = prev[postId] || 0;
       return {
@@ -195,7 +160,58 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
         [postId]: currentViews + 1
       };
     });
+    
+    // Update engagement count in SWR cache if available
+    if (updatePostEngagement) {
+      updatePostEngagement(postId, 'views', true);
+    }
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-2 gap-x-1 gap-y-1 md:gap-x-1 px-1 md:px-0">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div 
+            key={index} 
+            className="bg-gray-100 rounded-lg overflow-hidden"
+            style={{ 
+              animationDelay: `${index * 100}ms`,
+              opacity: 0,
+              animation: 'fadeIn 0.5s ease forwards'
+            }}
+          >
+            <div className="relative aspect-[3/4] overflow-hidden animate-pulse">
+              <div className="bg-gray-200 w-full h-full"></div>
+            </div>
+            <div className="p-2.5">
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-1.5"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Empty state
+  if (isEmpty || posts.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 text-center">
+        <div className="bg-gray-100 rounded-full p-4 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h3 className="text-base font-medium text-gray-900">No posts yet</h3>
+        <p className="text-sm text-gray-500 mt-1">Be the first to mention this place in a post.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-2 pb-4 -mx-4 md:mx-0">
@@ -217,7 +233,7 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
                   <BlurImage 
                     src={post.media && post.media.length > 0 
                       ? post.media[0].url 
-                      : (post.image || 'https://picsum.photos/600/600?random=default')} 
+                      : 'https://picsum.photos/600/600?random=default'} 
                     alt={post.title}
                     aspectRatio="aspect-[3/4]"
                     sizes="(max-width: 768px) 50vw, 33vw"
@@ -248,21 +264,9 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
                 </Link>
                 
                 <div className="flex items-center justify-between mt-1.5">
-                  <Link 
-                    href={`/user/${post.username}`} 
-                    className="flex items-center group/author"
-                  >
-                    <div className="w-4 h-4 rounded-full bg-gray-200 mr-1.5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
-                      <Image
-                        src={getUserByUsername(post.username)?.profileImage || `https://picsum.photos/200/200?random=${post.id}`}
-                        alt={post.username}
-                        width={16}
-                        height={16}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <span className="text-[10px] font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">@{post.username}</span>
-                  </Link>
+                  <div className="text-[10px] font-medium text-gray-500">
+                    {postViews[post.id] || post.views} views
+                  </div>
                   
                   <div className="flex items-center space-x-3">
                     <button 
@@ -275,7 +279,7 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
                         <FiHeart className="w-3 h-3 mr-1 text-gray-500 transition-transform duration-300" />
                       )}
                       <span className={likedPosts[post.id] ? "text-red-500 font-medium" : "text-gray-500"}>
-                        {postLikes[post.id] || post.likes}
+                        {post.likes}
                       </span>
                     </button>
                   </div>
@@ -286,14 +290,22 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
         ))}
       </div>
       
-      {/* Empty state */}
-      {posts.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-10 px-4 md:px-0">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-            <FiBookmark className="w-6 h-6 text-gray-400" />
-          </div>
-          <h3 className="text-gray-700 font-medium">No posts yet</h3>
-          <p className="text-gray-500 text-sm mt-1">Be the first to mention this place in a post</p>
+      {/* Load More */}
+      {hasMore && (
+        <div className="flex justify-center py-4">
+          {isLoadingMore ? (
+            <div className="flex items-center space-x-2">
+              <FiLoader className="w-4 h-4 animate-spin text-gray-400" />
+              <span className="text-sm text-gray-500">Loading more posts...</span>
+            </div>
+          ) : (
+            <button 
+              onClick={loadMore} 
+              className="text-sm text-blue-500 hover:text-blue-700"
+            >
+              Load more
+            </button>
+          )}
         </div>
       )}
     </div>

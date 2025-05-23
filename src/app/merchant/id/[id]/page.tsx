@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { useMerchantById } from '@/hooks/useMerchantById';
+import { useMerchantPostsById } from '@/hooks/useMerchantPostsById';
 import MerchantHeader from '@/components/merchant/MerchantHeader';
 import MerchantTopNav from '@/components/merchant/MerchantTopNav';
 import BusinessInfo from '@/components/merchant/BusinessInfo';
@@ -12,7 +13,6 @@ import BranchList from '@/components/merchant/BranchList';
 import PageTransition from '@/components/PageTransition';
 import ShareDialog from '@/components/ShareDialog';
 import MentionedGrid from '@/components/MentionedGrid';
-import { travelPosts } from '@/data/posts';
 import { 
   isSingleLocationMerchant,
   isMultiLocationMerchant,
@@ -31,13 +31,24 @@ import PhoneNumberDialog from '@/components/merchant/PhoneNumberDialog';
 import { Navigation, X, Phone, Copy, Car, Train } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function MerchantProfile() {
+export default function MerchantProfileById() {
   // Get the merchant ID from the URL
   const params = useParams();
   const id = params.id ? parseInt(params.id as string) : null;
   
   // Use the useMerchantById hook to fetch merchant data
   const { merchant, isLoading, isError } = useMerchantById(id);
+  const { 
+    posts, 
+    error: postsError, 
+    isLoading: isPostsLoading, 
+    hasMore, 
+    loadMore, 
+    isLoadingMore,
+    updatePostEngagement,
+    totalPosts
+  } = useMerchantPostsById(id);
+  
   const [selectedBranchIndex, setSelectedBranchIndex] = useState(0);
   const [showShareDialog, setShowShareDialog] = useState(false);
   
@@ -45,11 +56,6 @@ export default function MerchantProfile() {
   const [activeBranchIndex, setActiveBranchIndex] = useState<number | null>(null);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [showPhoneDialog, setShowPhoneDialog] = useState(false);
-  
-  // Filter posts that mention this merchant
-  const relatedPosts = travelPosts.filter(post => 
-    post.taggedAccounts?.some(account => account.username === merchant?.username)
-  );
   
   // If we're loading, show a loading state
   if (isLoading) {
@@ -221,11 +227,19 @@ export default function MerchantProfile() {
               Users Mentioning this place
               <div className="ml-2 w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center">
                 <span className="text-[11px] font-medium text-gray-600">
-                  {relatedPosts.length}
+                  {totalPosts || 0}
                 </span>
               </div>
             </h3>
-            <MentionedGrid posts={relatedPosts} />
+            <MentionedGrid 
+              posts={posts} 
+              isLoading={isPostsLoading}
+              isEmpty={!isPostsLoading && posts.length === 0}
+              hasMore={hasMore}
+              loadMore={loadMore}
+              isLoadingMore={isLoadingMore}
+              updatePostEngagement={updatePostEngagement}
+            />
           </div>
         </div>
       </PageTransition>
@@ -234,9 +248,8 @@ export default function MerchantProfile() {
       <ShareDialog 
         isOpen={merchant && showShareDialog}
         onClose={() => setShowShareDialog(false)}
-        postId={merchant?.id || 0}
-        postTitle={`Check out ${merchant?.displayName || ''}`}
-        customUrl={`/merchant/id/${merchant?.id || ''}`}
+        title={`Check out ${merchant?.displayName || ''}`}
+        url={`${typeof window !== 'undefined' ? window.location.origin : ''}/merchant/id/${merchant?.id || ''}`}
       />
     </main>
   );

@@ -1,66 +1,35 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { useMerchant } from '@/hooks/useMerchant';
+import { useMerchantPosts } from '@/hooks/useMerchantPosts';
 import MerchantHeader from '@/components/merchant/MerchantHeader';
 import MerchantTopNav from '@/components/merchant/MerchantTopNav';
-import BusinessInfo from '@/components/merchant/BusinessInfo';
-import OpenStatus from '@/components/merchant/OpenStatus';
-import BranchList from '@/components/merchant/BranchList';
-import { 
-  isSingleLocationMerchant,
-  isMultiLocationMerchant,
-  isHotelMerchant, 
-  isAttractionMerchant, 
-  isStreetMerchant, 
-  isBuildingMerchant, 
-  isBarClubMerchant,
-  BaseMerchant,
-  getMerchantByUsername,
-  MultiLocationMerchant
-} from '@/data/merchants';
-import PageTransition from '@/components/PageTransition';
-import { travelPosts, TravelPost } from '@/data/posts';
-import BlurImage from '@/components/BlurImage';
+import { useState } from 'react';
 import ShareDialog from '@/components/ShareDialog';
-import { FiNavigation, FiPhone, FiMusic, FiCoffee, FiLock, FiMic, FiRadio, FiTag, FiStar, FiAward, FiDollarSign } from 'react-icons/fi';
-import LocationSlideUp from '@/components/merchant/LocationSlideUp';
-import PhoneNumberDialog from '@/components/merchant/PhoneNumberDialog';
-import { Navigation, X, Phone, Copy, Car, Train } from "lucide-react";
-import { motion } from "framer-motion";
 import MentionedGrid from '@/components/MentionedGrid';
+import PageTransition from '@/components/PageTransition';
 
 export default function MerchantProfile() {
   const params = useParams();
   const username = params.username as string;
   
-  const { merchant, isLoading, isError } = useMerchant(username);
-  const [relatedPosts, setRelatedPosts] = useState<TravelPost[]>([]);
-  const [selectedBranchIndex, setSelectedBranchIndex] = useState(0);
+  const { merchant, isLoading: isMerchantLoading, isError: merchantError } = useMerchant(username);
+  const { 
+    posts, 
+    error: postsError, 
+    isLoading: isPostsLoading, 
+    hasMore, 
+    loadMore, 
+    isLoadingMore,
+    updatePostEngagement,
+    totalPosts
+  } = useMerchantPosts(username);
   const [showShareDialog, setShowShareDialog] = useState(false);
-  
-  // State for branch dialogs
-  const [activeBranchIndex, setActiveBranchIndex] = useState<number | null>(null);
-  const [showLocationDialog, setShowLocationDialog] = useState(false);
-  const [showPhoneDialog, setShowPhoneDialog] = useState(false);
-  
-  // Find posts that mention this merchant
-  useEffect(() => {
-    if (merchant) {
-      console.log("Merchant data received:", merchant);
-      // Filter posts that tag this merchant
-      const filtered = travelPosts.filter(post => 
-        post.taggedAccounts?.some(account => account.username === merchant.username)
-      );
-      setRelatedPosts(filtered);
-    }
-  }, [merchant]);
-  
+
   // Render loading state
-  if (isLoading) {
+  if (isMerchantLoading) {
     return (
       <main className="pb-12 bg-white min-h-screen flex flex-col">
         <div className="container-app pt-6 space-y-6">
@@ -74,37 +43,10 @@ export default function MerchantProfile() {
   }
 
   // Render error or not found
-  if (isError) {
-    console.error("Error loading merchant:", isError);
+  if (merchantError || !merchant) {
     return notFound();
   }
-  
-  if (!merchant) {
-    console.log("No merchant data found");
-    return notFound();
-  }
-  
-  // Function to render merchant-specific sections
-  const renderMerchantSpecificSections = (merchant: BaseMerchant) => {
-    const sections = [];
 
-    // Handle the multi-location merchant case
-    if (isMultiLocationMerchant(merchant)) {
-      sections.push(
-        <div key="branch-locations" className="mt-4">
-          <BranchList merchant={merchant as MultiLocationMerchant} />
-        </div>
-      );
-    }
-
-    // Remove any building merchant specific sections since we don't want Featured Shops
-    if (isBuildingMerchant(merchant)) {
-      // No sections to add for building merchants
-    }
-
-    return sections;
-  };
-  
   return (
     <main className="pb-12 min-h-screen">
       <PageTransition>
@@ -117,31 +59,36 @@ export default function MerchantProfile() {
         </div>
         
         <div className="container-app pb-6">
-          {renderMerchantSpecificSections(merchant)}
-          
           {/* Related posts section */}
           <div className="pt-5">
             <h3 className="font-bold text-sm mb-4 flex items-center">
               Users Mentioning this place
               <div className="ml-2 w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center">
                 <span className="text-[11px] font-medium text-gray-600">
-                  {relatedPosts.length}
+                  {totalPosts || 0}
                 </span>
               </div>
             </h3>
             
-            <MentionedGrid posts={relatedPosts} />
+            <MentionedGrid 
+              posts={posts} 
+              isLoading={isPostsLoading}
+              isEmpty={!isPostsLoading && posts.length === 0}
+              hasMore={hasMore}
+              loadMore={loadMore}
+              isLoadingMore={isLoadingMore}
+              updatePostEngagement={updatePostEngagement}
+            />
           </div>
         </div>
       </PageTransition>
       
-      {/* Share Dialog - Moved to the end of the main component */}
-      <ShareDialog 
+      {/* Share Dialog */}
+      <ShareDialog
         isOpen={merchant && showShareDialog}
         onClose={() => setShowShareDialog(false)}
-        postId={merchant?.id || 0}
-        postTitle={`Check out ${merchant?.displayName || ''}`}
-        customUrl={`/merchant/${merchant?.username || ''}`}
+        title={`Check out ${merchant.displayName}`}
+        url={`${typeof window !== 'undefined' ? window.location.origin : ''}/merchant/${merchant.username}`}
       />
     </main>
   );

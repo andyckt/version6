@@ -6,14 +6,17 @@ import { FaWhatsapp, FaInstagram, FaXTwitter } from 'react-icons/fa6';
 import { SiKakao } from 'react-icons/si';
 
 interface ShareDialogProps {
-  isOpen: boolean;
+  isOpen?: boolean;
   onClose: () => void;
-  postId: number;
-  postTitle: string;
+  postId?: number;
+  postTitle?: string;
   customUrl?: string;
+  title?: string;
+  url?: string;
+  imageUrl?: string;
 }
 
-export default function ShareDialog({ isOpen, onClose, postId, postTitle, customUrl }: ShareDialogProps) {
+export default function ShareDialog({ isOpen, onClose, postId, postTitle, customUrl, title, url, imageUrl }: ShareDialogProps) {
   const [copied, setCopied] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +28,8 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
       }
     };
 
-    if (isOpen) {
+    // Only add event listener if dialog is explicitly open or if no isOpen prop was provided (implicit open)
+    if (isOpen !== false) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     
@@ -36,7 +40,7 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
 
   // Prevent body scrolling when dialog is open
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen !== false) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -49,18 +53,36 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
 
   // Reset states when dialog closes
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen === false) {
       setCopied(false);
     }
   }, [isOpen]);
 
+  // Get the actual URL to share
+  const getShareUrl = () => {
+    // First priority: Directly provided URL
+    if (url) return url;
+    
+    // Second priority: Custom URL from post
+    if (customUrl) return `${window.location.origin}${customUrl}`;
+    
+    // Fallback: Generate from postId
+    if (postId) return `${window.location.origin}/post/${postId}`;
+    
+    // Last resort
+    return window.location.href;
+  };
+  
+  // Get the share title
+  const getShareTitle = () => {
+    return title || postTitle || 'Check out this post';
+  };
+
   // Copy link to clipboard
   const copyLink = () => {
-    const url = customUrl 
-      ? `${window.location.origin}${customUrl}` 
-      : `${window.location.origin}/post/${postId}`;
+    const shareUrl = getShareUrl();
       
-    navigator.clipboard.writeText(url)
+    navigator.clipboard.writeText(shareUrl)
       .then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
@@ -82,10 +104,8 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
       name: 'Instagram',
       icon: <FaInstagram className="w-5 h-5" />,
       action: () => {
-        const url = customUrl 
-          ? `${window.location.origin}${customUrl}` 
-          : `${window.location.origin}/post/${postId}`;
-        navigator.clipboard.writeText(url);
+        const shareUrl = getShareUrl();
+        navigator.clipboard.writeText(shareUrl);
         alert('Link copied! Open Instagram and paste in your story or DM.');
         onClose();
       },
@@ -95,10 +115,8 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
       name: 'Kakao',
       icon: <SiKakao className="w-5 h-5" />,
       action: () => {
-        const url = customUrl 
-          ? `${window.location.origin}${customUrl}` 
-          : `${window.location.origin}/post/${postId}`;
-        window.open(`https://story.kakao.com/share?url=${encodeURIComponent(url)}`, '_blank');
+        const shareUrl = getShareUrl();
+        window.open(`https://story.kakao.com/share?url=${encodeURIComponent(shareUrl)}`, '_blank');
         onClose();
       },
       color: 'bg-yellow-400',
@@ -107,10 +125,8 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
       name: 'Facebook',
       icon: <FiFacebook className="w-5 h-5" />,
       action: () => {
-        const url = customUrl 
-          ? `${window.location.origin}${customUrl}` 
-          : `${window.location.origin}/post/${postId}`;
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        const shareUrl = getShareUrl();
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
         onClose();
       },
       color: 'bg-blue-600',
@@ -119,10 +135,9 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
       name: 'WhatsApp',
       icon: <FaWhatsapp className="w-5 h-5" />,
       action: () => {
-        const url = customUrl 
-          ? `${window.location.origin}${customUrl}` 
-          : `${window.location.origin}/post/${postId}`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(`${postTitle} ${url}`)}`, '_blank');
+        const shareUrl = getShareUrl();
+        const shareTitle = getShareTitle();
+        window.open(`https://wa.me/?text=${encodeURIComponent(`${shareTitle} ${shareUrl}`)}`, '_blank');
         onClose();
       },
       color: 'bg-green-500',
@@ -131,17 +146,17 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
       name: 'X.com',
       icon: <FaXTwitter className="w-5 h-5" />,
       action: () => {
-        const url = customUrl 
-          ? `${window.location.origin}${customUrl}` 
-          : `${window.location.origin}/post/${postId}`;
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${postTitle}`)}&url=${encodeURIComponent(url)}`, '_blank');
+        const shareUrl = getShareUrl();
+        const shareTitle = getShareTitle();
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
         onClose();
       },
       color: 'bg-black',
     },
   ];
 
-  if (!isOpen) return null;
+  // Don't render if explicitly set to not open
+  if (isOpen === false) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -150,7 +165,7 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
         className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden animate-fade-in-up"
       >
         <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Share this post</h3>
+          <h3 className="text-lg font-semibold">Share</h3>
           <button 
             onClick={onClose}
             className="p-1 rounded-full hover:bg-gray-100 transition-colors"
@@ -158,6 +173,20 @@ export default function ShareDialog({ isOpen, onClose, postId, postTitle, custom
             <FiX className="w-5 h-5" />
           </button>
         </div>
+        
+        {imageUrl && (
+          <div className="px-4 pt-2">
+            <div className="relative w-full h-32 rounded-lg overflow-hidden">
+              <img 
+                src={imageUrl} 
+                alt={getShareTitle()} 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+            </div>
+            <h4 className="mt-2 text-sm font-medium line-clamp-1">{getShareTitle()}</h4>
+          </div>
+        )}
         
         <div className="p-4">
           <div className="grid grid-cols-3 gap-4">

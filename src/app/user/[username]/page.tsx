@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FiShare2, FiMapPin, FiCalendar, FiLink, FiChevronLeft, FiInfo, FiX, FiHeart, FiBookmark } from 'react-icons/fi';
+import { FiShare2, FiMapPin, FiCalendar, FiLink, FiChevronLeft, FiInfo, FiX, FiHeart, FiBookmark, FiLoader } from 'react-icons/fi';
 import { FaHeart, FaBookmark } from 'react-icons/fa';
-import { travelPosts, TravelPost } from '@/data/posts';
-import { getUserByUsername } from '@/data/users';
 import BlurImage from '@/components/BlurImage';
 import Navigation from '@/components/Navigation';
 import PageTransition from '@/components/PageTransition';
@@ -16,6 +14,7 @@ import { useNavigation } from '@/hooks/useNavigation';
 import { Button } from '@/components/ui/Button';
 import { useUser } from '@/hooks/useUser';
 import ShareDialog from '@/components/ShareDialog';
+import { useUserPosts, UserPost } from '@/hooks/useUserPosts';
 
 // Helper function to check if localStorage is available
 const isLocalStorageAvailable = () => {
@@ -34,19 +33,28 @@ export default function UserProfilePage() {
   const params = useParams();
   const username = params.username as string;
   
-  const { user, isLoading, isError } = useUser(username);
+  const { user, isLoading: isUserLoading, isError: isUserError } = useUser(username);
+  const { 
+    posts, 
+    isLoading: isPostsLoading, 
+    isEmpty,
+    hasMore,
+    loadMore,
+    isLoadingMore,
+    totalPosts,
+    updatePostEngagement
+  } = useUserPosts(username);
+  
   const [isFollowing, setIsFollowing] = useState(false);
-  const [userPosts, setUserPosts] = useState<TravelPost[]>([]);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInfoDialog, setShowInfoDialog] = useState(false);
   
   // States for post interactions
-  const [likedPosts, setLikedPosts] = useState<Record<number, boolean>>({});
-  const [postLikes, setPostLikes] = useState<Record<number, number>>({});
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<Record<number, boolean>>({});
-  const [postBookmarks, setPostBookmarks] = useState<Record<number, number>>({});
-  const [postViews, setPostViews] = useState<Record<number, number>>({});
+  const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<Record<string, boolean>>({});
+  const [postViews, setPostViews] = useState<Record<string, number>>({});
   const [storageAvailable, setStorageAvailable] = useState(false);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
   
   // Random image states - these will be different on each page load
   const [randomProfileImage, setRandomProfileImage] = useState('');
@@ -67,45 +75,6 @@ export default function UserProfilePage() {
     const available = isLocalStorageAvailable();
     setStorageAvailable(available);
   }, []);
-  
-  // Filter and sort user posts by view count
-  useEffect(() => {
-    if (username) {
-      const filtered = travelPosts.filter(post => post.username === username);
-      
-      // Load post views from localStorage
-      let viewCounts: Record<number, number> = {};
-      if (storageAvailable) {
-        try {
-          const savedViews = localStorage.getItem('postViews');
-          if (savedViews) {
-            viewCounts = JSON.parse(savedViews);
-          }
-        } catch (error) {
-          console.error('Failed to load post views:', error);
-        }
-      }
-      
-      // Sort by view count (descending)
-      const sorted = [...filtered].sort((a, b) => {
-        const aViews = viewCounts[a.id] || a.views;
-        const bViews = viewCounts[b.id] || b.views;
-        return bViews - aViews;
-      });
-      
-      setUserPosts(sorted);
-      
-      // Initialize post data
-      const initialLikes: Record<number, number> = {};
-      const initialBookmarks: Record<number, number> = {};
-      filtered.forEach(post => {
-        initialLikes[post.id] = post.likes;
-        initialBookmarks[post.id] = post.bookmarks || 0;
-      });
-      setPostLikes(initialLikes);
-      setPostBookmarks(initialBookmarks);
-    }
-  }, [username, storageAvailable]);
   
   // Initialize like and bookmark states from localStorage
   useEffect(() => {
@@ -133,6 +102,28 @@ export default function UserProfilePage() {
       }
     }
   }, [storageAvailable]);
+  
+  // Intersection Observer for infinite loading
+  useEffect(() => {
+    if (!loadMoreRef.current || !hasMore || isLoadingMore) return;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+          loadMore();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    
+    observer.observe(loadMoreRef.current);
+    
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current);
+      }
+    };
+  }, [hasMore, isLoadingMore, loadMore]);
   
   // Close info dialog when clicking outside
   useEffect(() => {
@@ -174,7 +165,7 @@ export default function UserProfilePage() {
   };
   
   // Handle liking a post
-  const handleLikePost = (e: React.MouseEvent, postId: number) => {
+  const handleLikePost = (e: React.MouseEvent, postId: string) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -185,13 +176,8 @@ export default function UserProfilePage() {
       [postId]: !isCurrentlyLiked
     }));
     
-    setPostLikes(prev => {
-      const currentLikes = prev[postId] || 0;
-      return {
-        ...prev,
-        [postId]: isCurrentlyLiked ? currentLikes - 1 : currentLikes + 1
-      };
-    });
+    // Update engagement count in SWR cache
+    updatePostEngagement(postId, 'likes', !isCurrentlyLiked);
     
     // Save to localStorage
     if (storageAvailable) {
@@ -204,7 +190,7 @@ export default function UserProfilePage() {
   };
   
   // Handle bookmarking a post
-  const handleBookmarkPost = (e: React.MouseEvent, postId: number) => {
+  const handleBookmarkPost = (e: React.MouseEvent, postId: string) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -215,13 +201,8 @@ export default function UserProfilePage() {
       [postId]: !isCurrentlyBookmarked
     }));
     
-    setPostBookmarks(prev => {
-      const currentBookmarks = prev[postId] || 0;
-      return {
-        ...prev,
-        [postId]: isCurrentlyBookmarked ? currentBookmarks - 1 : currentBookmarks + 1
-      };
-    });
+    // Update engagement count in SWR cache
+    updatePostEngagement(postId, 'bookmarks', !isCurrentlyBookmarked);
     
     // Save to localStorage
     if (storageAvailable) {
@@ -234,12 +215,15 @@ export default function UserProfilePage() {
   };
   
   // Handle viewing a post
-  const handleViewPost = (postId: number) => {
+  const handleViewPost = (postId: string) => {
     const newViews = {
       ...postViews,
       [postId]: (postViews[postId] || 0) + 1
     };
     setPostViews(newViews);
+    
+    // Update engagement count in SWR cache
+    updatePostEngagement(postId, 'views', true);
     
     // Save to localStorage
     if (storageAvailable) {
@@ -248,7 +232,7 @@ export default function UserProfilePage() {
   };
 
   // Render loading state
-  if (isLoading) {
+  if (isUserLoading) {
     return (
       <main className="pb-16 min-h-screen">
         <div className="animate-pulse">
@@ -283,7 +267,7 @@ export default function UserProfilePage() {
   }
 
   // Render error state or not found
-  if (isError || !user) {
+  if (isUserError || !user) {
     return notFound();
   }
 
@@ -440,10 +424,53 @@ export default function UserProfilePage() {
           )}
           
           {/* User Posts Grid */}
-          <div className="pt-2 pb-4 -mx-4 md:mx-0">
-            {userPosts.length > 0 ? (
+          <div className="pt-4 pb-4 -mx-4 md:mx-0">
+            {/* Loading State for Posts */}
+            {isPostsLoading && (
               <div className="grid grid-cols-2 gap-x-1 gap-y-1 md:gap-x-1 px-1 md:px-0">
-                {userPosts.map((post, index) => (
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div 
+                    key={index} 
+                    className="bg-gray-100 rounded-lg overflow-hidden"
+                    style={{ 
+                      animationDelay: `${index * 100}ms`,
+                      opacity: 0,
+                      animation: 'fadeIn 0.5s ease forwards'
+                    }}
+                  >
+                    <div className="relative aspect-[3/4] overflow-hidden animate-pulse">
+                      <div className="bg-gray-200 w-full h-full"></div>
+                    </div>
+                    <div className="p-2.5">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-1.5"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Empty State */}
+            {!isPostsLoading && isEmpty && (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <div className="bg-gray-100 rounded-full p-4 mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </div>
+                <h3 className="text-base font-medium text-gray-900">No posts yet</h3>
+                <p className="text-sm text-gray-500 mt-1">This user hasn't posted anything yet.</p>
+              </div>
+            )}
+            
+            {/* Posts Grid */}
+            {!isPostsLoading && posts.length > 0 && (
+              <div className="grid grid-cols-2 gap-x-1 gap-y-1 md:gap-x-1 px-1 md:px-0">
+                {posts.map((post, index) => (
                   <div 
                     key={post.id} 
                     className="group flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
@@ -459,7 +486,7 @@ export default function UserProfilePage() {
                           <BlurImage 
                             src={post.media && post.media.length > 0 
                               ? post.media[0].url 
-                              : (post.image || 'https://picsum.photos/600/600?random=default')} 
+                              : 'https://picsum.photos/600/600?random=default'} 
                             alt={post.title}
                             aspectRatio="aspect-[3/4]"
                             sizes="(max-width: 768px) 50vw, 33vw"
@@ -505,7 +532,7 @@ export default function UserProfilePage() {
                                 <FiHeart className="w-3 h-3 mr-1 text-gray-500 transition-transform duration-300" />
                               )}
                               <span className={likedPosts[post.id] ? "text-red-500 font-medium" : "text-gray-500"}>
-                                {postLikes[post.id] || post.likes}
+                                {post.likes}
                               </span>
                             </button>
                           </div>
@@ -515,37 +542,26 @@ export default function UserProfilePage() {
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-12 bg-gray-50 rounded-lg text-center">
-                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 animate-pulse">
-                  <Image 
-                    src="/icons/empty-posts.png" 
-                    alt="No posts" 
-                    width={40} 
-                    height={40}
-                    className="opacity-50"
-                    // Fallback to icon if image doesn't exist
-                    onError={(e) => {
-                      e.currentTarget.src = "";
-                      return true;
-                    }}
-                  />
-                  <FiHeart className="w-8 h-8 text-gray-300 absolute" />
-                </div>
-                <h3 className="text-gray-700 font-medium">No posts yet</h3>
-                <p className="text-gray-500 text-sm mt-1 max-w-xs mx-auto">
-                  This user hasn't posted anything yet
-                </p>
-                
-                {!isFollowing && (
-                  <Button 
-                    onClick={handleFollowClick}
-                    variant="primary"
-                    size="sm"
-                    className="rounded-full mt-5"
+            )}
+            
+            {/* Load More */}
+            {hasMore && (
+              <div 
+                ref={loadMoreRef} 
+                className="flex justify-center py-4"
+              >
+                {isLoadingMore ? (
+                  <div className="flex items-center space-x-2">
+                    <FiLoader className="w-4 h-4 animate-spin text-gray-400" />
+                    <span className="text-sm text-gray-500">Loading more posts...</span>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={loadMore} 
+                    className="text-sm text-blue-500 hover:text-blue-700"
                   >
-                    Follow
-                  </Button>
+                    Load more
+                  </button>
                 )}
               </div>
             )}
@@ -553,14 +569,15 @@ export default function UserProfilePage() {
         </div>
       </PageTransition>
       
-      {/* Share Dialog Implementation */}
-      <ShareDialog 
-        isOpen={showShareDialog}
-        onClose={() => setShowShareDialog(false)}
-        postId={user.id}
-        postTitle={`Check out ${user.displayName}'s profile`}
-        customUrl={`/user/${username}`}
-      />
+      {/* Share Dialog */}
+      {showShareDialog && (
+        <ShareDialog 
+          onClose={() => setShowShareDialog(false)} 
+          title={`${user.displayName}'s profile`}
+          url={`${window.location.origin}/user/${user.username}`}
+          imageUrl={profileImageToUse}
+        />
+      )}
       
       <Navigation />
     </main>

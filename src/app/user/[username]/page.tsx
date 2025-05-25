@@ -54,6 +54,7 @@ export default function UserProfilePage() {
   const [bookmarkedPosts, setBookmarkedPosts] = useState<Record<string, boolean>>({});
   const [postViews, setPostViews] = useState<Record<string, number>>({});
   const [storageAvailable, setStorageAvailable] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   
   // Random image states - these will be different on each page load
@@ -103,27 +104,27 @@ export default function UserProfilePage() {
     }
   }, [storageAvailable]);
   
-  // Intersection Observer for infinite loading
-  useEffect(() => {
-    if (!loadMoreRef.current || !hasMore || isLoadingMore) return;
+  // Set up Intersection Observer for infinite scrolling
+  const lastPostElementRef = useCallback((node: HTMLDivElement | null) => {
+    if (isPostsLoading || isLoadingMore) return;
     
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
-          loadMore();
-        }
-      },
-      { threshold: 0.5 }
-    );
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
     
-    observer.observe(loadMoreRef.current);
-    
-    return () => {
-      if (loadMoreRef.current) {
-        observer.unobserve(loadMoreRef.current);
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        loadMore();
       }
-    };
-  }, [hasMore, isLoadingMore, loadMore]);
+    }, {
+      rootMargin: '200px', // Load more posts when user is 200px away from the bottom
+      threshold: 0.1
+    });
+    
+    if (node) {
+      observerRef.current.observe(node);
+    }
+  }, [isPostsLoading, isLoadingMore, hasMore, loadMore]);
   
   // Close info dialog when clicking outside
   useEffect(() => {
@@ -229,6 +230,14 @@ export default function UserProfilePage() {
     if (storageAvailable) {
       localStorage.setItem('postViews', JSON.stringify(newViews));
     }
+  };
+
+  // Helper function to get image URL with optimized loading
+  const getImageUrl = (post: UserPost) => {
+    if (post.media && post.media.length > 0) {
+      return post.media[0].url;
+    }
+    return `https://picsum.photos/600/600?random=${post.id}`;
   };
 
   // Render loading state
@@ -433,9 +442,9 @@ export default function UserProfilePage() {
                     key={index} 
                     className="bg-gray-100 rounded-lg overflow-hidden"
                     style={{ 
-                      animationDelay: `${index * 100}ms`,
+                      animationDelay: `${index * 50}ms`,
                       opacity: 0,
-                      animation: 'fadeIn 0.5s ease forwards'
+                      animation: 'fadeIn 0.3s ease forwards'
                     }}
                   >
                     <div className="relative aspect-[3/4] overflow-hidden animate-pulse">
@@ -470,77 +479,82 @@ export default function UserProfilePage() {
             {/* Posts Grid */}
             {!isPostsLoading && posts.length > 0 && (
               <div className="grid grid-cols-2 gap-x-1 gap-y-1 md:gap-x-1 px-1 md:px-0">
-                {posts.map((post, index) => (
-                  <div 
-                    key={post.id} 
-                    className="group flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                    style={{ 
-                      animationDelay: `${index * 100}ms`,
-                      opacity: 0,
-                      animation: 'fadeIn 0.5s ease forwards'
-                    }}
-                  >
-                    <div className="relative overflow-hidden">
-                      <Link href={`/post/${post.id}`} className="block" onClick={() => handleViewPost(post.id)}>
-                        <div className="relative aspect-[3/4] overflow-hidden">
-                          <BlurImage 
-                            src={post.media && post.media.length > 0 
-                              ? post.media[0].url 
-                              : 'https://picsum.photos/600/600?random=default'} 
-                            alt={post.title}
-                            aspectRatio="aspect-[3/4]"
-                            sizes="(max-width: 768px) 50vw, 33vw"
-                            className="object-cover"
-                          />
-                          {/* Image overlay gradient */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          
-                          {/* Bookmark button */}
-                          <button 
-                            className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95"
-                            onClick={(e) => handleBookmarkPost(e, post.id)}
-                          >
-                            {bookmarkedPosts[post.id] ? (
-                              <FaBookmark className="w-4 h-4 text-amber-400" />
-                            ) : (
-                              <FiBookmark className="w-4 h-4 text-gray-600" />
-                            )}
-                          </button>
-                        </div>
-                      </Link>
-                      
-                      <div className="p-2.5">
-                        <Link href={`/post/${post.id}`}>
-                          <h3 className="font-[550] text-xs line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
-                            {post.title}
-                          </h3>
+                {posts.map((post, index) => {
+                  // Reference for last post element (for infinite scrolling)
+                  const ref = index === posts.length - 1 ? lastPostElementRef : null;
+                  
+                  return (
+                    <div 
+                      key={post.id} 
+                      ref={ref}
+                      className="group flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                      style={{ 
+                        animationDelay: `${index * 50}ms`,
+                        opacity: 0,
+                        animation: 'fadeIn 0.3s ease forwards'
+                      }}
+                    >
+                      <div className="relative overflow-hidden">
+                        <Link href={`/post/${post.id}`} className="block" onClick={() => handleViewPost(post.id)}>
+                          <div className="relative aspect-[3/4] overflow-hidden">
+                            <BlurImage 
+                              src={getImageUrl(post)}
+                              alt={post.title}
+                              aspectRatio="aspect-[3/4]"
+                              sizes="(max-width: 768px) 50vw, 33vw"
+                              className="object-cover"
+                              priority={index < 4} // Only prioritize the first 4 images
+                            />
+                            {/* Image overlay gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            
+                            {/* Bookmark button */}
+                            <button 
+                              className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95"
+                              onClick={(e) => handleBookmarkPost(e, post.id)}
+                            >
+                              {bookmarkedPosts[post.id] ? (
+                                <FaBookmark className="w-4 h-4 text-amber-400" />
+                              ) : (
+                                <FiBookmark className="w-4 h-4 text-gray-600" />
+                              )}
+                            </button>
+                          </div>
                         </Link>
                         
-                        <div className="flex items-center justify-between mt-1.5">
-                          <div className="text-[10px] font-medium text-gray-500">
-                            {postViews[post.id] || post.views} views
-                          </div>
+                        <div className="p-2.5">
+                          <Link href={`/post/${post.id}`}>
+                            <h3 className="font-[550] text-xs line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+                              {post.title}
+                            </h3>
+                          </Link>
                           
-                          <div className="flex items-center space-x-3">
-                            <button 
-                              className="flex items-center text-[10px] transition-all duration-300 active:scale-125"
-                              onClick={(e) => handleLikePost(e, post.id)}
-                            >
-                              {likedPosts[post.id] ? (
-                                <FaHeart className="w-3 h-3 mr-1 text-red-500 transition-transform duration-300" />
-                              ) : (
-                                <FiHeart className="w-3 h-3 mr-1 text-gray-500 transition-transform duration-300" />
-                              )}
-                              <span className={likedPosts[post.id] ? "text-red-500 font-medium" : "text-gray-500"}>
-                                {post.likes}
-                              </span>
-                            </button>
+                          <div className="flex items-center justify-between mt-1.5">
+                            <div className="text-[10px] font-medium text-gray-500">
+                              {postViews[post.id] || post.views} views
+                            </div>
+                            
+                            <div className="flex items-center space-x-3">
+                              <button 
+                                className="flex items-center text-[10px] transition-all duration-300 active:scale-125"
+                                onClick={(e) => handleLikePost(e, post.id)}
+                              >
+                                {likedPosts[post.id] ? (
+                                  <FaHeart className="w-3 h-3 mr-1 text-red-500 transition-transform duration-300" />
+                                ) : (
+                                  <FiHeart className="w-3 h-3 mr-1 text-gray-500 transition-transform duration-300" />
+                                )}
+                                <span className={likedPosts[post.id] ? "text-red-500 font-medium" : "text-gray-500"}>
+                                  {post.likes}
+                                </span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
             

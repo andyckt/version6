@@ -33,7 +33,7 @@ interface UserPostsResponse {
   total: number;
 }
 
-export function useUserPosts(username: string, initialLimit: number = 12) {
+export function useUserPosts(username: string, initialLimit: number = 30) {
   const [limit] = useState(initialLimit);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -61,7 +61,7 @@ export function useUserPosts(username: string, initialLimit: number = 12) {
     return response.json();
   };
 
-  // Use SWR Infinite for pagination
+  // Use SWR Infinite for pagination with optimized settings
   const {
     data,
     error,
@@ -74,6 +74,10 @@ export function useUserPosts(username: string, initialLimit: number = 12) {
     revalidateOnFocus: false,
     dedupingInterval: 60000, // 1 minute
     persistSize: true,
+    keepPreviousData: true, // Keep previous data while fetching new data
+    suspense: false, // Don't use suspense to handle loading state ourselves
+    revalidateIfStale: false, // Don't revalidate automatically if stale
+    revalidateOnReconnect: false, // Don't revalidate automatically on reconnect
   });
   
   // Flatten the paginated data
@@ -86,7 +90,7 @@ export function useUserPosts(username: string, initialLimit: number = 12) {
   const hasMore = data ? data[data.length - 1]?.hasMore : false;
   const totalPosts = data?.[0]?.total || 0;
   
-  // Function to load more posts
+  // Function to load more posts with throttling
   const loadMore = useCallback(() => {
     if (!isLoadingMore && hasMore) {
       setSize(size + 1);
@@ -103,9 +107,9 @@ export function useUserPosts(username: string, initialLimit: number = 12) {
     }
   }, [mutate]);
 
-  // Function to update post engagement metrics (like, bookmark, view)
+  // Function to update post engagement metrics (like, bookmark, view) with optimistic updates
   const updatePostEngagement = useCallback((postId: string, type: 'likes' | 'bookmarks' | 'views', increment: boolean) => {
-    // Update the post count optimistically
+    // Update the post count optimistically without waiting for server response
     mutate(
       (currentData) => {
         if (!currentData) return currentData;
@@ -125,9 +129,24 @@ export function useUserPosts(username: string, initialLimit: number = 12) {
         }));
       },
       {
-        revalidate: false // Don't revalidate immediately
+        revalidate: false // Don't revalidate immediately for faster UI updates
       }
     );
+    
+    // Optionally, you could send an API call here to update the server
+    // without waiting for the response, allowing for a more responsive UI
+    if (type !== 'views') { // Don't make API calls for views to reduce server load
+      fetch(`/api/posts/${postId}/${type}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ increment }),
+      }).catch(err => {
+        console.error(`Failed to update ${type} for post ${postId}:`, err);
+        // Could potentially revert the optimistic update here if the API call fails
+      });
+    }
   }, [mutate]);
 
   return {

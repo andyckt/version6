@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, Fragment, useEffect } from 'react'
+import { useState, Fragment, useEffect, useCallback } from 'react'
 import { FiArrowLeft, FiHeart, FiMessageSquare, FiBookmark, FiShare2, FiMoreHorizontal } from 'react-icons/fi'
 import { FaHeart, FaBookmark } from 'react-icons/fa'
 import { travelPosts, TaggedAccount, MediaItem } from '@/data/posts'
@@ -14,6 +14,7 @@ import MediaGallery from '@/components/MediaGallery'
 import ShareDialog from '@/components/ShareDialog'
 import { MerchantDataProvider } from '@/components/providers/MerchantDataProvider'
 import TaggedAccountCard from '@/components/TaggedAccountCard'
+import { useRouter } from 'next/navigation'
 
 // Define MediaVariant interface for extended media items
 interface MediaVariant {
@@ -69,6 +70,7 @@ const isLocalStorageAvailable = () => {
 };
 
 export default function PostDetail({ params }: { params: { id: string } }) {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [post, setPost] = useState<any>(null);
@@ -254,6 +256,18 @@ export default function PostDetail({ params }: { params: { id: string } }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
+  // Handle back button click
+  const handleBackClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    // Check if we can go back in history
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      // Fallback to homepage if there's no history
+      router.push('/');
+    }
+  }, [router]);
+  
   // Show loading state
   if (loading) {
     return (
@@ -261,9 +275,9 @@ export default function PostDetail({ params }: { params: { id: string } }) {
         <header className="sticky top-0 bg-white z-20 border-b border-gray-100">
           <div className="container-app">
             <div className="flex items-center justify-between py-1.5">
-              <Link href="/" className="p-1.5 transition-transform hover:scale-110 active:scale-95">
+              <button onClick={handleBackClick} className="p-1.5 transition-transform hover:scale-110 active:scale-95">
                 <FiArrowLeft className="w-5 h-5" />
-              </Link>
+              </button>
             </div>
           </div>
         </header>
@@ -285,9 +299,9 @@ export default function PostDetail({ params }: { params: { id: string } }) {
         <header className="sticky top-0 bg-white z-20 border-b border-gray-100">
           <div className="container-app">
             <div className="flex items-center justify-between py-1.5">
-              <Link href="/" className="p-1.5 transition-transform hover:scale-110 active:scale-95">
+              <button onClick={handleBackClick} className="p-1.5 transition-transform hover:scale-110 active:scale-95">
                 <FiArrowLeft className="w-5 h-5" />
-              </Link>
+              </button>
             </div>
           </div>
         </header>
@@ -527,9 +541,9 @@ export default function PostDetail({ params }: { params: { id: string } }) {
           <div className="container-app">
             <div className="flex items-center justify-between py-1.5">
               {/* Left section - Back button */}
-              <Link href="/" className="p-1.5 transition-transform hover:scale-110 active:scale-95">
+              <button onClick={handleBackClick} className="p-1.5 transition-transform hover:scale-110 active:scale-95">
                 <FiArrowLeft className="w-5 h-5" />
-              </Link>
+              </button>
               
               {/* Center section - Profile and username */}
               {post.user && (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FiShare2, FiMapPin, FiCalendar, FiLink, FiChevronLeft, FiInfo, FiX, FiHeart, FiBookmark, FiLoader } from 'react-icons/fi';
@@ -32,6 +32,7 @@ export default function UserProfilePage() {
   const { navigate } = useNavigation();
   const params = useParams();
   const username = params.username as string;
+  const router = useRouter();
   
   const { user, isLoading: isUserLoading, isError: isUserError } = useUser(username);
   const { 
@@ -240,6 +241,18 @@ export default function UserProfilePage() {
     return `https://picsum.photos/600/600?random=${post.id}`;
   };
 
+  // Handle back button click
+  const handleBackClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    // Check if we can go back in history
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      // Fallback to homepage if there's no history
+      router.push('/');
+    }
+  }, [router]);
+  
   // Render loading state
   if (isUserLoading) {
     return (
@@ -296,9 +309,9 @@ export default function UserProfilePage() {
           {/* Floating Navigation Buttons - Improved Back Button */}
           <div className="absolute top-0 left-0 right-0 p-2">
             <div className="container-app">
-              <Link href="/" className="inline-flex items-center justify-center w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-colors">
+              <button onClick={handleBackClick} className="inline-flex items-center justify-center w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-colors">
                 <FiChevronLeft className="w-4 h-4" />
-              </Link>
+              </button>
             </div>
           </div>
         </div>

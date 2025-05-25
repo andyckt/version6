@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/Button';
 import { useUser } from '@/hooks/useUser';
 import ShareDialog from '@/components/ShareDialog';
 import { useUserPosts, UserPost } from '@/hooks/useUserPosts';
-import React from 'react';
 
 // Helper function to check if localStorage is available
 const isLocalStorageAvailable = () => {

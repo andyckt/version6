@@ -67,12 +67,15 @@ export async function PATCH(
     // In a real app, validate user has permission to update this user
     // and validate the update data more thoroughly
     
-    // Don't allow updating username through this endpoint
+    // Validate username format if being updated
     if (data.username && data.username !== username) {
-      return NextResponse.json(
-        { error: 'Cannot change username through this endpoint' },
-        { status: 400 }
-      );
+      // Simple validation: alphanumeric and underscore only
+      if (!/^[a-zA-Z0-9_]+$/.test(data.username)) {
+        return NextResponse.json(
+          { error: 'Username can only contain letters, numbers, and underscores' },
+          { status: 400 }
+        );
+      }
     }
     
     // Don't allow updating sensitive fields

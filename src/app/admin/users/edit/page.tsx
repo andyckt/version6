@@ -177,7 +177,7 @@ export default function UserEditor() {
     setSaveSuccess(false);
     
     try {
-      // If username changed, need to update the API endpoint
+      // Always use the original username for the API endpoint
       const endpoint = `/api/users/${user.username}`;
       
       const response = await fetch(endpoint, {
@@ -194,19 +194,28 @@ export default function UserEditor() {
       }
       
       const updatedUser = await response.json();
+      
+      // Update the user state with the new data
       setUser(updatedUser);
       
-      // If username changed, update the search field
+      // If username changed, update the search field and route
       if (form.username !== user.username) {
         setSearchUsername(form.username);
+        
+        // Show success message before potentially redirecting
+        setSaveSuccess(true);
+        setTimeout(() => {
+          // If we're still on this page after 1.5 seconds, clear the success message
+          setSaveSuccess(false);
+        }, 1500);
+      } else {
+        setSaveSuccess(true);
+        
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setSaveSuccess(false);
+        }, 3000);
       }
-      
-      setSaveSuccess(true);
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setSaveSuccess(false);
-      }, 3000);
       
     } catch (error: any) {
       setSaveError(error.message);

@@ -114,11 +114,18 @@ export async function updateUser(id: string, userData: Partial<IUser>): Promise<
     }
   }
   
+  // Update the user
   await db.collection(COLLECTION).updateOne(
     { _id: new ObjectId(id) },
     { $set: userData }
   );
   
+  // If the username has changed, we need to refetch with the new username
+  if (userData.username) {
+    return findUserByUsername(userData.username);
+  }
+  
+  // Otherwise fetch by ID
   return findUserById(id);
 }
 

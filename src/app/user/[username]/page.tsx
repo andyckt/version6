@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/Button';
 import { useUser } from '@/hooks/useUser';
 import ShareDialog from '@/components/ShareDialog';
 import { useUserPosts, UserPost } from '@/hooks/useUserPosts';
+import React from 'react';
 
 // Helper function to check if localStorage is available
 const isLocalStorageAvailable = () => {
@@ -296,108 +297,117 @@ export default function UserProfilePage() {
   return (
     <main className="pb-16 min-h-screen">
       <PageTransition>
-        {/* Cover Image with Floating Navigation */}
-        <div className="relative h-36 md:h-48 w-full bg-gray-200">
-          <Image 
-            src={coverImageToUse}
-            alt={`${user.displayName}'s cover image`}
-            fill
-            className="object-cover"
-            priority
-          />
-          
-          {/* Floating Navigation Buttons - Improved Back Button */}
-          <div className="absolute top-0 left-0 right-0 p-2">
-            <div className="container-app">
-              <button onClick={handleBackClick} className="inline-flex items-center justify-center w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-colors">
-                <FiChevronLeft className="w-4 h-4" />
-              </button>
+        {/* Cover Image with User Info Overlay */}
+        <div className="relative w-full">
+          {/* Cover Image - made taller to accommodate the overlay info */}
+          <div className="relative h-56 md:h-64 w-full bg-gray-200">
+            <Image 
+              src={coverImageToUse}
+              alt={`${user.displayName}'s cover image`}
+              fill
+              className="object-cover"
+              priority
+            />
+            {/* Dark gradient overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
+            
+            {/* Floating Navigation Buttons - Improved Back Button */}
+            <div className="absolute top-0 left-0 right-0 p-2">
+              <div className="container-app">
+                <button onClick={handleBackClick} className="inline-flex items-center justify-center w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-colors">
+                  <FiChevronLeft className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            
+            {/* Profile info - now positioned on top of the cover image */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+              <div className="container-app">
+                <div className="flex items-end gap-4">
+                  {/* Profile Picture */}
+                  <div className="border-4 border-white rounded-full bg-white shadow-md">
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden">
+                      <BlurImage 
+                        src={profileImageToUse}
+                        alt={user.displayName}
+                        priority={true}
+                      />
+                    </div>
+                    
+                    {/* Verification Badge */}
+                    {user.verified && (
+                      <div className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 border-2 border-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                          <path fillRule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex-1">
+                    {/* User Info */}
+                    <div className="[text-shadow:0_1px_2px_rgba(0,0,0,0.8)]">
+                      <h1 className="text-xl font-bold">{user.displayName}</h1>
+                      <p className="text-gray-200 text-sm">@{user.username}</p>
+                      
+                      {/* Bio - only show if it exists */}
+                      {user.bio && (
+                        <p className="mt-1 text-sm text-gray-100 line-clamp-2">{user.bio}</p>
+                      )}
+                      
+                      <div className="mt-1 flex flex-wrap gap-2">
+                        {/* Location and Home Location */}
+                        {user.homeLocation && (
+                          <div className="flex items-center text-xs text-gray-200">
+                            <FiMapPin className="w-3 h-3 mr-1" />
+                            <span className="truncate">From {user.homeLocation}</span>
+                          </div>
+                        )}
+                        
+                        {user.location && (
+                          <div className="flex items-center text-xs text-gray-200">
+                            <FiMapPin className="w-3 h-3 mr-1" />
+                            <span className="truncate">{user.location}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Follow and Share Buttons */}
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={handleInfoClick}
+                      className="flex items-center justify-center p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                      aria-label="More information"
+                    >
+                      <FiInfo className="w-4 h-4" />
+                    </button>
+                    
+                    <button 
+                      onClick={handleShareClick}
+                      className="flex items-center justify-center p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                      aria-label="Share profile"
+                    >
+                      <FiShare2 className="w-4 h-4" />
+                    </button>
+                    
+                    <Button 
+                      onClick={handleFollowClick}
+                      variant="primary"
+                      size="sm"
+                      className="rounded-full"
+                    >
+                      Follow
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="container-app">
-          {/* Profile info */}
-          <div className="relative">
-            {/* Profile Picture */}
-            <div className="absolute -top-12 left-4 border-4 border-white rounded-full bg-white shadow-md">
-              <div className="relative w-24 h-24 rounded-full overflow-hidden">
-                <BlurImage 
-                  src={profileImageToUse}
-                  alt={user.displayName}
-                  priority={true}
-                />
-              </div>
-              
-              {/* Verification Badge */}
-              {user.verified && (
-                <div className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 border-2 border-white">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                    <path fillRule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              )}
-            </div>
-            
-            {/* Follow and Share Buttons */}
-            <div className="flex justify-end items-center gap-2 pt-2">
-              <button 
-                onClick={handleInfoClick}
-                className="flex items-center justify-center p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-                aria-label="More information"
-              >
-                <FiInfo className="w-4 h-4" />
-              </button>
-              
-              <button 
-                onClick={handleShareClick}
-                className="flex items-center justify-center p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-                aria-label="Share profile"
-              >
-                <FiShare2 className="w-4 h-4" />
-              </button>
-              
-              <Button 
-                onClick={handleFollowClick}
-                variant="primary"
-                size="sm"
-                className="rounded-full"
-              >
-                Follow
-              </Button>
-            </div>
-          </div>
-          
-          {/* User Info */}
-          <div className="mt-14 mb-4">
-            <h1 className="text-xl font-bold">{user.displayName}</h1>
-            <p className="text-gray-600 text-sm">@{user.username}</p>
-            
-            {/* Bio - only show if it exists */}
-            {user.bio && (
-              <p className="mt-2 text-sm">{user.bio}</p>
-            )}
-            
-            <div className="mt-2 flex flex-col gap-y-1">
-              {/* Location and Home Location using grid to match post layout below */}
-              <div className={`${user.homeLocation && user.location ? 'grid grid-cols-2' : 'flex'} gap-x-1 px-1 text-gray-500 text-xs`}>
-                {user.homeLocation && (
-                  <div className="flex items-center">
-                    <FiMapPin className="w-3 h-3 mr-1" />
-                    <span className="truncate">From {user.homeLocation}</span>
-                  </div>
-                )}
-                
-                {user.location && (
-                  <div className={`flex items-center ${!user.homeLocation ? 'ml-0' : ''}`}>
-                    <FiMapPin className="w-3 h-3 mr-1" />
-                    <span className="truncate">{user.location}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          
+        <div className="container-app">          
           {/* Info Dialog */}
           {showInfoDialog && (
             <div 
@@ -445,8 +455,8 @@ export default function UserProfilePage() {
             </div>
           )}
           
-          {/* User Posts Grid */}
-          <div className="pt-4 pb-4 -mx-4 md:mx-0">
+          {/* User Posts Grid - updated top padding */}
+          <div className="pt-3 pb-4 -mx-4 md:mx-0">
             {/* Loading State for Posts */}
             {isPostsLoading && (
               <div className="grid grid-cols-2 gap-x-1 gap-y-1 md:gap-x-1 px-1 md:px-0">

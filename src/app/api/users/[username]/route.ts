@@ -78,7 +78,7 @@ export async function PATCH(
     // Don't allow updating sensitive fields
     const allowedUpdates = [
       'displayName', 'bio', 'profileImage', 'coverImage', 
-      'location', 'homeLocation', 'website'
+      'location', 'homeLocation', 'website', 'username', 'verified'
     ];
     
     const updates = Object.entries(data)

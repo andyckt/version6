@@ -234,6 +234,13 @@ export default function AdminUsersPage() {
                 <FiRefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
               <Link 
+                href="/admin/users/edit"
+                className="p-2 mr-2 text-gray-600 hover:text-gray-900 transition-colors"
+                title="Edit User"
+              >
+                <FiEdit2 className="w-5 h-5" />
+              </Link>
+              <Link 
                 href="/admin"
                 className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
                 title="Add New User"

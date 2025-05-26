@@ -1,91 +1,33 @@
-@41
-display name: Danielle 🇺🇸
-username: danielle
-
-@47
-display name: Heather 🇺🇸
-username: heather.herrera
-
-@49
-display name: Lisa Mangin 🇺🇸
-username: lisa.m
-
-@51
-display name: Stacy Sabine 🇺🇸
-username: stacysabine
-
-@53
-display name: Anika 🇲🇽
-username: anikaaa
-
-@55
-display name: Alondra 🇺🇸
-username: alondra.usa
-
-@57
-display name: Deianira Eliz 🇲🇽
-username: eliz.deian
-
-@59
-display name: Valerie Greaves 🇺🇸
-username: valerie2000
-
-@61
-display name: Lexi Haught 🇺🇸
-username: lexiii
-
-@63
-display name: Abigail Gates 🇺🇸
-username: abigates
-
-@65
-display name: Madison 🇺🇸
-username: madison1999
-
-@67
-display name: Lyla Keeling 🇺🇸
-username: lyla2000
-
-@69
-display name: Kaitlyn 🇺🇸
-username: kaitlyn.b
-
-@71
-display name: Lily Reed 🇺🇸
-username: lilyreed333
-
-@73
-display name: Bella Stoddard 🇺🇸
-username: b.stoddard
-
-@75
-display name: Holly Baron 🇺🇸
-username: hollybaron
-
-@77
-display name: Molly 🇺🇸
-username: mollyyy
-
-@79
-display name: Brooke XOXO 🇺🇸
-username: brookexoxo
-
-@81
-display name: Lol Strauss 🇺🇸
-username: strausslol
-
-@83
-display name: Sophia Denham 🇺🇸
-username: soph.den
-
-@85
-display name: Perla 🇲🇽
-username: peralta29
-
-@87
-display name: Tate Lainey 🇺🇸
-username: tatelainey
-
-@89
-display name: Magdalene 🇺🇸
-username: magdaleneee
+Pavel Cherkasov @pavel
+David M Joseph @davidm
+Noel Bastola @bastola
+Andy Kuzinsky @kuzinsky
+Adam Lazár @adamlazar
+Javier Ocampo @javier
+Jeremy White @iamwhite
+Nikita @nikita
+Gary Almond @garyalmond
+Jordan Boyd-Graber @graber
+Dimitri Vallette @vallette
+John Hall Incadenza @incadenza
+Saint @saint
+Fred Schaff @fredschaff
+Jim Hane @jimhane
+Fred Butler @
+David Reeck @davidreeck
+Wilfrido Sy
+Michael Sun @seonfromkorea
+Steve Woolgrove @woolandgrove
+Simon William @thesimonguy
+Keith
+Ron Leezius
+Heisenberg Martinez
+Matt Gaudio
+Jay Kim @jaykim
+Andrew Diamond @diamond
+Slimane Azayri @thealgerianguy
+Tom Wilson @tomwilson
+David Lawrence @lawrence
+Brian McGaw @brianmcgaw
+Evan Gadowski @gadowski
+Michael Conklin @mconklin

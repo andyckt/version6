@@ -33,7 +33,8 @@ export async function GET(request: NextRequest) {
       .limit(limit)
       .project({
         title: 1,
-        username: 1,
+        userId: 1, // Get userId instead of relying on username
+        username: 1, // Keep the original username for fallback
         likes: 1,
         bookmarks: 1,
         views: 1,
@@ -69,34 +70,41 @@ export async function GET(request: NextRequest) {
       return map;
     }, {} as Record<string, any>);
     
-    // Fetch user profile images
-    // Use Array.from to avoid Set iteration issues
-    const usernamesSet = new Set(posts.map(post => post.username));
-    const usernames = Array.from(usernamesSet);
+    // Extract all user IDs from posts
+    const userIds = posts.map(post => 
+      typeof post.userId === 'string' ? new ObjectId(post.userId) : post.userId
+    ).filter(id => id); // Filter out any undefined/null values
     
-    const userProfiles = usernames.length > 0 
+    // Fetch user profiles by ID - this ensures we get the most up-to-date username
+    const userProfiles = userIds.length > 0 
       ? await db.collection('users')
-          .find({ username: { $in: usernames } })
+          .find({ _id: { $in: userIds } })
           .project({
-            username: 1,
+            _id: 1,
+            username: 1, // Get current username
             profileImage: 1
           })
           .toArray()
       : [];
     
-    // Create a lookup map for user profiles
+    // Create a lookup map for user profiles by ID
     const userProfileMap = userProfiles.reduce((map, user) => {
       // Handle profileImage which can be a string (for backward compatibility) or an object
+      let profileImageUrl = '';
       if (typeof user.profileImage === 'string') {
-        map[user.username] = user.profileImage;
+        profileImageUrl = user.profileImage;
       } else if (user.profileImage && typeof user.profileImage === 'object') {
         // Use micro variant for avatars in grid view
-        map[user.username] = user.profileImage.micro || '';
-      } else {
-        map[user.username] = '';
+        profileImageUrl = user.profileImage.micro || '';
       }
+      
+      map[user._id.toString()] = {
+        username: user.username,
+        profileImage: profileImageUrl
+      };
+      
       return map;
-    }, {} as Record<string, string>);
+    }, {} as Record<string, { username: string, profileImage: string }>);
     
     // Transform the posts for grid view
     const gridPosts = posts.map(post => {
@@ -113,11 +121,18 @@ export async function GET(request: NextRequest) {
         height: mediaItem.variants?.medium?.height || 800
       } : null;
       
+      // Get updated user info from the map, or fall back to original data
+      const userIdStr = post.userId ? post.userId.toString() : '';
+      const userInfo = userProfileMap[userIdStr] || { 
+        username: post.username, // Fall back to the stored username
+        profileImage: '' 
+      };
+      
       return {
         _id: post._id,
         title: post.title,
-        username: post.username,
-        userProfileImage: userProfileMap[post.username] || '',
+        username: userInfo.username, // Use the current username from users collection
+        userProfileImage: userInfo.profileImage,
         likes: post.likes || 0,
         bookmarks: post.bookmarks || 0,
         views: post.views || 0,

@@ -11,6 +11,13 @@ export interface UserStats {
   following: number;
 }
 
+// Profile image variants
+export interface ProfileImage {
+  micro: string;   // 40x40px variant for avatars, navigation elements
+  media: string;   // 300x300px variant for profile pages
+  original?: string; // Original uploaded image URL
+}
+
 // MongoDB User interface
 export interface IUser {
   _id?: ObjectId;         // MongoDB ObjectId
@@ -18,7 +25,7 @@ export interface IUser {
   email: string;          // User's email address
   displayName: string;    // Display name, can include emojis
   bio: string;            // User biography
-  profileImage: string;   // URL to profile image
+  profileImage: ProfileImage | string;   // Profile image (string for backward compatibility)
   coverImage: string;     // URL to cover image
   verified: boolean;      // Verification status
   location: string;       // Current traveling location

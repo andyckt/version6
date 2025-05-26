@@ -4,6 +4,14 @@ import { processImage } from '@/lib/image-processing';
 import { createMediaItem, MediaType } from '@/lib/db/models/media';
 import fs from 'fs';
 import { ObjectId } from 'mongodb';
+import cloudinary from 'cloudinary';
+
+// Configure Cloudinary
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 interface FileMetadata {
   originalname: string;
@@ -30,6 +38,96 @@ export async function POST(request: NextRequest) {
       userId = new ObjectId().toString();
     }
     
+    // Check if this is a profile image upload
+    const formData = await request.formData();
+    const type = formData.get('type');
+    const isProfileUpload = type === 'profile';
+    
+    // If profile upload, handle it differently
+    if (isProfileUpload) {
+      const file = formData.get('file') as File;
+      if (!file) {
+        return NextResponse.json(
+          { error: 'No file uploaded' },
+          { status: 400 }
+        );
+      }
+      
+      try {
+        // Create a buffer from the file
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        
+        // Create a temporary file to upload to Cloudinary
+        const tempPath = `/tmp/upload-${Date.now()}-${file.name}`;
+        fs.writeFileSync(tempPath, buffer);
+        
+        // Create a unique public_id for Cloudinary
+        const timestamp = new Date().getTime();
+        const publicId = `profiles/${userId}-${timestamp}`;
+        
+        // Upload to Cloudinary with eager transformations for both variants
+        const uploadResult = await cloudinary.v2.uploader.upload(tempPath, {
+          public_id: publicId,
+          eager: [
+            // Micro variant (40x40px) for small avatars, face detection
+            { 
+              width: 40, 
+              height: 40, 
+              crop: 'fill', 
+              gravity: 'face', 
+              quality: 'auto:good' 
+            },
+            // Media variant (300x300px) for profile pages, face detection
+            { 
+              width: 300, 
+              height: 300, 
+              crop: 'fill', 
+              gravity: 'face', 
+              quality: 'auto' 
+            }
+          ],
+          eager_async: false // Process immediately since it's just two variants
+        });
+        
+        // Clean up temp file
+        if (fs.existsSync(tempPath)) {
+          fs.unlinkSync(tempPath);
+        }
+        
+        // Return URLs for both variants
+        return NextResponse.json({
+          success: true,
+          micro: cloudinary.v2.url(uploadResult.public_id, {
+            width: 40, 
+            height: 40, 
+            crop: 'fill', 
+            gravity: 'face',
+            quality: 'auto:good', 
+            fetch_format: 'auto'
+          }),
+          media: cloudinary.v2.url(uploadResult.public_id, {
+            width: 300, 
+            height: 300, 
+            crop: 'fill', 
+            gravity: 'face',
+            quality: 'auto', 
+            fetch_format: 'auto'
+          }),
+          url: uploadResult.secure_url,
+          public_id: uploadResult.public_id
+        });
+        
+      } catch (error) {
+        console.error('Profile image upload error:', error);
+        return NextResponse.json(
+          { error: error instanceof Error ? error.message : 'Failed to upload profile image' },
+          { status: 500 }
+        );
+      }
+    }
+    
+    // If not a profile upload, handle as a regular media upload with the existing code
     // Use the upload middleware to handle the file upload
     const { files, error } = await withUpload('media', 10)(request);
     

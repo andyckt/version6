@@ -86,7 +86,15 @@ export async function GET(request: NextRequest) {
     
     // Create a lookup map for user profiles
     const userProfileMap = userProfiles.reduce((map, user) => {
-      map[user.username] = user.profileImage;
+      // Handle profileImage which can be a string (for backward compatibility) or an object
+      if (typeof user.profileImage === 'string') {
+        map[user.username] = user.profileImage;
+      } else if (user.profileImage && typeof user.profileImage === 'object') {
+        // Use micro variant for avatars in grid view
+        map[user.username] = user.profileImage.micro || '';
+      } else {
+        map[user.username] = '';
+      }
       return map;
     }, {} as Record<string, string>);
     

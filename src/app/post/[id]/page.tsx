@@ -530,6 +530,21 @@ export default function PostDetail({ params }: { params: { id: string } }) {
     );
   };
 
+  // Helper function to get profile image URL
+  const getProfileImageUrl = (profileImage: any): string => {
+    if (!profileImage) return '';
+    
+    if (typeof profileImage === 'string') {
+      return profileImage; // Return directly if it's a string URL
+    } else if (typeof profileImage === 'object') {
+      // If it's an object, get the correct variant
+      // According to ProfileImageUploader, profile images have media and micro variants
+      return profileImage.media || profileImage.micro || profileImage.original || '';
+    }
+    
+    return '';
+  };
+
   return (
     <MerchantDataProvider>
       <main className="pb-12 bg-white min-h-screen">
@@ -553,7 +568,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                 >
                   <div className="w-9 h-9 rounded-full overflow-hidden">
                     <img 
-                      src={post.user.profileImage || '/placeholder-profile.jpg'} 
+                      src={getProfileImageUrl(post.user.profileImage) || '/placeholder-profile.jpg'} 
                       alt={post.user.username}
                       className="w-full h-full object-cover"
                     />
@@ -562,7 +577,6 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                     <span className="font-medium group-hover:underline">
                       {post.user.displayName || post.user.username}
                     </span>
-                    <span className="text-xs text-gray-500">@{post.user.username}</span>
                   </div>
                 </Link>
               )}

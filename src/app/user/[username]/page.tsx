@@ -337,7 +337,7 @@ export default function UserProfilePage() {
               <div className="container-app">
                 <div className="flex items-end gap-4">
                   {/* Profile Picture - New Implementation */}
-                  <div className="border-4 border-white rounded-full bg-white shadow-md">
+                  <div className="border-4 border-white rounded-full bg-white shadow-md relative">
                     <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden">
                       {profileImgError ? (
                         <div className="w-full h-full flex items-center justify-center bg-gray-200">
@@ -363,7 +363,7 @@ export default function UserProfilePage() {
                       )}
                     </div>
                     
-                    {/* Verification Badge */}
+                    {/* Verification Badge - Repositioned */}
                     {user.verified && (
                       <div className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 border-2 border-white">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">

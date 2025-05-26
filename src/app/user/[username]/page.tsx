@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FiShare2, FiMapPin, FiCalendar, FiLink, FiChevronLeft, FiInfo, FiX, FiHeart, FiBookmark, FiLoader } from 'react-icons/fi';
+import { FiShare2, FiMapPin, FiCalendar, FiLink, FiChevronLeft, FiInfo, FiX, FiHeart, FiBookmark, FiLoader, FiUser } from 'react-icons/fi';
 import { FaHeart, FaBookmark } from 'react-icons/fa';
 import BlurImage from '@/components/BlurImage';
 import Navigation from '@/components/Navigation';
@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/Button';
 import { useUser } from '@/hooks/useUser';
 import ShareDialog from '@/components/ShareDialog';
 import { useUserPosts, UserPost } from '@/hooks/useUserPosts';
+import Avatar from '@/components/Avatar';
 
 // Helper function to check if localStorage is available
 const isLocalStorageAvailable = () => {
@@ -61,6 +62,9 @@ export default function UserProfilePage() {
   // Random image states - these will be different on each page load
   const [randomProfileImage, setRandomProfileImage] = useState('');
   const [randomCoverImage, setRandomCoverImage] = useState('');
+  
+  // Add state for profile image error
+  const [profileImgError, setProfileImgError] = useState(false);
   
   // Generate random IDs for Picsum Photos on each page load
   useEffect(() => {
@@ -146,11 +150,20 @@ export default function UserProfilePage() {
   }, [showInfoDialog]);
   
   // Check if user's profile image is from Picsum
-  const isUserProfileFromPicsum = user?.profileImage?.includes('picsum.photos');
+  const isUserProfileFromPicsum = typeof user?.profileImage === 'string' 
+    ? user.profileImage?.includes('picsum.photos')
+    : false;
   const isUserCoverFromPicsum = user?.coverImage?.includes('picsum.photos');
   
   // Get the final images to use - replace Picsum URLs with random ones
-  const profileImageToUse = isUserProfileFromPicsum ? randomProfileImage : (user?.profileImage || randomProfileImage);
+  // Handle profileImage which can be a string or an object with media property
+  const profileImageToUse = isUserProfileFromPicsum 
+    ? randomProfileImage 
+    : (typeof user?.profileImage === 'string' 
+        ? user.profileImage 
+        : (user?.profileImage && typeof user.profileImage === 'object' && 'media' in user.profileImage
+            ? (user.profileImage as { media: string }).media
+            : randomProfileImage));
   const coverImageToUse = isUserCoverFromPicsum ? randomCoverImage : (user?.coverImage || randomCoverImage);
   
   const handleFollowClick = () => {
@@ -323,14 +336,31 @@ export default function UserProfilePage() {
             <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
               <div className="container-app">
                 <div className="flex items-end gap-4">
-                  {/* Profile Picture */}
+                  {/* Profile Picture - New Implementation */}
                   <div className="border-4 border-white rounded-full bg-white shadow-md">
                     <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden">
-                      <BlurImage 
-                        src={profileImageToUse}
-                        alt={user.displayName}
-                        priority={true}
-                      />
+                      {profileImgError ? (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                          <FiUser className="w-1/2 h-1/2 text-gray-400" />
+                        </div>
+                      ) : (
+                        <Image
+                          src={
+                            typeof user.profileImage === 'string'
+                              ? user.profileImage
+                              : (user.profileImage && typeof user.profileImage === 'object' && 'media' in user.profileImage
+                                ? (user.profileImage as { media: string }).media
+                                : randomProfileImage)
+                          }
+                          alt={user.displayName}
+                          fill
+                          priority
+                          sizes="(max-width: 768px) 80px, 96px"
+                          className="object-cover"
+                          style={{ borderRadius: '50%' }}
+                          onError={() => setProfileImgError(true)}
+                        />
+                      )}
                     </div>
                     
                     {/* Verification Badge */}
@@ -611,7 +641,14 @@ export default function UserProfilePage() {
           onClose={() => setShowShareDialog(false)} 
           title={`${user.displayName}'s profile`}
           url={`${window.location.origin}/user/${user.username}`}
-          imageUrl={profileImageToUse}
+          imageUrl={(() => {
+            // Use the same logic as profile image to ensure consistency
+            return typeof user.profileImage === 'string'
+              ? user.profileImage
+              : (user.profileImage && typeof user.profileImage === 'object' && 'media' in user.profileImage
+                  ? (user.profileImage as { media: string }).media
+                  : randomProfileImage);
+          })()}
         />
       )}
       

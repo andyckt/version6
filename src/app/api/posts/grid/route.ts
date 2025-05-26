@@ -82,7 +82,8 @@ export async function GET(request: NextRequest) {
           .project({
             _id: 1,
             username: 1, // Get current username
-            profileImage: 1
+            profileImage: 1,
+            displayName: 1 // Add displayName to projection
           })
           .toArray()
       : [];
@@ -100,11 +101,12 @@ export async function GET(request: NextRequest) {
       
       map[user._id.toString()] = {
         username: user.username,
-        profileImage: profileImageUrl
+        profileImage: profileImageUrl,
+        displayName: user.displayName || user.username // Add displayName, fallback to username if not available
       };
       
       return map;
-    }, {} as Record<string, { username: string, profileImage: string }>);
+    }, {} as Record<string, { username: string, profileImage: string, displayName: string }>);
     
     // Transform the posts for grid view
     const gridPosts = posts.map(post => {
@@ -125,13 +127,15 @@ export async function GET(request: NextRequest) {
       const userIdStr = post.userId ? post.userId.toString() : '';
       const userInfo = userProfileMap[userIdStr] || { 
         username: post.username, // Fall back to the stored username
-        profileImage: '' 
+        profileImage: '',
+        displayName: post.username // Fallback to username if displayName is not available
       };
       
       return {
         _id: post._id,
         title: post.title,
         username: userInfo.username, // Use the current username from users collection
+        displayName: userInfo.displayName, // Add displayName to the response
         userProfileImage: userInfo.profileImage,
         likes: post.likes || 0,
         bookmarks: post.bookmarks || 0,

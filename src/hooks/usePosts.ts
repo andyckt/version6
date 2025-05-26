@@ -5,6 +5,7 @@ export interface GridPost {
   _id: string;
   title: string;
   username: string;
+  displayName: string;
   userProfileImage?: string;
   likes: number;
   bookmarks: number;

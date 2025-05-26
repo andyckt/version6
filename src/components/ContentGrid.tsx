@@ -375,7 +375,7 @@ export default function ContentGrid() {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <span className="text-[10px] font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">@{post.username}</span>
+                        <span className="text-[10px] font-medium text-gray-700 group-hover/author:text-blue-600 transition-colors duration-300">{post.displayName}</span>
                       </Link>
                       
                       <div className="flex items-center space-x-3">

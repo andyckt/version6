@@ -32,13 +32,14 @@ import PhoneNumberDialog from '@/components/merchant/PhoneNumberDialog';
 import { Navigation, X, Phone, Copy, Car, Train } from "lucide-react";
 import { motion } from "framer-motion";
 import MentionedGrid from '@/components/MentionedGrid';
+import { useMerchantPosts } from '@/hooks/useMerchantPosts';
 
 export default function MerchantProfile() {
   const params = useParams();
   const username = params.username as string;
   
   const { merchant, isLoading, isError } = useMerchant(username);
-  const [relatedPosts, setRelatedPosts] = useState<TravelPost[]>([]);
+  const { posts: mentionedPosts, loading: postsLoading } = useMerchantPosts(username);
   const [selectedBranchIndex, setSelectedBranchIndex] = useState(0);
   const [showShareDialog, setShowShareDialog] = useState(false);
   
@@ -46,18 +47,6 @@ export default function MerchantProfile() {
   const [activeBranchIndex, setActiveBranchIndex] = useState<number | null>(null);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [showPhoneDialog, setShowPhoneDialog] = useState(false);
-  
-  // Find posts that mention this merchant
-  useEffect(() => {
-    if (merchant) {
-      console.log("Merchant data received:", merchant);
-      // Filter posts that tag this merchant
-      const filtered = travelPosts.filter(post => 
-        post.taggedAccounts?.some(account => account.username === merchant.username)
-      );
-      setRelatedPosts(filtered);
-    }
-  }, [merchant]);
   
   // Render loading state
   if (isLoading) {
@@ -125,12 +114,18 @@ export default function MerchantProfile() {
               Users Mentioning this place
               <div className="ml-2 w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center">
                 <span className="text-[11px] font-medium text-gray-600">
-                  {relatedPosts.length}
+                  {mentionedPosts.length}
                 </span>
               </div>
             </h3>
             
-            <MentionedGrid posts={relatedPosts} />
+            {postsLoading ? (
+              <div className="py-10 flex justify-center">
+                <div className="w-10 h-10 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <MentionedGrid posts={mentionedPosts} />
+            )}
           </div>
         </div>
       </PageTransition>

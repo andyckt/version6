@@ -18,13 +18,7 @@ if (!MONGODB_DB) {
 
 // Additional post URLs to delete
 const additionalUrls = [
-  'https://www.bobe.co/post/68218c714c39a8916fff628c',
-  'https://www.bobe.co/post/68218cf84c39a8916fff6293',
-  'https://www.bobe.co/post/68218d5c4c39a8916fff629c',
-  'https://www.bobe.co/post/682198a326d56746e629d1cd',
-  'https://www.bobe.co/post/682194d050c9b5578c459082',
-  'https://www.bobe.co/post/6821a5d2658b85a8b5e88139',
-  'https://www.bobe.co/post/68219a4f4c622805fc2470f9'
+  'https://www.bobe.co/post/682595bd2ef94bc1f8740b8d'
 ];
 
 // Extract post IDs from URLs

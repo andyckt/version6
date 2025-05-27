@@ -420,8 +420,8 @@ export default function Header() {
               </div>
               
               {/* Plus Button */}
-              <button className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
-                <FiPlus className="w-4 h-4" />
+              <button className="relative w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm overflow-hidden group">
+                <FiPlus className="w-4 h-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-90" />
               </button>
             </div>
           </div>

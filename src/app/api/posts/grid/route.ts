@@ -102,23 +102,14 @@ export async function GET(request: NextRequest) {
     
     // Create a lookup map for user profiles by ID
     const userProfileMap = userProfiles.reduce((map, user) => {
-      // Handle profileImage which can be a string (for backward compatibility) or an object
-      let profileImageUrl = '';
-      if (typeof user.profileImage === 'string') {
-        profileImageUrl = user.profileImage;
-      } else if (user.profileImage && typeof user.profileImage === 'object') {
-        // Use micro variant for avatars in grid view
-        profileImageUrl = user.profileImage.micro || '';
-      }
-      
       map[user._id.toString()] = {
         username: user.username,
-        profileImage: profileImageUrl,
+        profileImage: user.profileImage, // Keep the full profileImage object or string
         displayName: user.displayName || user.username // Add displayName, fallback to username if not available
       };
       
       return map;
-    }, {} as Record<string, { username: string, profileImage: string, displayName: string }>);
+    }, {} as Record<string, { username: string, profileImage: any, displayName: string }>);
     
     // Transform the posts for grid view
     const gridPosts = posts.map(post => {

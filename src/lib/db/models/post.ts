@@ -188,16 +188,19 @@ export async function getPostWithDetails(id: string | ObjectId): Promise<any | n
     {
       $lookup: {
         from: 'users',
-        let: { userId: { $toObjectId: '$userId' } },
+        localField: 'userId',
+        foreignField: '_id',
         pipeline: [
-          { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
-          { $project: { 
-            _id: 1, 
-            username: 1, 
-            displayName: 1, 
-            profileImage: 1, 
-            verified: 1 
-          }}
+          { 
+            $project: { 
+              _id: 1, 
+              username: 1, 
+              displayName: 1, 
+              verified: 1,
+              profileImage: 1,
+              email: 1 
+            }
+          }
         ],
         as: 'user'
       }

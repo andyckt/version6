@@ -60,6 +60,20 @@ const isLocalStorageAvailable = () => {
   }
 };
 
+// Helper function to get profile image URL
+const getProfileImageUrl = (profileImage: any): string => {
+  if (!profileImage) return '';
+  
+  if (typeof profileImage === 'string') {
+    return profileImage; // Return directly if it's a string URL
+  } else if (typeof profileImage === 'object') {
+    // If it's an object, get the correct variant
+    return profileImage.micro || profileImage.media || profileImage.original || '';
+  }
+  
+  return '';
+};
+
 export default function ContentGrid() {
   const [activeCategory, setActiveCategory] = useState("");
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
@@ -368,7 +382,7 @@ export default function ContentGrid() {
                       >
                         <div className="w-4 h-4 rounded-full bg-gray-200 mr-1.5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
                           <Image
-                            src={post.userProfileImage || `/placeholder-avatar.jpg`}
+                            src={getProfileImageUrl(post.userProfileImage) || `/placeholder-avatar.jpg`}
                             alt={post.username}
                             width={16}
                             height={16}

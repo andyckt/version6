@@ -574,7 +574,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                     />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-medium group-hover:underline">
+                    <span className="font-medium transition-colors duration-300 group-hover:text-primary">
                       {post.user.displayName || post.user.username}
                     </span>
                   </div>

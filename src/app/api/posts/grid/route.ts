@@ -18,7 +18,19 @@ export async function GET(request: NextRequest) {
     
     // Add category filter if provided
     if (category) {
-      query.hashtags = { $regex: category, $options: 'i' };
+      if (category === 'attractions') {
+        // For attractions category, include both plural and singular forms
+        query.hashtags = { $regex: /(attraction|attractions)/i };
+      } else if (category === 'luxurious') {
+        // For luxury category, include both forms
+        query.hashtags = { $regex: /(luxury|luxurious)/i };
+      } else if (category === 'hotel') {
+        // For accommodation category, include both hotel and accommodation
+        query.hashtags = { $regex: /(hotel|accommodation)/i };
+      } else {
+        // For other categories, use the regular expression as before
+        query.hashtags = { $regex: category, $options: 'i' };
+      }
     }
     
     // Add cursor-based pagination if cursor is provided

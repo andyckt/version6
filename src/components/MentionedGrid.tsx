@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { FiHeart, FiBookmark } from 'react-icons/fi';
 import { FaHeart, FaBookmark } from 'react-icons/fa';
@@ -24,16 +24,55 @@ const isLocalStorageAvailable = () => {
 
 interface MentionedGridProps {
   posts: TravelPost[] | MerchantPost[];
+  hasMore?: boolean;
+  onLoadMore?: () => void;
 }
 
-export default function MentionedGrid({ posts }: MentionedGridProps) {
+export default function MentionedGrid({ posts, hasMore = false, onLoadMore }: MentionedGridProps) {
   const [likedPosts, setLikedPosts] = useState<Record<number, boolean>>({});
   const [postLikes, setPostLikes] = useState<Record<number, number>>({});
   const [bookmarkedPosts, setBookmarkedPosts] = useState<Record<number, boolean>>({});
   const [postBookmarks, setPostBookmarks] = useState<Record<number, number>>({});
   const [postViews, setPostViews] = useState<Record<number, number>>({});
   const [storageAvailable, setStorageAvailable] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  // Handle intersection for infinite scrolling
+  const lastPostElementRef = useCallback((node: HTMLElement | null) => {
+    if (!hasMore || !onLoadMore) return;
+    
+    if (observerRef.current) observerRef.current.disconnect();
+    
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        onLoadMore();
+      }
+    }, { rootMargin: '200px' });
+    
+    if (node) observerRef.current.observe(node);
+  }, [hasMore, onLoadMore]);
   
+  // Setup observer for loadMore ref as a fallback
+  useEffect(() => {
+    if (!hasMore || !onLoadMore) return;
+    
+    const currentRef = loadMoreRef.current;
+    if (!currentRef) return;
+    
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        onLoadMore();
+      }
+    }, { rootMargin: '200px' });
+    
+    observer.observe(currentRef);
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasMore, onLoadMore, loadMoreRef]);
+
   // Check if localStorage is available
   useEffect(() => {
     const available = isLocalStorageAvailable();
@@ -213,11 +252,16 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
           ? post.media[0].mediaId.toString() 
           : post.media[0].mediaId;
         
-        return `/api/media/${mediaId}/thumbnail`;
+        // Directly use medium variant instead of thumbnail to match ContentGrid
+        return `/api/media/${mediaId}/medium`;
       }
       
       // TravelPost type with media array
       if ('id' in post && post.media[0] && post.media[0].url) {
+        // Directly use the URL but prefer medium variant if available
+        if (typeof post.media[0].url === 'object' && post.media[0].url.medium) {
+          return post.media[0].url.medium;
+        }
         return post.media[0].url;
       }
     }
@@ -258,9 +302,13 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
           {posts.map((post, index) => {
             const postId = getPostId(post);
             
+            // Reference for last post element (for infinite scrolling)
+            const ref = index === posts.length - 1 ? lastPostElementRef : null;
+            
             return (
               <div 
-                key={postId} 
+                key={postId}
+                ref={ref}
                 className="group flex flex-col rounded-lg overflow-hidden bg-white shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
                 style={{ 
                   animationDelay: `${index * 100}ms`,
@@ -275,8 +323,10 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
                         src={getMediaUrl(post)} 
                         alt={post.title}
                         aspectRatio="aspect-[3/4]"
-                        sizes="(max-width: 768px) 50vw, 33vw"
+                        sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 25vw"
+                        quality={85}
                         className="object-cover"
+                        priority={index < 4} // Add priority loading for first 4 images
                       />
                       {/* Image overlay gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -341,6 +391,11 @@ export default function MentionedGrid({ posts }: MentionedGridProps) {
             );
           })}
         </div>
+      )}
+      
+      {/* Load more trigger for Intersection Observer */}
+      {hasMore && (
+        <div ref={loadMoreRef} className="h-10"></div>
       )}
     </div>
   );

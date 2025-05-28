@@ -39,7 +39,7 @@ export default function MerchantProfile() {
   const username = params.username as string;
   
   const { merchant, isLoading, isError } = useMerchant(username);
-  const { posts: mentionedPosts, loading: postsLoading } = useMerchantPosts(username);
+  const { posts: mentionedPosts, loading: postsLoading, hasMore, loadMore } = useMerchantPosts(username);
   const [selectedBranchIndex, setSelectedBranchIndex] = useState(0);
   const [showShareDialog, setShowShareDialog] = useState(false);
   
@@ -119,12 +119,23 @@ export default function MerchantProfile() {
               </div>
             </h3>
             
-            {postsLoading ? (
+            {postsLoading && mentionedPosts.length === 0 ? (
               <div className="py-10 flex justify-center">
                 <div className="w-10 h-10 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
               </div>
             ) : (
-              <MentionedGrid posts={mentionedPosts} />
+              <MentionedGrid 
+                posts={mentionedPosts} 
+                hasMore={hasMore}
+                onLoadMore={loadMore}
+              />
+            )}
+            
+            {/* Loading more indicator */}
+            {postsLoading && mentionedPosts.length > 0 && (
+              <div className="py-4 flex justify-center">
+                <div className="w-6 h-6 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+              </div>
             )}
           </div>
         </div>

@@ -259,10 +259,19 @@ export default function MentionedGrid({ posts, hasMore = false, onLoadMore }: Me
       // TravelPost type with media array
       if ('id' in post && post.media[0] && post.media[0].url) {
         // Directly use the URL but prefer medium variant if available
-        if (typeof post.media[0].url === 'object' && post.media[0].url.medium) {
-          return post.media[0].url.medium;
+        const mediaUrl = post.media[0].url;
+        
+        // Check if url is an object with a medium property
+        if (typeof mediaUrl === 'object' && mediaUrl !== null) {
+          // Use type assertion to access the medium property safely
+          const urlWithVariants = mediaUrl as { medium?: string };
+          if (urlWithVariants.medium) {
+            return urlWithVariants.medium;
+          }
         }
-        return post.media[0].url;
+        
+        // Fallback to the original url
+        return post.media[0].url as string;
       }
     }
     
